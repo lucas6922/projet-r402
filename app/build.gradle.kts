@@ -77,4 +77,13 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.7.2")
     testImplementation("io.kotest:kotest-framework-engine:5.7.2")
     testImplementation ("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+
+    testImplementation ("org.mockito:mockito-core:4.0.0")
+    testImplementation ("org.mockito:mockito-inline:4.0.0")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+
+    testImplementation("org.slf4j:slf4j-simple:1.7.32")
+    testImplementation(kotlin("test"))
+
+
 }
