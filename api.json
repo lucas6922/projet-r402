@@ -1,0 +1,2042 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "District 14 API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/reset": {
+      "get": {
+        "tags": [
+          "Util"
+        "summary": "Reset all your datas to a random set.",
+        "operationId": "resetData",
+        "responses": {
+          "200": {
+            "description": "Datas successfully reseted."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitions": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "List of every competitions you have access.",
+        "operationId": "getAllCompetitions",
+        "responses": {
+          "200": {
+            "description": "All competitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Competition"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competitions found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Store a competition, default status set to 'not_ready'",
+        "operationId": "addCompetition",
+        "requestBody": {
+          "description": "Competition's informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Competition successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Competition"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitions/{id}": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Get the details of a competition",
+        "description": "Get the details of a competition by his id",
+        "operationId": "getCompetitionDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competition ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Competition's details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Competition"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Update the competition",
+        "operationId": "updateCompetition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competition ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating competitions informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Competition successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Delete the competition and everything attached to it",
+        "operationId": "deleteCompetition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competition ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Competition deleted."
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitions/{id}/inscriptions": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Get the competitors registered to the given competition",
+        "description": "Get the competitors registered to the given competition",
+        "operationId": "getCompetitionInscriptions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competition ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of the competitors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Competitor"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitions/{id}/courses": {
+      "get": {
+        "tags": [
+          "Competitions"
+        ],
+        "summary": "Get the courses of a given competition",
+        "description": "Get the courses of a given competition",
+        "operationId": "getCompetitionCourses",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competition ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of the courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Course"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitors": {
+      "get": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "List of every competitors you have access.",
+        "operationId": "getAllCompetitors",
+        "responses": {
+          "200": {
+            "description": "All competitors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Competitor"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competitors found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "Store a competitor",
+        "operationId": "addCompetitor",
+        "requestBody": {
+          "description": "Competitor's informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitorCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Competitor successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Competitor"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitors/{id}": {
+      "get": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "Get the details of a competitor",
+        "description": "Get the details of a competitor by his id",
+        "operationId": "getCompetitorDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Competitor's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Competitor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Competitor not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "Update the competitor",
+        "operationId": "updateCompetitor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating competitors informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitorUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Competitor successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Competitor not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "Delete the competitor and everything attached to him",
+        "operationId": "deleteCompetitor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Competitor deleted."
+          },
+          "404": {
+            "description": "Competitor not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitors/{id}/performances": {
+      "get": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "List of every performance for a given competitor.",
+        "operationId": "getCompetitorPerformances",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All performances for a given competitor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Performance"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competitors found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitors/{id}/courses": {
+      "get": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "List of every courses a competitor is registered in.",
+        "operationId": "getCompetitorCourses",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of every courses a competitor is registered in.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Course"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competitors found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/competitors/{id}/{id_course}/details_performances": {
+      "get": {
+        "tags": [
+          "Competitors"
+        ],
+        "summary": "Retrieves details about an competitor's performance in a course",
+        "operationId": "getCompetitorCoursePerformanceDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Competitor ID in the database",
+            "required": true
+          },
+          {
+            "name": "id_course",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves details about an competitor's performance in a course.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PerformanceObstacle"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No competitors found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "List of every courses you have access.",
+        "operationId": "getAllCourses",
+        "responses": {
+          "200": {
+            "description": "All courses",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Course"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No courses found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Store a course as the last one of the competition, the position is automatically computed.",
+        "operationId": "addCourse",
+        "requestBody": {
+          "description": "Store a course as the last one of the competition, the position is automatically computed.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Course successfully created."
+          },
+          "422": {
+            "description": "Incorrect body parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Competition not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses/{id}/competitors": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "List of every competitors registered to this course.",
+        "operationId": "getCourseCompetitors",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of every competitors registered to this course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Competitor"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No courses found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses/{id}/obstacles": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "List of every obstacles of the course.",
+        "operationId": "getCourseObstacles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of every obstacles of the course",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CourseObstacle"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No courses found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses/{id}": {
+      "get": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Get the details of a course",
+        "description": "Get the details of a course by his id",
+        "operationId": "getCourseDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Course"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Update the course",
+        "operationId": "updateCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating courses informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Course successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Delete the course and everything attached to it",
+        "operationId": "deleteCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Course deleted."
+          },
+          "404": {
+            "description": "Course not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses/{id}/add_obstacle": {
+      "post": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Add a given obstacle to a course",
+        "operationId": "addCourseObstacle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Obstacle ID to add",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "obstacle_id"
+                ],
+                "properties": {
+                  "obstacle_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obstacle added successfully."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Course or obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/courses/{id}/update_obstacle_position": {
+      "post": {
+        "tags": [
+          "Courses"
+        ],
+        "summary": "Update the course",
+        "operationId": "updateCourseObstaclePosition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Course ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating courses informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseObstacleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Position successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Course or obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/obstacles": {
+      "get": {
+        "tags": [
+          "Obstacles"
+        ],
+        "summary": "List of every obstacles you have access.",
+        "operationId": "getAllObstacles",
+        "responses": {
+          "200": {
+            "description": "All obstacles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Obstacle"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Obstacles"
+        ],
+        "summary": "Store a obstacle",
+        "operationId": "addObstacle",
+        "requestBody": {
+          "description": "Updating obstacles informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObstacleCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Obstacle successfully created."
+          },
+          "422": {
+            "description": "Incorrect body parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Obstacle"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/obstacles/{id}": {
+      "get": {
+        "tags": [
+          "Obstacles"
+        ],
+        "summary": "Get the details of an obstacle",
+        "description": "Get the details of an obstacle by his id",
+        "operationId": "getObstacleDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Obstacle ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Obstacle's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Obstacle"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Obstacles"
+        ],
+        "summary": "Update the obstacle",
+        "operationId": "updateObstacle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Obstacle ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating obstacles informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObstacleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Obstacle successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Obstacles"
+        ],
+        "summary": "Delete the obstacle and everything attached to it, if it was in a course, it's deleted from the course.",
+        "operationId": "deleteObstacle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Obstacle ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Obstacle deleted."
+          },
+          "404": {
+            "description": "Obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/performance_obstacles": {
+      "get": {
+        "tags": [
+          "Performance obstacles"
+        ],
+        "summary": "List of every performance by obstacle you have access.",
+        "operationId": "getAllPerformanceObstacles",
+        "responses": {
+          "200": {
+            "description": "All performances by obstacles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PerformanceObstacle"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No obstacles found."
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Performance obstacles"
+        ],
+        "summary": "Store a performance obstacle",
+        "operationId": "createPerformanceObstacle",
+        "requestBody": {
+          "description": "Storing performance obstacles informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerformanceObstacleCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Performance obstacle successfully created."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Performance or obstacle not found"
+          },
+          "403": {
+            "description": "Performance or obstacle don't belong to you."
+          },
+          "409": {
+            "description": "This combination already exists."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/performance_obstacles/{id}": {
+      "get": {
+        "tags": [
+          "Performance obstacles"
+        ],
+        "summary": "Get the details of a obstacle",
+        "description": "Get the details of a performance obstacle by his id",
+        "operationId": "getPerformanceObstacleDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Performance obstacle ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Performance obstacle's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceObstacle"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Performance obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Performance obstacles"
+        ],
+        "summary": "Update the performance obstacle",
+        "operationId": "updatePerformanceObstacle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Performance obstacle ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating obstacles informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerformanceObstacleUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Performance obstacle successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Performance obstacle not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/performances": {
+      "get": {
+        "tags": [
+          "Performances"
+        ],
+        "summary": "List of every performance you have access.",
+        "operationId": "getAllPerformances",
+        "responses": {
+          "200": {
+            "description": "All performances",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Performance"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token unauthorized."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Performances"
+        ],
+        "summary": "Store a performance",
+        "operationId": "addPerformance",
+        "requestBody": {
+          "description": "Storing performance informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerformanceCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Performance successfully created."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Competitor or course not found"
+          },
+          "403": {
+            "description": "Competitor or course don't belong to you."
+          },
+          "409": {
+            "description": "This combination already exists."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/performances/{id}": {
+      "get": {
+        "tags": [
+          "Performances"
+        ],
+        "summary": "Get the details of a performance",
+        "description": "Get the details of a performance by his id",
+        "operationId": "getPerformanceDetails",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Performance's ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Performance's details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Performance"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Performance not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Performances"
+        ],
+        "summary": "Update the performance",
+        "operationId": "updatePerformance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Performance ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Updating performance informations",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PerformanceUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Performance successfully updated."
+          },
+          "422": {
+            "description": "Incorrect body parameters"
+          },
+          "404": {
+            "description": "Performance not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Performances"
+        ],
+        "summary": "Delete the performance and everything attached to it.",
+        "operationId": "deletePerformance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Performance ID in the database",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Performance deleted."
+          },
+          "404": {
+            "description": "Performance not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Competition": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "age_min": {
+            "type": "integer"
+          },
+          "age_max": {
+            "type": "integer"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "H",
+              "F"
+            ]
+          },
+          "has_retry": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_ready",
+              "not_started",
+              "started",
+              "finished"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "CompetitionUpdate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age_min": {
+            "type": "integer"
+          },
+          "age_max": {
+            "type": "integer"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "H",
+              "F"
+            ]
+          },
+          "has_retry": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "not_ready",
+              "not_started",
+              "started",
+              "finished"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "CompetitionCreate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "age_min": {
+            "type": "integer"
+          },
+          "age_max": {
+            "type": "integer"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "H",
+              "F"
+            ]
+          },
+          "has_retry": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "Competitor": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "H",
+              "F"
+            ]
+          },
+          "phone": {
+            "type": "string"
+          },
+          "born_at": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "type": "object"
+      },
+      "CompetitorUpdate": {
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "born_at": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "type": "object"
+      },
+      "CompetitorCreate": {
+        "properties": {
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "H",
+              "F"
+            ]
+          },
+          "born_at": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "type": "object"
+      },
+      "Course": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "max_duration": {
+            "type": "integer"
+          },
+          "position": {
+            "type": "integer"
+          },
+          "is_over": {
+            "type": "boolean"
+          },
+          "competition_id": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CourseUpdate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "max_duration": {
+            "type": "integer"
+          },
+          "position": {
+            "type": "integer"
+          },
+          "is_over": {
+            "type": "boolean"
+          },
+          "competition_id": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CourseCreate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "max_duration": {
+            "type": "integer"
+          },
+          "competition_id": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CourseObstacle": {
+        "properties": {
+          "course_obstacle_id": {
+            "type": "integer"
+          },
+          "obstacle_name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "Obstacle": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ObstacleUpdate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ObstacleCreate": {
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CourseObstacleUpdate": {
+        "properties": {
+          "obstacle_id": {
+            "type": "integer"
+          },
+          "position": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceObstacle": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "obstacle_id": {
+            "type": "integer"
+          },
+          "performance_id": {
+            "type": "integer"
+          },
+          "has_fell": {
+            "type": "boolean"
+          },
+          "to_verify": {
+            "type": "boolean"
+          },
+          "time": {
+            "type": "integer"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceObstacleCreate": {
+        "properties": {
+          "obstacle_id": {
+            "type": "integer"
+          },
+          "performance_id": {
+            "type": "integer"
+          },
+          "has_fell": {
+            "type": "boolean"
+          },
+          "to_verify": {
+            "type": "boolean"
+          },
+          "time": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceObstacleUpdate": {
+        "properties": {
+          "has_fell": {
+            "type": "boolean"
+          },
+          "to_verify": {
+            "type": "boolean"
+          },
+          "time": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "Performance": {
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "competitor_id": {
+            "type": "integer"
+          },
+          "course_id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "defection",
+              "to_finish",
+              "to_verify",
+              "over"
+            ]
+          },
+          "total_time": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceUpdate": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "defection",
+              "to_finish",
+              "to_verify",
+              "over"
+            ]
+          },
+          "total_time": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "PerformanceCreate": {
+        "properties": {
+          "competitor_id": {
+            "type": "integer"
+          },
+          "course_id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "defection",
+              "to_finish",
+              "to_verify",
+              "over"
+            ]
+          },
+          "total_time": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Util",
+      "description": "Util"
+    },
+    {
+      "name": "Competitions",
+      "description": "Competitions"
+    },
+    {
+      "name": "Competitors",
+      "description": "Competitors"
+    },
+    {
+      "name": "Courses",
+      "description": "Courses"
+    },
+    {
+      "name": "Obstacles",
+      "description": "Obstacles"
+    },
+    {
+      "name": "Performance obstacles",
+      "description": "Performance obstacles"
+    },
+    {
+      "name": "Performances",
+      "description": "Performances"
+    }
+  ]
+}
