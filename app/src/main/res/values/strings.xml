@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">parkour</string>
+    <string name="title_activity_inscription_concurent">InscriptionConcurent</string>
+    <string name="title_activity_liste_parkours">ListeParkours</string>
 </resources>

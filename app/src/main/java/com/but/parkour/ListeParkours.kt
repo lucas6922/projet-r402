@@ -1,19 +1,22 @@
 package com.but.parkour
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,23 +25,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.but.parkour.ui.theme.ParkourTheme
 
-class MainActivity : ComponentActivity() {
+class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val valeur = intent.getStringExtra("item")
         setContent {
             ParkourTheme {
-                Competition()
+                ParkoursPage(valeur!!)
             }
         }
     }
 }
 
 @Composable
-fun Competition() {
+fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,25 +49,25 @@ fun Competition() {
             .padding(top = 16.dp)
     ) {
         Text(
-            text = "Bienvenue dans Parkour! \n Sélectionnez une competition.",
+            text = compet,
             modifier = Modifier.padding(bottom = 16.dp), // Correction du Modifier
             style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        ListItems(
+        ListParkours(
             items = listOf(
-                "Competition 1",
-                "Competition 2",
-                "Competition 3",
-                "Competition 4",
-                "Competition 5",
-                "Competition 6",
-                "Competition 7",
-                "Competition 8",
-                "Competition 9",
-                "Competition 10"
+                "Parkour 1",
+                "Parkour 2",
+                "Parkour 3",
+                "Parkour 4",
+                "Parkour 5",
+                "Parkour 6",
+                "Parkour 7",
+                "Parkour 8",
+                "Parkour 9",
+                "Parkour 10"
             ),
             modifier = Modifier.weight(1f)
         ) {
@@ -74,7 +77,7 @@ fun Competition() {
 }
 
 @Composable
-fun ListItems(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -88,42 +91,24 @@ fun ListItems(items: List<String>, modifier: Modifier = Modifier, onItemClick: (
                     .padding(vertical = 4.dp)
                     .clickable { onItemClick(item) }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
+                    .padding(4.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+
                     Text(
                         text = item,
-                        modifier = Modifier.padding(bottom = 8.dp)
+                        modifier = Modifier.padding(8.dp)
                     )
-                    Button(onClick = { onItemClickInscription(item, context) }) {
-                        Text("Inscription des concurrents")
-                    }
-                    Button(
-                        onClick = { onItemClickListeParkours(item, context) },
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Liste des parkours")
-                    }
-                }
+
             }
         }
     }
 }
 
-
-fun onItemClickInscription(item: String,context: Context) {
-    val intent = Intent(context, InscriptionConcurent::class.java)
-    intent.putExtra("item", item)
-    context.startActivity(intent)
-}
-
-fun onItemClickListeParkours(item: String, context: Context) {
-    // Handle item click for parkours list
-}
-
 @Preview(showBackground = true)
 @Composable
-fun CompetitionPreview() {
+fun ParkoursPreview() {
     ParkourTheme {
-        Competition()
+        ParkoursPage("euh")
     }
 }
+
