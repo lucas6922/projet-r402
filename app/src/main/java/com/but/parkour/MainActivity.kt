@@ -53,7 +53,7 @@ fun Competition() {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        ListItems(
+        ListCompetitions(
             items = listOf(
                 "Competition 1",
                 "Competition 2",
@@ -68,13 +68,13 @@ fun Competition() {
             ),
             modifier = Modifier.weight(1f)
         ) {
-            // Handle item click
+
         }
     }
 }
 
 @Composable
-fun ListItems(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+fun ListCompetitions(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -117,7 +117,9 @@ fun onItemClickInscription(item: String,context: Context) {
 }
 
 fun onItemClickListeParkours(item: String, context: Context) {
-    // Handle item click for parkours list
+    val intent = Intent(context, ListeParkours::class.java)
+    intent.putExtra("item", item)
+    context.startActivity(intent)
 }
 
 @Preview(showBackground = true)
