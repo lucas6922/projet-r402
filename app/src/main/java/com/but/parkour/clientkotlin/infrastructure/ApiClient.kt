@@ -71,9 +71,9 @@ class ApiClient(
         authNames: Array<String>
     ) : this(baseUrl, okHttpClientBuilder, serializerBuilder) {
         authNames.forEach { authName ->
-            val auth: Interceptor? = when (authName) { 
+            val auth: Interceptor? = when (authName) {
                 "bearerAuth" -> HttpBearerAuth("bearer")
-                
+
                 else -> throw RuntimeException("auth name $authName not found in available auth names")
             }
             if (auth != null) {
@@ -169,5 +169,27 @@ class ApiClient(
         })
     }
 
+    fun <T> fetchData(
+        call: CallRetrofit<T>,
+        onSuccess: (T?, Int) -> Unit,
+        onError: (String, Int?) -> Unit
+    ) {
+        call.enqueue(object : Callback<T> {
+            override fun onResponse(call: CallRetrofit<T>, response: Response<T>) {
+                val statusCode = response.code()
+                if (response.isSuccessful) {
+                    onSuccess(response.body(), statusCode)
+                } else {
+                    onError("Erreur: ${response.message()}", statusCode)
+                }
+            }
 
+            override fun onFailure(call: CallRetrofit<T>, t: Throwable) {
+                onError("Erreur : ${t.message}", null)
+            }
+        })
+    }
 }
+
+
+

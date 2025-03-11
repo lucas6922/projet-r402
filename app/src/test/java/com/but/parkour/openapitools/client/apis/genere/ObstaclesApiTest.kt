@@ -13,7 +13,7 @@
     "UnusedImport"
 )
 
-package com.but.parkour.openapitools.client.apis
+package com.but.parkour.openapitools.client.apis.genere
 
 import io.kotlintest.specs.ShouldSpec
 

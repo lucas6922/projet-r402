@@ -13,14 +13,10 @@
     "UnusedImport"
 )
 
-package com.but.parkour.openapitools.client.apis
+package com.but.parkour.openapitools.client.apis.genere
 
-import android.util.Log
-import com.but.parkour.clientkotlin.apis.CompetitionsApi
-import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import io.kotlintest.specs.ShouldSpec
-import org.mockito.Mockito.*
-import org.junit.Test
+
 class CompetitionsApiTest : ShouldSpec() {
     init {
         // uncomment below to create an instance of CompetitionsApi
