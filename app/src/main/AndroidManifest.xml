@@ -13,17 +13,42 @@
         android:theme="@style/Theme.Parkour"
         tools:targetApi="31">
         <activity
-            android:name=".ListeParkours"
+            android:name=".concurrents.ListeConcurrents"
+            android:exported="false"
+            android:label="@string/title_activity_liste_concurrents"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".concurrents.Classement"
+            android:exported="false"
+            android:label="@string/title_activity_classement"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".obstacles.ListeObstacles"
+            android:exported="false"
+            android:label="@string/title_activity_liste_obstacles"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".parkour.AjoutParkour"
+            android:exported="false"
+            android:label="@string/title_activity_ajout_parkour"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".competition.AjoutCompetition"
+            android:exported="false"
+            android:label="@string/title_activity_ajout_competition"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".parkour.ListeParkours"
             android:exported="false"
             android:label="@string/title_activity_liste_parkours"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".InscriptionConcurent"
+            android:name=".concurrents.InscriptionConcurent"
             android:exported="false"
             android:label="@string/title_activity_inscription_concurent"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".MainActivity"
+            android:name=".competition.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Parkour">

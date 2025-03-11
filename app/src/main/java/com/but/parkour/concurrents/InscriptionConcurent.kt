@@ -1,4 +1,4 @@
-package com.but.parkour
+package com.but.parkour.concurrents
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -154,3 +154,4 @@ fun InscriptionPreview() {
         InscriptionPage("euh")
     }
 }
+

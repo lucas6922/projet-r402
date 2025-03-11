@@ -2,4 +2,9 @@
     <string name="app_name">parkour</string>
     <string name="title_activity_inscription_concurent">InscriptionConcurent</string>
     <string name="title_activity_liste_parkours">ListeParkours</string>
+    <string name="title_activity_ajout_competition">AjoutCompetition</string>
+    <string name="title_activity_ajout_parkour">AjoutParkour</string>
+    <string name="title_activity_liste_obstacles">ListeObstacles</string>
+    <string name="title_activity_classement">Classement</string>
+    <string name="title_activity_liste_concurrents">ListeConcurrents</string>
 </resources>

@@ -1,5 +1,7 @@
-package com.but.parkour
+package com.but.parkour.parkour
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,6 +27,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.but.parkour.concurrents.InscriptionConcurent
+import com.but.parkour.concurrents.ListeConcurrents
 import com.but.parkour.ui.theme.ParkourTheme
 
 class ListeParkours : ComponentActivity() {
@@ -39,7 +42,45 @@ class ListeParkours : ComponentActivity() {
             }
         }
     }
+
+
 }
+
+@Composable
+fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+    val context = LocalContext.current
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        items(items) { item ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { onItemClick(context, item) }
+                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
+                    .padding(4.dp)
+            ) {
+
+                Text(
+                    text = item,
+                    modifier = Modifier.padding(8.dp)
+                )
+
+            }
+        }
+    }
+    Button(onClick = {}) { Text(text = "Ajouter un parkour") }
+}
+
+fun onItemClick(context : Context, item : String) {
+    val intent = Intent(context, ListeConcurrents::class.java)
+    intent.putExtra("item", item)
+    context.startActivity(intent)
+}
+
 
 @Composable
 fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
@@ -77,36 +118,6 @@ fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
-    val context = LocalContext.current
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        items(items) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onItemClick(item) }
-                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
-                    .padding(4.dp)
-            ) {
-
-                    Text(
-                        text = item,
-                        modifier = Modifier.padding(8.dp)
-                    )
-
-            }
-        }
-    }
-    Button(onClick = {}) { Text(text = "Ajouter une compétition") }
-}
-
-
 
 
 @Preview(showBackground = true)
@@ -116,4 +127,6 @@ fun ParkoursPreview() {
         ParkoursPage("euh")
     }
 }
+
+
 
