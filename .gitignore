@@ -143,3 +143,6 @@ gradle/wrapper/gradle-wrapper.jar
 
 # Ignore other IDE-specific configurations (e.g., IntelliJ, Eclipse)
 *.iml
+
+local.properties
+
