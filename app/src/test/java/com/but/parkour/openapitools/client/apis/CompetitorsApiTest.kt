@@ -1,12 +1,14 @@
 package com.but.parkour.openapitools.client.apis
 
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
+import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.CompetitionCreate.Gender
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import com.but.parkour.clientkotlin.models.CompetitorUpdate
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
 import java.time.LocalDate
 
 class CompetitorsApiTest {
@@ -14,7 +16,13 @@ class CompetitorsApiTest {
         bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM",
     )
     private val apiService = apiClient.createService(CompetitorsApi::class.java)
+    private val reset = apiClient.createService(UtilApi::class.java)
 
+    @BeforeEach
+    fun setUp() {
+        val resetData = reset.resetData()
+        resetData.execute()
+    }
     @Test
     fun getAllCompetitorsTest(){
         val call = apiService.getAllCompetitors()
