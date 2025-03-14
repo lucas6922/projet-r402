@@ -3,7 +3,6 @@ package com.but.parkour.openapitools.client.apis
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
-import com.but.parkour.clientkotlin.models.CompetitionCreate.Gender
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import com.but.parkour.clientkotlin.models.CompetitorUpdate
 import junit.framework.TestCase.assertEquals
