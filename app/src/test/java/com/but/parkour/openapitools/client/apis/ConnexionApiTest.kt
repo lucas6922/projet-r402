@@ -6,7 +6,9 @@ import org.junit.Test
 import org.junit.Assert.*
 
 class ConnexionApiTest {
-    private val apiClient = ApiClient()
+    private val apiClient = ApiClient(
+        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM",
+    )
     private val apiService = apiClient.createService(UtilApi::class.java)
     private val call = apiService.resetData()
 

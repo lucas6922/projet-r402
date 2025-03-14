@@ -4,6 +4,7 @@ import retrofit2.http.*
 import retrofit2.Call
 
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.clientkotlin.models.CompetitorCoursePerformanceDetails
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import com.but.parkour.clientkotlin.models.CompetitorUpdate
 import com.but.parkour.clientkotlin.models.Course
@@ -23,7 +24,7 @@ interface CompetitorsApi {
      * @return [Call]<[Competitor]>
      */
     @POST("api/competitors")
-    fun addCompetitor(@Body competitorCreate: CompetitorCreate): Call<Competitor>
+    fun addCompetitor(@Body competitorCreate: CompetitorCreate): Call<Unit>
 
     /**
      * DELETE api/competitors/{id}
@@ -67,7 +68,7 @@ interface CompetitorsApi {
      * @return [Call]<[kotlin.collections.List<PerformanceObstacle>]>
      */
     @GET("api/competitors/{id}/{id_course}/details_performances")
-    fun getCompetitorCoursePerformanceDetails(@Path("id") id: Int , @Path("id_course") idCourse: Int): Call<List<PerformanceObstacle>>
+    fun getCompetitorCoursePerformanceDetails(@Path("id") id: Int , @Path("id_course") idCourse: Int): Call<CompetitorCoursePerformanceDetails>
 
     /**
      * GET api/competitors/{id}/courses
@@ -111,7 +112,7 @@ interface CompetitorsApi {
      * @return [Call]<[kotlin.collections.List<Performance>]>
      */
     @GET("api/competitors/{id}/performances")
-    fun getCompetitorPerformances(@Path("id") id: Int ): Call<List<Performance>>
+    fun getCompetitorPerformances(@Path("id") id: Int ): Call<CompetitorCoursePerformanceDetails>
 
     /**
      * PUT api/competitors/{id}
