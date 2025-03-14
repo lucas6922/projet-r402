@@ -43,7 +43,7 @@ data class CompetitionCreate (
     val ageMax: Int? = null,
 
     @Json(name = "gender")
-    val gender: String? = null,
+    val gender: Gender? = null,
 
     @Json(name = "has_retry")
     val hasRetry: Boolean? = null
@@ -54,6 +54,7 @@ data class CompetitionCreate (
      *
      * Values: H,F
      */
+    @JsonClass(generateAdapter = false)
     enum class Gender(val value: String) {
         @Json(name = "H") H("H"),
         @Json(name = "F") F("F");

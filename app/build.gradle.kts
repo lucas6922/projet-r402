@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "2.1.10-1.0.29"
 }
 
 android {
@@ -80,5 +80,6 @@ dependencies {
     testImplementation (libs.mockito.kotlin)
     testImplementation(kotlin("test"))
 
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    ksp(libs.moshi.kotlin.codegen)
+
 }

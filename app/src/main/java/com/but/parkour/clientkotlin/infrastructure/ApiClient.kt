@@ -21,13 +21,14 @@ class ApiClient(
     private var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     private val serializerBuilder: Moshi.Builder = Moshi.Builder()
-        .add(BooleanAdapter())  // Ajouter l'adaptateur pour convertir les entiers en booléens
+        .add(BooleanAdapter())
+        .add(CompetitionCreateGenderAdapter())
     ,
     private val callFactory: Call.Factory? = null,
     private val callAdapterFactories: List<CallAdapter.Factory> = listOf(),
     private val converterFactories: List<Converter.Factory> = listOf(
         ScalarsConverterFactory.create(),
-        MoshiConverterFactory.create(serializerBuilder.build()) // Utiliser le Moshi personnalisé ici
+        MoshiConverterFactory.create(serializerBuilder.build())
     )
 ) {
     private val apiAuthorizations = mutableMapOf<String, Interceptor>()
