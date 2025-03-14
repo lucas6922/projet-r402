@@ -110,4 +110,20 @@ interface CompetitionsApi {
     @PUT("api/competitions/{id}")
     fun updateCompetition(@Path("id") id: Int, @Body competitionUpdate: CompetitionUpdate): Call<Unit>
 
+    /**
+     * POST api/competitions/{id}/add_competitor
+     * Add a competitor to the competition
+     *
+     * Responses:
+     *  - 201: Competitor successfully added.
+     *  - 422: Incorrect body parameters
+     *  - 404: Competition or competitor not found
+     *  - 409: This competitor is already in the competition.
+     *
+     * @param id Competition ID in the database
+     * @param competitorId Competitor ID in the database
+     * @return [Call]<[Unit]>
+     */
+    @POST("api/competitions/{id}/add_competitor")
+    fun addCompetitor(@Path("id") id: Int, @Body competitorId: Int): Call<Unit>
 }

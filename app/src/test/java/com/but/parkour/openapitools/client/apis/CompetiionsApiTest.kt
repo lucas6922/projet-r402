@@ -26,11 +26,6 @@ class CompetiionsApiTest {
         assertEquals(200, code)
         assertEquals(null, erreur)
         println(reponse.body())
-
-        val callCompet = apiService.getCompetitionDetails(1)
-        val reponseCompet = callCompet.execute()
-        val codeCompet = reponseCompet.code()
-        println(reponseCompet.body())
     }
 
     @Test
@@ -131,6 +126,24 @@ class CompetiionsApiTest {
 
             val allCompet = apiService.getAllCompetitions().execute().body();
             println("toutes competition après modification : " + allCompet)
+        }else{
+            println("aucune competition")
+        }
+    }
+
+
+    @Test
+    fun getCompetitionDetailsTest(){
+        val allCompet = apiService.getAllCompetitions().execute().body();
+        val id = allCompet?.get(0)?.id
+        if(id != null){
+            val call = apiService.getCompetitionDetails(id)
+            val reponse = call.execute()
+            val code = reponse.code()
+            val erreur = if(reponse.isSuccessful) null else reponse.message()
+            assertEquals(200, code)
+            assertEquals(null, erreur)
+            println(reponse.body())
         }else{
             println("aucune competition")
         }
