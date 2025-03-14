@@ -11,8 +11,7 @@ import com.but.parkour.clientkotlin.models.CourseObstacleUpdate
 import com.but.parkour.clientkotlin.models.CourseUpdate
 import org.junit.Test
 import org.junit.jupiter.api.BeforeEach
-import junit.framework.TestCase.assertEquals
-import java.util.zip.GZIPOutputStream
+import org.junit.jupiter.api.Assertions.assertEquals
 
 class CoursesApiTest {
     private val apiClient = ApiClient(
@@ -91,8 +90,8 @@ class CoursesApiTest {
 
     @Test
     fun getAllCoursesTest(){
-        println("getAllCoursesTest")
         println("----------------")
+        println("getAllCoursesTest")
         val call = apiService.getAllCourses()
         val reponse = call.execute()
         val code = reponse.code()
@@ -105,8 +104,8 @@ class CoursesApiTest {
 
     @Test
     fun getCourseCompetitorsTest(){
-        println("getCourseCompetitorsTest")
         println("----------------")
+        println("getCourseCompetitorsTest")
         val courseId = apiService.getAllCourses().execute()
             .body()?.get(0)?.id
 
@@ -128,8 +127,8 @@ class CoursesApiTest {
 
     @Test
     fun getCourseDetailsTest(){
-        println("getCourseDetailsTest")
         println("----------------")
+        println("getCourseDetailsTest")
         val courseId = apiService.getAllCourses().execute()
             .body()?.get(0)?.id
 
@@ -150,8 +149,8 @@ class CoursesApiTest {
 
     @Test
     fun getCourseObstaclesTest(){
-        println("getCourseObstaclesTest")
         println("----------------")
+        println("getCourseObstaclesTest")
         val courseId = apiService.getAllCourses().execute()
             .body()?.get(0)?.id
 
@@ -172,8 +171,8 @@ class CoursesApiTest {
 
     @Test
     fun updateCourseTest(){
-        println("updateCourseTest")
         println("----------------")
+        println("updateCourseTest")
         val courses = apiService.getAllCourses().execute()
             .body()
 
@@ -204,8 +203,8 @@ class CoursesApiTest {
 
     @Test
     fun updateCourseObstaclePositionTest(){
-        println("updateCourseObstaclePositionTest")
         println("----------------")
+        println("updateCourseObstaclePositionTest")
         val courseId = apiService.getAllCourses().execute()
             .body()?.get(0)?.id
 

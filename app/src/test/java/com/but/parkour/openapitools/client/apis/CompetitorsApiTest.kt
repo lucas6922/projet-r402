@@ -5,7 +5,7 @@ import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import com.but.parkour.clientkotlin.models.CompetitorUpdate
-import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.Test
 import org.junit.jupiter.api.BeforeEach
 import java.time.LocalDate

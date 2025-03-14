@@ -1,15 +1,11 @@
 package com.but.parkour.openapitools.client.apis
 
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
-import com.but.parkour.clientkotlin.apis.ObstaclesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
-import com.but.parkour.clientkotlin.infrastructure.Serializer
 import com.but.parkour.clientkotlin.models.CompetitionCreate
 import com.but.parkour.clientkotlin.models.CompetitionCreate.Gender
 import com.but.parkour.clientkotlin.models.CompetitionUpdate
-import com.but.parkour.clientkotlin.models.ObstacleCreate
-import com.squareup.moshi.Moshi
-import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.Test
 
 
