@@ -30,6 +30,7 @@ import com.squareup.moshi.JsonClass
  */
 
 
+@JsonClass(generateAdapter = true)
 data class CompetitionCreate (
 
     @Json(name = "name")
@@ -48,9 +49,8 @@ data class CompetitionCreate (
     val hasRetry: Boolean? = null
 
 ) {
-
     /**
-     * 
+     *
      *
      * Values: H,F
      */
@@ -59,6 +59,5 @@ data class CompetitionCreate (
         @Json(name = "H") H("H"),
         @Json(name = "F") F("F");
     }
-
 }
 

@@ -27,6 +27,7 @@ interface PerformanceObstaclesApi {
 
     /**
      * GET api/performance_obstacles
+     * GET api/performance_obstacles
      * List of every performance by obstacle you have access.
      * 
      * Responses:

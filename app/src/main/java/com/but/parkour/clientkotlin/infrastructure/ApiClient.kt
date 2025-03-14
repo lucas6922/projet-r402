@@ -21,13 +21,14 @@ class ApiClient(
     private var baseUrl: String = defaultBasePath,
     private val okHttpClientBuilder: OkHttpClient.Builder? = null,
     private val serializerBuilder: Moshi.Builder = Moshi.Builder()
-        .add(BooleanAdapter())  // Ajouter l'adaptateur pour convertir les entiers en booléens
+        .add(BooleanAdapter())
+        .add(CompetitionCreateGenderAdapter())
     ,
     private val callFactory: Call.Factory? = null,
     private val callAdapterFactories: List<CallAdapter.Factory> = listOf(),
     private val converterFactories: List<Converter.Factory> = listOf(
         ScalarsConverterFactory.create(),
-        MoshiConverterFactory.create(serializerBuilder.build()) // Utiliser le Moshi personnalisé ici
+        MoshiConverterFactory.create(serializerBuilder.build())
     )
 ) {
     private val apiAuthorizations = mutableMapOf<String, Interceptor>()
@@ -71,9 +72,9 @@ class ApiClient(
         authNames: Array<String>
     ) : this(baseUrl, okHttpClientBuilder, serializerBuilder) {
         authNames.forEach { authName ->
-            val auth: Interceptor? = when (authName) { 
+            val auth: Interceptor? = when (authName) {
                 "bearerAuth" -> HttpBearerAuth("bearer")
-                
+
                 else -> throw RuntimeException("auth name $authName not found in available auth names")
             }
             if (auth != null) {
@@ -169,5 +170,27 @@ class ApiClient(
         })
     }
 
+    fun <T> fetchData(
+        call: CallRetrofit<T>,
+        onSuccess: (T?, Int) -> Unit,
+        onError: (String, Int?) -> Unit
+    ) {
+        call.enqueue(object : Callback<T> {
+            override fun onResponse(call: CallRetrofit<T>, response: Response<T>) {
+                val statusCode = response.code()
+                if (response.isSuccessful) {
+                    onSuccess(response.body(), statusCode)
+                } else {
+                    onError("Erreur: ${response.message()}", statusCode)
+                }
+            }
 
+            override fun onFailure(call: CallRetrofit<T>, t: Throwable) {
+                onError("Erreur : ${t.message}", null)
+            }
+        })
+    }
 }
+
+
+
