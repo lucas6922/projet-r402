@@ -5,7 +5,6 @@ import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
 import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
-import com.but.parkour.clientkotlin.models.ObstacleCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleUpdate
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,6 +27,7 @@ class PerformancesObstaclesApiTest {
 
     @Test
     fun createPerformanceObstacleTest() {
+        TODO("A completer en creant un obstacle et une performance")
         val obstacleID = obstaclesApi.getAllObstacles().execute().body()?.get(0)?.id
         val performanceID = performancesApi.getAllPerformances().execute().body()?.get(0)?.id
         if (obstacleID != null && performanceID != null) {
