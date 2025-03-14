@@ -1,5 +1,6 @@
 package com.but.parkour.clientkotlin.apis
 
+import com.but.parkour.clientkotlin.models.AddCompetitorRequest
 import retrofit2.http.*
 import retrofit2.Call
 
@@ -125,5 +126,5 @@ interface CompetitionsApi {
      * @return [Call]<[Unit]>
      */
     @POST("api/competitions/{id}/add_competitor")
-    fun addCompetitor(@Path("id") id: Int, @Body competitorId: Int): Call<Unit>
+    fun addCompetitor(@Path("id") id: Int, @Body competitorId: AddCompetitorRequest): Call<Unit>
 }

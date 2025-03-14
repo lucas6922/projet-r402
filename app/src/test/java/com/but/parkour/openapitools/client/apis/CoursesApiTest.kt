@@ -21,6 +21,7 @@ class CoursesApiTest {
     private val reset = apiClient.createService(UtilApi::class.java)
     private val competition = apiClient.createService(CompetitionsApi::class.java)
     private val obstacleApi = apiClient.createService(ObstaclesApi::class.java)
+
     @BeforeEach
     fun setUp() {
         val resetData = reset.resetData()
