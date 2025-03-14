@@ -22,7 +22,7 @@ interface CompetitionsApi {
      * @return [Call]<[Competition]>
      */
     @POST("api/competitions")
-        fun addCompetition(@Body competitionCreate: CompetitionCreate): Call<Unit>
+    fun addCompetition(@Body competitionCreate: CompetitionCreate): Call<Unit>
 
     /**
      * DELETE api/competitions/{id}
