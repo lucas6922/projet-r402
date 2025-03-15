@@ -27,8 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.but.parkour.concurrents.InscriptionConcurent
-import com.but.parkour.concurrents.ListeConcurrents
+import com.but.parkour.concurrents.view.ListeConcurrents
 import com.but.parkour.ui.theme.ParkourTheme
 
 class ListeParkours : ComponentActivity() {

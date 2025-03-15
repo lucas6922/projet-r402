@@ -17,12 +17,12 @@
         android:theme="@style/Theme.Parkour"
         tools:targetApi="31">
         <activity
-            android:name=".concurrents.ListeConcurrents"
+            android:name=".concurrents.view.ListeConcurrents"
             android:exported="false"
             android:label="@string/title_activity_liste_concurrents"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".concurrents.Classement"
+            android:name=".concurrents.view.Classement"
             android:exported="false"
             android:label="@string/title_activity_classement"
             android:theme="@style/Theme.Parkour" />
@@ -47,7 +47,7 @@
             android:label="@string/title_activity_liste_parkours"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".concurrents.InscriptionConcurent"
+            android:name=".concurrents.view.InscriptionConcurent"
             android:exported="false"
             android:label="@string/title_activity_inscription_concurent"
             android:theme="@style/Theme.Parkour" />

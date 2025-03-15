@@ -28,7 +28,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
-import com.but.parkour.concurrents.InscriptionConcurent
+import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.ListeParkours
 import com.but.parkour.ui.theme.ParkourTheme
 

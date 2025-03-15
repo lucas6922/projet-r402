@@ -1,42 +1,52 @@
-package com.but.parkour.concurrents
+package com.but.parkour.concurrents.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.but.parkour.clientkotlin.models.Competition
-import com.but.parkour.ui.theme.ParkourTheme
+import com.but.parkour.concurrents.ui.theme.ParkourTheme
 
-class InscriptionConcurent : ComponentActivity() {
+class ListeConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val competition = intent.getSerializableExtra("competition") as? Competition
-        Log.d("InscriptionConcurent", "Competition: $competition")
+        val valeur = intent.getStringExtra("item")
         setContent {
             ParkourTheme {
-                InscriptionPage(competition?.name ?: "Unknown")
+                ConcurrentPage(valeur!!)
             }
         }
     }
 }
 
 @Composable
-fun InscriptionPage(compet: String, modifier: Modifier = Modifier) {
+fun ConcurrentPage(parkour: String, modifier: Modifier = Modifier) {
     var selectedCompetitor by remember { mutableStateOf("Select a competitor") }
     var expanded by remember { mutableStateOf(false) }
     var participants by remember { mutableStateOf(listOf(
@@ -56,7 +66,7 @@ fun InscriptionPage(compet: String, modifier: Modifier = Modifier) {
 
     ) {
         Text(
-            text = compet,
+            text = parkour,
             modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
         )
@@ -124,37 +134,13 @@ fun InscriptionPage(compet: String, modifier: Modifier = Modifier) {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun ListParticipants(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
-    val context = LocalContext.current
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        items(items) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onItemClick(item) }
-                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
-                    .padding(4.dp)
-            ) {
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-            }
-        }
+fun GreetingPreview5() {
+    ParkourTheme {
+        ConcurrentPage("Android")
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun InscriptionPreview() {
-    ParkourTheme {
-        InscriptionPage("euh")
-    }
-}
+
 
