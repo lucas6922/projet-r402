@@ -1,4 +1,4 @@
-package com.but.parkour.competition
+package com.but.parkour.competition.view
 
 import android.content.Context
 import android.content.Intent
@@ -16,12 +16,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.InscriptionConcurent
 import com.but.parkour.parkour.ListeParkours
 import com.but.parkour.ui.theme.ParkourTheme
@@ -32,14 +37,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
-                Competition()
+                val competitionViewModel: CompetitionViewModel = viewModel()
+                val competitions by competitionViewModel.competitions.observeAsState(initial = emptyList())
+                Competition(competitions)
             }
         }
     }
 }
 
 @Composable
-fun Competition() {
+fun Competition(competitions: List<Competition>) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,25 +55,14 @@ fun Competition() {
     ) {
         Text(
             text = "Bienvenue dans Parkour! \n Sélectionnez une competition.",
-            modifier = Modifier.padding(bottom = 16.dp), // Correction du Modifier
+            modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         ListCompetitions(
-            items = listOf(
-                "Competition 1",
-                "Competition 2",
-                "Competition 3",
-                "Competition 4",
-                "Competition 5",
-                "Competition 6",
-                "Competition 7",
-                "Competition 8",
-                "Competition 9",
-                "Competition 10"
-            ),
+            items = competitions,
             modifier = Modifier.weight(1f)
         ) {
 
@@ -75,7 +71,7 @@ fun Competition() {
 }
 
 @Composable
-fun ListCompetitions(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+fun ListCompetitions(items: List<Competition>, modifier: Modifier = Modifier, onItemClick: (Competition) -> Unit) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -92,7 +88,7 @@ fun ListCompetitions(items: List<String>, modifier: Modifier = Modifier, onItemC
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = item,
+                        text = item.name ?: "Unknown",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Button(onClick = { onItemClickInscription(item, context) }) {
@@ -110,16 +106,15 @@ fun ListCompetitions(items: List<String>, modifier: Modifier = Modifier, onItemC
     }
 }
 
-
-fun onItemClickInscription(item: String,context: Context) {
+fun onItemClickInscription(item: Competition, context: Context) {
     val intent = Intent(context, InscriptionConcurent::class.java)
-    intent.putExtra("item", item)
+    intent.putExtra("item", item.name)
     context.startActivity(intent)
 }
 
-fun onItemClickListeParkours(item: String, context: Context) {
+fun onItemClickListeParkours(item: Competition, context: Context) {
     val intent = Intent(context, ListeParkours::class.java)
-    intent.putExtra("item", item)
+    intent.putExtra("item", item.name)
     context.startActivity(intent)
 }
 
@@ -127,6 +122,11 @@ fun onItemClickListeParkours(item: String, context: Context) {
 @Composable
 fun CompetitionPreview() {
     ParkourTheme {
-        Competition()
+        Competition(
+            competitions = listOf(
+                Competition(name = "Competition 1"),
+                Competition(name = "Competition 2")
+            )
+        )
     }
 }

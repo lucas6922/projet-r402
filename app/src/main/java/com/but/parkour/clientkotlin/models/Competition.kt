@@ -18,6 +18,7 @@ package com.but.parkour.clientkotlin.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.io.Serializable
 import java.time.OffsetDateTime
 
 /**
@@ -64,7 +65,7 @@ data class Competition (
     @Json(name = "status")
     val status: Status? = null
 
-) {
+) : Serializable {
 
     /**
      * 

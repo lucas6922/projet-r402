@@ -82,4 +82,7 @@ dependencies {
 
     ksp(libs.moshi.kotlin.codegen)
 
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+    implementation (libs.androidx.runtime.livedata)
+
 }
