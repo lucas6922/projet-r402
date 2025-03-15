@@ -1,6 +1,7 @@
 package com.but.parkour.concurrents
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,16 +18,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.ui.theme.ParkourTheme
 
 class InscriptionConcurent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val valeur = intent.getStringExtra("item")
+        val competition = intent.getSerializableExtra("competition") as? Competition
+        Log.d("InscriptionConcurent", "Competition: $competition")
         setContent {
             ParkourTheme {
-                InscriptionPage(valeur!!)
+                InscriptionPage(competition?.name ?: "Unknown")
             }
         }
     }

@@ -73,7 +73,7 @@ data class Competition (
      * Values: H,F
      */
     @JsonClass(generateAdapter = false)
-    enum class Gender(val value: String) {
+    enum class Gender(val value: String) : Serializable {
         @Json(name = "H") H("H"),
         @Json(name = "F") F("F");
     }
@@ -83,7 +83,7 @@ data class Competition (
      * Values: not_ready,not_started,started,finished
      */
     @JsonClass(generateAdapter = false)
-    enum class Status(val value: String) {
+    enum class Status(val value: String) : Serializable {
         @Json(name = "not_ready") not_ready("not_ready"),
         @Json(name = "not_started") not_started("not_started"),
         @Json(name = "started") started("started"),

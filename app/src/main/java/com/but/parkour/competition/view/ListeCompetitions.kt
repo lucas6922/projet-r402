@@ -3,6 +3,7 @@ package com.but.parkour.competition.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -106,9 +107,10 @@ fun ListCompetitions(items: List<Competition>, modifier: Modifier = Modifier, on
     }
 }
 
-fun onItemClickInscription(item: Competition, context: Context) {
+fun onItemClickInscription(competition: Competition, context: Context) {
     val intent = Intent(context, InscriptionConcurent::class.java)
-    intent.putExtra("item", item.name)
+    Log.d("ListeCompetitions", "Competition: $competition")
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 
