@@ -29,7 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.view.InscriptionConcurent
-import com.but.parkour.parkour.ListeParkours
+import com.but.parkour.parkour.view.ListeParkours
 import com.but.parkour.ui.theme.ParkourTheme
 
 class MainActivity : ComponentActivity() {
@@ -114,9 +114,9 @@ fun onItemClickInscription(competition: Competition, context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClickListeParkours(item: Competition, context: Context) {
+fun onItemClickListeParkours(competition: Competition, context: Context) {
     val intent = Intent(context, ListeParkours::class.java)
-    intent.putExtra("item", item.name)
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 

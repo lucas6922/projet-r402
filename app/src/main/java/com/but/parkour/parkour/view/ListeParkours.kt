@@ -1,8 +1,9 @@
-package com.but.parkour.parkour
+package com.but.parkour.parkour.view
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,68 +22,92 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
 import com.but.parkour.ui.theme.ParkourTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.parkour.viewmodel.ParkourViewModel
+import androidx.compose.runtime.livedata.observeAsState
+import com.but.parkour.clientkotlin.models.Course
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val valeur = intent.getStringExtra("item")
+        val competition = intent.getSerializableExtra("competition") as? Competition
+        val competitionId = competition?.id
+        Log.d("ListeParkour", "Competition: $competition")
         setContent {
             ParkourTheme {
-                ParkoursPage(valeur!!)
+                val parkourViewModel : ParkourViewModel = viewModel()
+                competitionId?.let {
+                    LaunchedEffect(it) {
+                        parkourViewModel.fetchCourses(it)
+                    }
+                }
+                val courses by parkourViewModel.parkours.observeAsState(initial = emptyList())
+                ParkoursPage(
+                    competition?.name ?: "Unknown",
+                    courses
+                )
             }
         }
     }
-
-
 }
 
 @Composable
-fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        items(items) { item ->
+        items(courses) { item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable { onItemClick(context, item) }
+                    .clickable {
+                        onItemClickCourse(item, context)
+                    }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
-
                 Text(
-                    text = item,
+                    text = item.name ?: "Unknown",
                     modifier = Modifier.padding(8.dp)
                 )
-
             }
         }
     }
-    Button(onClick = {}) { Text(text = "Ajouter un parkour") }
+    Button(onClick = {onItemClickAddCourse(context)}) { Text(text = "Ajouter un parkour") }
 }
 
-fun onItemClick(context : Context, item : String) {
+fun onItemClickCourse(course: Course, context: Context) {
+    Log.d("     ListeParkours", "Course: $course")
     val intent = Intent(context, ListeConcurrents::class.java)
-    intent.putExtra("item", item)
+    intent.putExtra("course", course)
     context.startActivity(intent)
 }
 
+fun onItemClickAddCourse(context: Context) {
+    val intent = Intent(context, AjoutParkour::class.java)
+    context.startActivity(intent)
+}
 
 @Composable
-fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
+fun ParkoursPage(
+    compet: String,
+    courses: List<Course>
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,41 +116,15 @@ fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
     ) {
         Text(
             text = compet,
-            modifier = Modifier.padding(bottom = 16.dp), // Correction du Modifier
+            modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         ListParkours(
-            items = listOf(
-                "Parkour 1",
-                "Parkour 2",
-                "Parkour 3",
-                "Parkour 4",
-                "Parkour 5",
-                "Parkour 6",
-                "Parkour 7",
-                "Parkour 8",
-                "Parkour 9",
-                "Parkour 10"
-            ),
+            courses = courses,
             modifier = Modifier.weight(1f)
-        ) {
-            // Handle item click
-        }
+        )
     }
 }
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun ParkoursPreview() {
-    ParkourTheme {
-        ParkoursPage("euh")
-    }
-}
-
-
-

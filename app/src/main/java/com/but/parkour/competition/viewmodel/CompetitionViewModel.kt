@@ -13,7 +13,9 @@ import kotlinx.coroutines.launch
 class CompetitionViewModel : ViewModel() {
     private val _competitions = MutableLiveData<List<Competition>>()
     val competitions: LiveData<List<Competition>> = _competitions
-
+    private val apiClient = ApiClient(
+        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
+    )
     init {
         fetchCompetitions()
     }
@@ -23,9 +25,7 @@ class CompetitionViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 Log.d("CompetitionViewModel", "Fetching competitions...")
-                val apiClient = ApiClient(
-                    bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
-                )
+
                 val competitionApi = apiClient.createService(CompetitionsApi::class.java)
                 val call = competitionApi.getAllCompetitions()
 

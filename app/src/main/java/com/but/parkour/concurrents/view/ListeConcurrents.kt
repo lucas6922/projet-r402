@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,34 +31,36 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.concurrents.ui.theme.ParkourTheme
-
+import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
+import androidx.compose.runtime.livedata.observeAsState
 class ListeConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val valeur = intent.getStringExtra("item")
+        val course = intent.getSerializableExtra("course") as Course
         setContent {
             ParkourTheme {
-                ConcurrentPage(valeur!!)
+                ConcurrentPage(course)
             }
         }
     }
 }
 
 @Composable
-fun ConcurrentPage(parkour: String, modifier: Modifier = Modifier) {
-    var selectedCompetitor by remember { mutableStateOf("Select a competitor") }
-    var expanded by remember { mutableStateOf(false) }
-    var participants by remember { mutableStateOf(listOf(
-        "Competitor 1",
-        "Competitor 2",
-        "Competitor 3",
-        "Competitor 4",
-        "Competitor 5"
-    )) }
-    val competitors = remember { mutableStateListOf("Competitor A", "Competitor B", "Competitor C") }
-    var searchQuery by remember { mutableStateOf("") }
+fun ConcurrentPage(parkour: Course) {
+    val competitorViewModel: CompetitorViewModel = viewModel()
+    val participants by competitorViewModel.competitorsCourse.observeAsState(emptyList())
+
+    LaunchedEffect(parkour) {
+        parkour.id?.let { id ->
+            competitorViewModel.fetchCompetitorsCourse(id)
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,81 +69,22 @@ fun ConcurrentPage(parkour: String, modifier: Modifier = Modifier) {
 
     ) {
         Text(
-            text = parkour,
+            text = parkour.name ?: "Unknown",
             modifier = Modifier.padding(bottom = 16.dp),
-            style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
+            style = MaterialTheme.typography.titleLarge.copy(
+                color = Color.DarkGray,
+                fontWeight = FontWeight.Bold
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         ListParticipants(
-            items = participants,
+            concurrents = participants,
             modifier = Modifier.weight(1f)
         ) {
             // Handle item click
         }
 
-        Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
-            Text(
-                text = selectedCompetitor,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Color.Gray)
-                    .padding(16.dp)
-                    .clickable { expanded = true }
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                Column {
-                    TextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        placeholder = { Text("Search competitor") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                    )
-                    val filteredCompetitors = competitors.filter { it.contains(searchQuery, ignoreCase = true) }
-                    filteredCompetitors.forEach { competitor ->
-                        DropdownMenuItem(
-                            text = { Text(competitor) },
-                            onClick = {
-                                selectedCompetitor = competitor
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        Button(
-            onClick = {
-                if (selectedCompetitor != "Select a competitor") {
-                    participants = participants + selectedCompetitor
-                    competitors.remove(selectedCompetitor)
-                    selectedCompetitor = "Select a competitor"
-                    searchQuery = ""
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-        ) {
-            Text(text = "Inscrire un concurrent")
-        }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview5() {
-    ParkourTheme {
-        ConcurrentPage("Android")
-    }
-}
-
-
-

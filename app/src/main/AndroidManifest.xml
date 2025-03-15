@@ -32,7 +32,7 @@
             android:label="@string/title_activity_liste_obstacles"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".parkour.AjoutParkour"
+            android:name=".parkour.view.AjoutParkour"
             android:exported="false"
             android:label="@string/title_activity_ajout_parkour"
             android:theme="@style/Theme.Parkour" />
@@ -42,7 +42,7 @@
             android:label="@string/title_activity_ajout_competition"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".parkour.ListeParkours"
+            android:name=".parkour.view.ListeParkours"
             android:exported="false"
             android:label="@string/title_activity_liste_parkours"
             android:theme="@style/Theme.Parkour" />

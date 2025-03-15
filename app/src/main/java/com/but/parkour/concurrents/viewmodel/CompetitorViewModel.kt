@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
+import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCompetitorRequest
 import com.but.parkour.clientkotlin.models.Competitor
@@ -19,6 +20,9 @@ class CompetitorViewModel : ViewModel() {
     private val _unregisteredCompetitors = MutableLiveData<List<Competitor>>()
     val unregisteredCompetitors: LiveData<List<Competitor>> = _unregisteredCompetitors
 
+    private val _competitorsCourse = MutableLiveData<List<Competitor>>()
+    val competitorsCourse: LiveData<List<Competitor>> = _competitorsCourse
+
     private val apiClient = ApiClient(
         bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
     )
@@ -26,6 +30,7 @@ class CompetitorViewModel : ViewModel() {
 
     val competitionApi = apiClient.createService(CompetitionsApi::class.java)
     val competitorApi = apiClient.createService(CompetitorsApi::class.java)
+    val courseApi = apiClient.createService(CoursesApi::class.java)
 
     fun fetchCompetitorsInscrit(competitionId: Int) {
         viewModelScope.launch {
@@ -105,6 +110,32 @@ class CompetitorViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun fetchCompetitorsCourse(courseId : Int){
+        viewModelScope.launch {
+            try {
+                Log.d("CompetitorViewModel", "Fetching competitors for a course... id: $courseId")
+
+                val call = courseApi.getCourseCompetitors(courseId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("CompetitorViewModel", "Competitors received: $data")
+                        _competitorsCourse.postValue(data ?: emptyList())
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("CompetitorViewModel", "Error: $errorMessage")
+                        _competitorsCourse.postValue(emptyList())
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+                _competitorsCourse.postValue(emptyList())
             }
         }
     }

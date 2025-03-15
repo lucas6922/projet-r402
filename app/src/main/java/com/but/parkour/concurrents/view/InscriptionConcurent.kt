@@ -65,11 +65,11 @@ fun InscriptionPage(
     Log.d("InscriptionPage", "Competitors inscrit dans la course: $competitorsInscrit")
     var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
     var expanded by remember { mutableStateOf(false) }
-    var participants by remember { mutableStateOf(emptyList<String>()) }
+    var participants by remember { mutableStateOf(emptyList<Competitor>()) }
     var searchQuery by remember { mutableStateOf("") }
 
     LaunchedEffect(competitorsInscrit) {
-        participants = competitorsInscrit.map { it.firstName ?: "Unknown" }
+        participants = competitorsInscrit
     }
 
     Column(
@@ -81,7 +81,7 @@ fun InscriptionPage(
         HeaderText(compet)
         Spacer(modifier = Modifier.height(8.dp))
         ListParticipants(
-            items = participants,
+            concurrents = participants,
             modifier = Modifier.weight(1f),
             onItemClick = {}
         )
@@ -173,7 +173,7 @@ fun CompetitorDropdown(
 }
 @Composable
 fun ListParticipants(
-    items: List<String>,
+    concurrents: List<Competitor>,
     modifier: Modifier = Modifier,
     onItemClick: (String) -> Unit
 ) {
@@ -182,17 +182,17 @@ fun ListParticipants(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        items(items) { item ->
+        items(concurrents) { item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable { onItemClick(item) }
+                    .clickable { onItemClick(item.firstName ?: "Unknown") }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
                 Text(
-                    text = item,
+                    text = item.firstName ?: "Unknown",
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
