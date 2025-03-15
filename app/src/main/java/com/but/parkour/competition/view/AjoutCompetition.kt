@@ -1,4 +1,4 @@
-package com.but.parkour.parkour
+package com.but.parkour.competition.view
 
 import android.content.Context
 import android.content.Intent
@@ -18,7 +18,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -32,27 +31,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.but.parkour.competition.view.MainActivity
-import com.but.parkour.parkour.ui.theme.ParkourTheme
+import com.but.parkour.ui.theme.ParkourTheme
 
-class AjoutParkour : ComponentActivity() {
+class AjoutCompetition : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
-                AjtParkourPage("")
+                AjtCompetPage()
             }
         }
     }
 }
 
 @Composable
-fun AjtParkourPage(compet : String, modifier: Modifier = Modifier) {
+fun AjtCompetPage(modifier: Modifier = Modifier) {
     var nom by remember { mutableStateOf("") }
-    var dureeMax by remember { mutableStateOf("") }
-    var position by remember { mutableStateOf("") }
-
+    var selectedOption by remember { mutableStateOf("Plusieurs essais ?") }
+    var expanded by remember { mutableStateOf(false) }
+    var selectedGender by remember { mutableStateOf("Genre") }
+    var genderExpanded by remember { mutableStateOf(false) }
+    var ageMin by remember { mutableStateOf("") }
+    var ageMax by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -69,27 +70,89 @@ fun AjtParkourPage(compet : String, modifier: Modifier = Modifier) {
         )
 
         TextField(
-            value = dureeMax,
-            onValueChange = { dureeMax = it },
-            label = { Text("Durée Maximum") },
+            value = ageMin,
+            onValueChange = { ageMin = it },
+            label = { Text("Age Minimum") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.padding(top = 16.dp)
         )
 
         TextField(
-            value = position,
-            onValueChange = { position = it },
-            label = { Text("Position dans la competition") },
+            value = ageMax,
+            onValueChange = { ageMax = it },
+            label = { Text("Age Maximum") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.padding(top = 16.dp)
         )
+
+        Box(modifier = Modifier.padding(top = 16.dp)) {
+            Text(
+                text = selectedGender,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.Gray)
+                    .padding(16.dp)
+                    .clickable { genderExpanded = true }
+            )
+            DropdownMenu(
+                expanded = genderExpanded,
+                onDismissRequest = { genderExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Homme") },
+                    onClick = {
+                        selectedGender = "Homme"
+                        genderExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Femme") },
+                    onClick = {
+                        selectedGender = "Femme"
+                        genderExpanded = false
+                    }
+                )
+            }
+        }
+
+        Box(modifier = Modifier.padding(top = 16.dp)) {
+            Text(
+                text = selectedOption,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color.Gray)
+                    .padding(16.dp)
+                    .clickable { expanded = true }
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Oui") },
+                    onClick = {
+                        selectedOption = "Oui"
+                        expanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Non") },
+                    onClick = {
+                        selectedOption = "Non"
+                        expanded = false
+                    }
+                )
+            }
+        }
         Row() {
             Button(
                 onClick = {
-                    onClickAjouterParkour(
+                    onClickAjouterCompetition(
                         nom,
-                        dureeMax,
-                        position,
+                        ageMin,
+                        ageMax,
+                        selectedGender,
+                        selectedOption,
                         context
                     )
                 },
@@ -107,7 +170,7 @@ fun AjtParkourPage(compet : String, modifier: Modifier = Modifier) {
     }
 }
 
-fun onClickAjouterParkour(name : String, ageMin : String, ageMax : String, context: Context) {
+fun onClickAjouterCompetition(name : String, ageMin : String, ageMax : String, gender: String, multipleAttempts: String, context: Context) {
     val intent = Intent(context, MainActivity::class.java)
     context.startActivity(intent)
 }
@@ -120,8 +183,8 @@ fun onClickAnnuler(context: Context) {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview2() {
+fun GreetingPreview() {
     ParkourTheme {
-        AjtParkourPage("Android")
+        AjtCompetPage()
     }
 }

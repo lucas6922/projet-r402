@@ -72,7 +72,14 @@ fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick
             }
         }
     }
-    Button(onClick = {}) { Text(text = "Ajouter un parkour") }
+    Button(onClick = { onClickAjouterParkour(context)}, modifier = Modifier.padding(bottom = 32.dp)) {
+        Text(text = "Ajouter un parkour")
+    }
+}
+
+fun onClickAjouterParkour(context: Context) {
+    val intent = Intent(context, AjoutParkour::class.java)
+    context.startActivity(intent)
 }
 
 fun onItemClick(context : Context, item : String) {
@@ -88,7 +95,7 @@ fun ParkoursPage(compet: String, modifier: Modifier = Modifier) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 32.dp)
     ) {
         Text(
             text = compet,
