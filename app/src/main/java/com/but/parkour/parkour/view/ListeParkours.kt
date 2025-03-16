@@ -1,4 +1,4 @@
-package com.but.parkour.parkour.view
+package com.but.parkour.parkour
 
 import android.content.Context
 import android.content.Intent
@@ -31,6 +31,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
+import com.but.parkour.concurrents.InscriptionConcurent
+import com.but.parkour.concurrents.ListeConcurrents
+import com.but.parkour.obstacles.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
@@ -60,6 +63,8 @@ class ListeParkours : ComponentActivity() {
             }
         }
     }
+
+
 }
 
 @Composable
@@ -85,6 +90,23 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
                     text = item.name ?: "Unknown",
                     modifier = Modifier.padding(8.dp)
                 )
+
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = item ?: "Unknown",
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Button(onClick = { onItemClickConcu(context, item) }) {
+                        Text("Liste des concurrents")
+                    }
+                    Button(
+                        onClick = { onItemClickListeObstacles(context, item ) },
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text("Liste des parkours")
+                    }
+                }
+
             }
         }
     }
@@ -103,6 +125,13 @@ fun onItemClickAddCourse(context: Context) {
     context.startActivity(intent)
 }
 
+fun onItemClickListeObstacles(context : Context, item : String) {
+    val intent = Intent(context, ListeObstacles::class.java)
+    intent.putExtra("item", item)
+    context.startActivity(intent)
+}
+
+
 @Composable
 fun ParkoursPage(
     compet: String,
@@ -112,7 +141,7 @@ fun ParkoursPage(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 32.dp)
     ) {
         Text(
             text = compet,
@@ -128,3 +157,16 @@ fun ParkoursPage(
         )
     }
 }
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun ParkoursPreview() {
+    ParkourTheme {
+        ParkoursPage("euh")
+    }
+}
+
+
+

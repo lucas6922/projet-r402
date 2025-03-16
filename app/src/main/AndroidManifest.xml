@@ -37,7 +37,7 @@
             android:label="@string/title_activity_ajout_parkour"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".competition.AjoutCompetition"
+            android:name=".competition.view.AjoutCompetition"
             android:exported="false"
             android:label="@string/title_activity_ajout_competition"
             android:theme="@style/Theme.Parkour" />

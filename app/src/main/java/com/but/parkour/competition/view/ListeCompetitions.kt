@@ -48,11 +48,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Competition(competitions: List<Competition>) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 32.dp)
     ) {
         Text(
             text = "Bienvenue dans Parkour! \n Sélectionnez une competition.",
@@ -67,6 +68,12 @@ fun Competition(competitions: List<Competition>) {
             modifier = Modifier.weight(1f)
         ) {
 
+        }
+
+        Button(onClick = { onClickAjouterCompetition(context) }, modifier = Modifier.padding(bottom = 32.dp)) {
+            Text(
+                text = "Ajouter une competition"
+            )
         }
     }
 }
@@ -117,6 +124,11 @@ fun onItemClickInscription(competition: Competition, context: Context) {
 fun onItemClickListeParkours(competition: Competition, context: Context) {
     val intent = Intent(context, ListeParkours::class.java)
     intent.putExtra("competition", competition)
+    context.startActivity(intent)
+}
+
+fun onClickAjouterCompetition(context: Context) {
+    val intent = Intent(context, AjoutCompetition::class.java)
     context.startActivity(intent)
 }
 
