@@ -31,14 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
-import com.but.parkour.concurrents.InscriptionConcurent
-import com.but.parkour.concurrents.ListeConcurrents
 import com.but.parkour.obstacles.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.parkour.view.AjoutParkour
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,14 +92,11 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
 
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = item ?: "Unknown",
+                        text = item.name ?: "Unknown",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    Button(onClick = { onItemClickConcu(context, item) }) {
-                        Text("Liste des concurrents")
-                    }
                     Button(
-                        onClick = { onItemClickListeObstacles(context, item ) },
+                        onClick = { onItemClickListeObstacles(context, item) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text("Liste des parkours")
@@ -125,7 +121,7 @@ fun onItemClickAddCourse(context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClickListeObstacles(context : Context, item : String) {
+fun onItemClickListeObstacles(context : Context, item : Course) {
     val intent = Intent(context, ListeObstacles::class.java)
     intent.putExtra("item", item)
     context.startActivity(intent)
@@ -155,16 +151,6 @@ fun ParkoursPage(
             courses = courses,
             modifier = Modifier.weight(1f)
         )
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun ParkoursPreview() {
-    ParkourTheme {
-        ParkoursPage("euh")
     }
 }
 
