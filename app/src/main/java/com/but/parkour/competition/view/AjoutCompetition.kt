@@ -31,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.but.parkour.clientkotlin.models.CompetitionCreate
+import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 
 class AjoutCompetition : ComponentActivity() {
@@ -54,6 +56,7 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
     var genderExpanded by remember { mutableStateOf(false) }
     var ageMin by remember { mutableStateOf("") }
     var ageMax by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -63,7 +66,7 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
         )
 
         TextField(
-            value = "",
+            value = nom,
             onValueChange = { nom = it },
             label = { Text("Nom") },
             modifier = Modifier.padding(top = 16.dp)
@@ -144,17 +147,37 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
                 )
             }
         }
-        Row() {
+
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
+
+        Row {
             Button(
                 onClick = {
-                    onClickAjouterCompetition(
-                        nom,
-                        ageMin,
-                        ageMax,
-                        selectedGender,
-                        selectedOption,
-                        context
-                    )
+                    if (nom.isEmpty() || ageMin.isEmpty() || ageMax.isEmpty() || selectedGender == "Genre" || selectedOption == "Plusieurs essais ?") {
+                        errorMessage = "Tous les champs sont obligatoires"
+                    } else {
+                        val ageMinInt = ageMin.toIntOrNull()
+                        val ageMaxInt = ageMax.toIntOrNull()
+                        if (ageMinInt == null || ageMaxInt == null) {
+                            errorMessage = "L'âge minimum et maximum doivent être des nombres entiers"
+                        } else {
+                            errorMessage = ""
+                            onClickAjouterCompetition(
+                                nom,
+                                ageMin,
+                                ageMax,
+                                selectedGender,
+                                selectedOption,
+                                context
+                            )
+                        }
+                    }
                 },
                 modifier = Modifier.padding(top = 32.dp)
             ) {
@@ -170,7 +193,25 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
     }
 }
 
-fun onClickAjouterCompetition(name : String, ageMin : String, ageMax : String, gender: String, multipleAttempts: String, context: Context) {
+fun onClickAjouterCompetition(name: String, ageMin: String, ageMax: String, genderReceive: String, multipleAttempts: String, context: Context) {
+    val competition = CompetitionCreate(
+        name = name,
+        ageMin = ageMin.toInt(),
+        ageMax = ageMax.toInt(),
+        gender = when(genderReceive) {
+            "Homme" -> CompetitionCreate.Gender.H
+            "Femme" -> CompetitionCreate.Gender.F
+            else -> throw IllegalArgumentException("Genre invalide")
+        },
+        hasRetry = when(multipleAttempts) {
+            "Oui" -> true
+            "Non" -> false
+            else -> throw IllegalArgumentException("Option invalide")
+        }
+    )
+
+    val competitionViewModel = CompetitionViewModel()
+    competitionViewModel.addCompetition(competition)
     val intent = Intent(context, MainActivity::class.java)
     context.startActivity(intent)
 }
@@ -179,7 +220,6 @@ fun onClickAnnuler(context: Context) {
     val intent = Intent(context, MainActivity::class.java)
     context.startActivity(intent)
 }
-
 
 @Preview(showBackground = true)
 @Composable
