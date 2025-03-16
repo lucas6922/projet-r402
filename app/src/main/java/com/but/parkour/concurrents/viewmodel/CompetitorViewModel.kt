@@ -11,6 +11,7 @@ import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCompetitorRequest
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.clientkotlin.models.CompetitorCreate
 import kotlinx.coroutines.launch
 
 class CompetitorViewModel : ViewModel() {
@@ -136,6 +137,27 @@ class CompetitorViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
                 _competitorsCourse.postValue(emptyList())
+            }
+        }
+    }
+
+    fun addCompetitor(competitor: CompetitorCreate, competitionId: Int){
+        viewModelScope.launch {
+            try{
+                val call = competitorApi.addCompetitor(competitor)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("CompetitorViewModel", "Competitor registered: $data")
+                        fetchUnregisteredCompetitors(competitionId)
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("CompetitorViewModel", "Error: $errorMessage")
+                    }
+                )
+            }catch (e: Exception){
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
             }
         }
     }

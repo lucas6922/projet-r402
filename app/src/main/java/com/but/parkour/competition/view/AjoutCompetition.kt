@@ -197,12 +197,12 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
     }
 }
 
-fun onClickAjouterCompetition(name: String, ageMin: String, ageMax: String, genderReceive: String, multipleAttempts: String, context: Context) {
+fun onClickAjouterCompetition(name: String, ageMin: String, ageMax: String, gender: String, multipleAttempts: String, context: Context) {
     val competition = CompetitionCreate(
         name = name,
         ageMin = ageMin.toInt(),
         ageMax = ageMax.toInt(),
-        gender = when(genderReceive) {
+        gender = when(gender) {
             "Homme" -> CompetitionCreate.Gender.H
             "Femme" -> CompetitionCreate.Gender.F
             else -> throw IllegalArgumentException("Genre invalide")

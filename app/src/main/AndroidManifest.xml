@@ -52,6 +52,11 @@
             android:label="@string/title_activity_inscription_concurent"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".concurrents.view.AjoutConcurrent"
+            android:exported="false"
+            android:label="Ajout Concurrent"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
