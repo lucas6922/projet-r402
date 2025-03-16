@@ -31,8 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
-import com.but.parkour.concurrents.InscriptionConcurent
-import com.but.parkour.concurrents.ListeConcurrents
+import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.obstacles.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -96,7 +95,7 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
                         text = item ?: "Unknown",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    Button(onClick = { onItemClickConcu(context, item) }) {
+                    Button(onClick = { onItemClickListeObstacles(context, "ok") }) {
                         Text("Liste des concurrents")
                     }
                     Button(
@@ -158,15 +157,6 @@ fun ParkoursPage(
     }
 }
 
-
-
-@Preview(showBackground = true)
-@Composable
-fun ParkoursPreview() {
-    ParkourTheme {
-        ParkoursPage("euh")
-    }
-}
 
 
 
