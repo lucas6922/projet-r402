@@ -97,7 +97,7 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Button(
-                        onClick = { onItemClickListeObstacles(context, item.name ?: "Unknown") },
+                        onClick = { onItemClickListeObstacles(context, item) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text("Liste des parkours")
@@ -124,7 +124,7 @@ fun onItemClickAddCourse(context: Context) {
 
 fun onItemClickListeObstacles(context : Context, course : Course) {
     val intent = Intent(context, ListeObstacles::class.java)
-    intent.putExtra("item", item)
+    intent.putExtra("item", course)
     context.startActivity(intent)
 }
 
