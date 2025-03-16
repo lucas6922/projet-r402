@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
-import com.but.parkour.obstacles.ListeObstacles
+import com.but.parkour.obstacles.view.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
@@ -84,11 +84,6 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
-                Text(
-                    text = item.name ?: "Unknown",
-                    modifier = Modifier.padding(8.dp)
-                )
-
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = item.name ?: "Unknown",
@@ -122,7 +117,7 @@ fun onItemClickAddCourse(context: Context) {
 
 fun onItemClickListeObstacles(context : Context, course : Course) {
     val intent = Intent(context, ListeObstacles::class.java)
-    intent.putExtra("item", course)
+    intent.putExtra("parkour", course)
     context.startActivity(intent)
 }
 
