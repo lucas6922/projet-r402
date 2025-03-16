@@ -1,4 +1,4 @@
-package com.but.parkour.parkour
+package com.but.parkour.parkour.view
 
 import android.content.Context
 import android.content.Intent
@@ -31,14 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.concurrents.view.ListeConcurrents
-import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.obstacles.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import com.but.parkour.clientkotlin.models.Course
-import com.but.parkour.parkour.view.AjoutParkour
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
