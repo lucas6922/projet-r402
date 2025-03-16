@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.parkour.view.AjoutParkour
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,14 +93,11 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
 
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = item ?: "Unknown",
+                        text = item.name ?: "Unknown",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    Button(onClick = { onItemClickListeObstacles(context, "ok") }) {
-                        Text("Liste des concurrents")
-                    }
                     Button(
-                        onClick = { onItemClickListeObstacles(context, item ) },
+                        onClick = { onItemClickListeObstacles(context, item.name ?: "Unknown") },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text("Liste des parkours")
@@ -124,7 +122,7 @@ fun onItemClickAddCourse(context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClickListeObstacles(context : Context, item : String) {
+fun onItemClickListeObstacles(context : Context, course : Course) {
     val intent = Intent(context, ListeObstacles::class.java)
     intent.putExtra("item", item)
     context.startActivity(intent)
