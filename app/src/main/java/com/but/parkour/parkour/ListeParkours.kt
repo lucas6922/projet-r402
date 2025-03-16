@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.but.parkour.concurrents.InscriptionConcurent
 import com.but.parkour.concurrents.ListeConcurrents
+import com.but.parkour.obstacles.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 
 class ListeParkours : ComponentActivity() {
@@ -47,7 +48,7 @@ class ListeParkours : ComponentActivity() {
 }
 
 @Composable
-fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick: (String) -> Unit) {
+fun ListParkours(items: List<String>, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -59,15 +60,25 @@ fun ListParkours(items: List<String>, modifier: Modifier = Modifier, onItemClick
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable { onItemClick(context, item) }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
 
-                Text(
-                    text = item,
-                    modifier = Modifier.padding(8.dp)
-                )
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = item ?: "Unknown",
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Button(onClick = { onItemClickConcu(context, item) }) {
+                        Text("Liste des concurrents")
+                    }
+                    Button(
+                        onClick = { onItemClickListeObstacles(context, item ) },
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text("Liste des parkours")
+                    }
+                }
 
             }
         }
@@ -82,8 +93,14 @@ fun onClickAjouterParkour(context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClick(context : Context, item : String) {
+fun onItemClickConcu(context : Context, item : String) {
     val intent = Intent(context, ListeConcurrents::class.java)
+    intent.putExtra("item", item)
+    context.startActivity(intent)
+}
+
+fun onItemClickListeObstacles(context : Context, item : String) {
+    val intent = Intent(context, ListeObstacles::class.java)
     intent.putExtra("item", item)
     context.startActivity(intent)
 }
