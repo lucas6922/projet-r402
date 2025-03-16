@@ -56,7 +56,8 @@ class ListeParkours : ComponentActivity() {
                 val courses by parkourViewModel.parkours.observeAsState(initial = emptyList())
                 ParkoursPage(
                     competition?.name ?: "Unknown",
-                    courses
+                    courses,
+                    competition ?: Competition()
                 )
             }
         }
@@ -66,7 +67,7 @@ class ListeParkours : ComponentActivity() {
 }
 
 @Composable
-fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
+fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier, competition: Competition) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -105,7 +106,7 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
             }
         }
     }
-    Button(onClick = {onItemClickAddCourse(context)}) { Text(text = "Ajouter un parkour") }
+    Button(onClick = {onItemClickAddCourse(context, competition)}) { Text(text = "Ajouter un parkour") }
 }
 
 fun onItemClickCourse(course: Course, context: Context) {
@@ -115,8 +116,9 @@ fun onItemClickCourse(course: Course, context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClickAddCourse(context: Context) {
+fun onItemClickAddCourse(context: Context, competition: Competition) {
     val intent = Intent(context, AjoutParkour::class.java)
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 
@@ -130,7 +132,8 @@ fun onItemClickListeObstacles(context : Context, course : Course) {
 @Composable
 fun ParkoursPage(
     compet: String,
-    courses: List<Course>
+    courses: List<Course>,
+    competition: Competition
 ) {
     Column(
         modifier = Modifier
@@ -148,7 +151,8 @@ fun ParkoursPage(
 
         ListParkours(
             courses = courses,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            competition = competition
         )
     }
 }

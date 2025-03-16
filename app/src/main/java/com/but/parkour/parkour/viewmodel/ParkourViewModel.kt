@@ -6,8 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
+import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.clientkotlin.models.CourseCreate
 import kotlinx.coroutines.launch
 
 class ParkourViewModel : ViewModel() {
@@ -19,14 +21,15 @@ class ParkourViewModel : ViewModel() {
         bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
     )
 
-    private val courseApi = apiClient.createService(CompetitionsApi::class.java)
+    private val competitionApi = apiClient.createService(CompetitionsApi::class.java)
+    private val courseApi = apiClient.createService(CoursesApi::class.java)
 
     fun fetchCourses(competitionId : Int) {
         viewModelScope.launch {
             try {
                 Log.d("ParkourViewModel", "Fetching courses...")
 
-                val call = courseApi.getCompetitionCourses(competitionId)
+                val call = competitionApi.getCompetitionCourses(competitionId)
 
                 apiClient.fetchData(
                     call,
@@ -43,6 +46,29 @@ class ParkourViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("ParkourViewModel", "Exception: ${e.message}", e)
                 _parkours.postValue(emptyList())
+            }
+        }
+    }
+
+    fun addCourse(course: CourseCreate) {
+        viewModelScope.launch {
+            try {
+                Log.d("ParkourViewModel", "Adding course...")
+
+                val call = courseApi.addCourse(course)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ParkourViewModel", "course added: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ParkourViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ParkourViewModel", "Exception: ${e.message}", e)
             }
         }
     }
