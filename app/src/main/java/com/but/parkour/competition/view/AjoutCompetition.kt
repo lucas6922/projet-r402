@@ -167,15 +167,19 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
                         if (ageMinInt == null || ageMaxInt == null) {
                             errorMessage = "L'âge minimum et maximum doivent être des nombres entiers"
                         } else {
-                            errorMessage = ""
-                            onClickAjouterCompetition(
-                                nom,
-                                ageMin,
-                                ageMax,
-                                selectedGender,
-                                selectedOption,
-                                context
-                            )
+                            if(ageMinInt > ageMaxInt) {
+                                errorMessage = "L'âge minimum doit être inférieur à l'âge maximum"
+                            } else {
+                                errorMessage = ""
+                                onClickAjouterCompetition(
+                                    nom,
+                                    ageMin,
+                                    ageMax,
+                                    selectedGender,
+                                    selectedOption,
+                                    context
+                                )
+                            }
                         }
                     }
                 },
