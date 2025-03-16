@@ -7,4 +7,5 @@
     <string name="title_activity_liste_obstacles">ListeObstacles</string>
     <string name="title_activity_classement">Classement</string>
     <string name="title_activity_liste_concurrents">ListeConcurrents</string>
+    <string name="title_activity_chronometre">Chronometre</string>
 </resources>
