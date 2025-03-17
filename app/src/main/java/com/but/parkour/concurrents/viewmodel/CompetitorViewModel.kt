@@ -73,6 +73,7 @@ class CompetitorViewModel : ViewModel() {
                                     registeredCompetitors?.none { it.id == competitor.id } != false
                                 } ?: emptyList()
                                 _unregisteredCompetitors.postValue(unregisteredCompetitors)
+                                Log.d("CompetitorViewModel", "Competitors unregistred fetch : $unregisteredCompetitors")
                             },
                             onError = { _, _ ->
                                 _unregisteredCompetitors.postValue(emptyList())
