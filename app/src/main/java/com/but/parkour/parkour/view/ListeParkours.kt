@@ -56,7 +56,8 @@ class ListeParkours : ComponentActivity() {
                 val courses by parkourViewModel.parkours.observeAsState(initial = emptyList())
                 ParkoursPage(
                     competition?.name ?: "Unknown",
-                    courses
+                    courses,
+                    competition ?: Competition()
                 )
             }
         }
@@ -66,34 +67,41 @@ class ListeParkours : ComponentActivity() {
 }
 
 @Composable
-fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
+fun ListParkours(
+    courses: List<Course>,
+    modifier: Modifier = Modifier,
+    competition: Competition
+) {
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        items(courses) { item ->
+        items(courses) { course ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable {
-                        onItemClickCourse(item, context)
-                    }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = item.name ?: "Unknown",
+                        text = course.name ?: "Unknown",
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Button(
-                        onClick = { onItemClickListeObstacles(context, item) },
+                        onClick = { onItemClickListeObstacles(context, course) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
-                        Text("Liste des parkours")
+                        Text("Liste des obstacles")
+                    }
+                    Button(
+                        onClick = { onItemClickCourseConcurrent(competition, context) },
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text("Liste des concurrents")
                     }
                 }
 
@@ -103,10 +111,10 @@ fun ListParkours(courses: List<Course>, modifier: Modifier = Modifier) {
     Button(onClick = {onItemClickAddCourse(context)}) { Text(text = "Ajouter un parkour") }
 }
 
-fun onItemClickCourse(course: Course, context: Context) {
-    Log.d("     ListeParkours", "Course: $course")
+fun onItemClickCourseConcurrent(competition: Competition, context: Context) {
+    Log.d("     ListeParkours", "competition: $competition")
     val intent = Intent(context, ListeConcurrents::class.java)
-    intent.putExtra("course", course)
+    intent.putExtra("course", competition)
     context.startActivity(intent)
 }
 
@@ -125,7 +133,8 @@ fun onItemClickListeObstacles(context : Context, course : Course) {
 @Composable
 fun ParkoursPage(
     compet: String,
-    courses: List<Course>
+    courses: List<Course>,
+    competition: Competition
 ) {
     Column(
         modifier = Modifier
@@ -143,7 +152,8 @@ fun ParkoursPage(
 
         ListParkours(
             courses = courses,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            competition = competition
         )
     }
 }

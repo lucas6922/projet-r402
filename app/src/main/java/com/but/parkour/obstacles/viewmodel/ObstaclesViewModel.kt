@@ -21,7 +21,7 @@ class ObstaclesViewModel : ViewModel() {
 
     private val courseApi = apiClient.createService(CoursesApi::class.java)
 
-    fun fetchCourses(parkourId : Int) {
+    fun fetchCoursesObstacles(parkourId : Int) {
         viewModelScope.launch {
             try {
                 Log.d("ObstaclesViewModel", "Fetching courses...")
