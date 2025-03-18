@@ -57,6 +57,11 @@
             android:label="Ajout Concurrent"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".obstacles.view.AjoutObstacles"
+            android:exported="false"
+            android:label="Ajout Obstacle"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"

@@ -31,7 +31,6 @@ class CompetitorViewModel : ViewModel() {
 
     val competitionApi = apiClient.createService(CompetitionsApi::class.java)
     val competitorApi = apiClient.createService(CompetitorsApi::class.java)
-    val courseApi = apiClient.createService(CoursesApi::class.java)
 
     fun fetchCompetitorsInscrit(competitionId: Int) {
         viewModelScope.launch {
