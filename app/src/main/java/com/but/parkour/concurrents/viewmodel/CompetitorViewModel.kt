@@ -116,12 +116,12 @@ class CompetitorViewModel : ViewModel() {
         }
     }
 
-    fun fetchCompetitorsCourse(courseId : Int){
+    fun fetchCompetitorsCourse(competitionId : Int){
         viewModelScope.launch {
             try {
-                Log.d("CompetitorViewModel", "Fetching competitors for a course... id: $courseId")
+                Log.d("CompetitorViewModel", "Fetching competitors for a course... id: $competitionId")
 
-                val call = courseApi.getCourseCompetitors(courseId)
+                val call = competitionApi.getCompetitionInscriptions(competitionId)
 
                 apiClient.fetchData(
                     call,

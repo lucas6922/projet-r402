@@ -1,6 +1,7 @@
 package com.but.parkour.concurrents.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,26 +38,28 @@ import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.concurrents.ui.theme.ParkourTheme
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import com.but.parkour.clientkotlin.models.Competition
+
 class ListeConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val course = intent.getSerializableExtra("course") as Course
+        val competition = intent.getSerializableExtra("competition") as Competition
         setContent {
             ParkourTheme {
-                ConcurrentPage(course)
+                ConcurrentPage(competition)
             }
         }
     }
 }
 
 @Composable
-fun ConcurrentPage(parkour: Course) {
+fun ConcurrentPage(competition: Competition) {
     val competitorViewModel: CompetitorViewModel = viewModel()
     val participants by competitorViewModel.competitorsCourse.observeAsState(emptyList())
 
-    LaunchedEffect(parkour) {
-        parkour.id?.let { id ->
+    LaunchedEffect(competition) {
+        competition.id?.let { id ->
             competitorViewModel.fetchCompetitorsCourse(id)
         }
     }
@@ -69,7 +72,7 @@ fun ConcurrentPage(parkour: Course) {
 
     ) {
         Text(
-            text = parkour.name ?: "Unknown",
+            text = competition.name ?: "Unknown",
             modifier = Modifier.padding(bottom = 16.dp),
             style = MaterialTheme.typography.titleLarge.copy(
                 color = Color.DarkGray,
@@ -79,6 +82,7 @@ fun ConcurrentPage(parkour: Course) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        Log.d("ListeConcurrents", "Participants: $participants")
         ListParticipants(
             concurrents = participants,
             modifier = Modifier.weight(1f)
