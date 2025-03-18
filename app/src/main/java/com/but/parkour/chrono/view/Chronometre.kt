@@ -31,12 +31,12 @@ class Chronometre : ComponentActivity() {
 }
 
 @Composable
-fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : Boolean) {
+fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: Boolean) {
     val obstacles = viewModel.obstacles.value
-    var has_fell by remember {mutableStateOf(false)}
+    var hasFell by remember { mutableStateOf(false) }
 
     var currentObstacleIndex by remember { mutableStateOf(0) }
-    var time by remember { mutableStateOf(0) }
+    var time by remember { mutableStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) }
     val laps = remember { mutableStateListOf<Pair<String, String>>() }
 
@@ -47,11 +47,11 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : 
 
     // Timer
     LaunchedEffect(isRunning) {
-        val startTime = System.currentTimeMillis() - time * 10L
+        val startTime = System.currentTimeMillis() - time
         while (isRunning) {
             val elapsed = System.currentTimeMillis() - startTime
-            time = (elapsed / 10).toInt()
-            delay(10L)
+            time = elapsed
+            delay(1L) // Mise à jour chaque milliseconde
         }
     }
 
@@ -101,7 +101,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : 
                 } else {
                     Button(
                         onClick = {
-                            time = 0
+                            time = 0L
                             currentObstacleIndex = 0
                             laps.clear()
                         },
@@ -114,15 +114,14 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : 
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                has_fell = true
+                                hasFell = true
                                 if (laps.isNotEmpty()) {
                                     val lastLapTime = laps.last().second
                                     time = parseTime(lastLapTime)
+                                } else {
+                                    time = 0L
                                 }
-                                else{
-                                    time = 0
-                                }
-                            }, enabled = !has_fell
+                            }, enabled = !hasFell
                         ) {
                             Text("Recommencer l'obstacle")
                         }
@@ -131,30 +130,28 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : 
             }
         }
 
-
         LazyColumn {
             items(laps) { (obstacleName, lapTime) ->
                 Text(text = "$obstacleName : $lapTime")
             }
         }
     }
-
 }
 
-
-
-fun formatTime(time: Int): String {
-    val minutes = time / 6000
-    val seconds = (time / 100) % 60
-    val centiseconds = time % 100
-    return String.format("%02d:%02d:%02d", minutes, seconds, centiseconds)
+// Convertit un temps en String
+fun formatTime(time: Long): String {
+    val minutes = (time / 60000) % 60
+    val seconds = (time / 1000) % 60
+    val milliseconds = time % 1000
+    return String.format("%02d:%02d:%03d", minutes, seconds, milliseconds)
 }
 
-fun parseTime(timeString: String): Int {
+// Convertit un un string en temps (nombre de millisecondes)
+fun parseTime(timeString: String): Long {
     val parts = timeString.split(":").map { it.toIntOrNull() ?: 0 }
     return if (parts.size == 3) {
-        (parts[0] * 6000) + (parts[1] * 100) + parts[2]
+        (parts[0] * 60000L) + (parts[1] * 1000L) + parts[2]
     } else {
-        0
+        0L
     }
 }
