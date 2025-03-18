@@ -24,16 +24,16 @@ class Chronometre : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
-                ChronometreScreen(viewModel = viewModel, parkourId = 488) // Remplace par l'ID du parkour
+                ChronometreScreen(viewModel = viewModel, parkourId = 1106, true) // Remplace par l'ID du parkour
             }
         }
     }
 }
 
 @Composable
-fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int) {
-    // Observing LiveData with the new 'collectAsStateWithLifecycle'
+fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry : Boolean) {
     val obstacles = viewModel.obstacles.value
+    var has_fell by remember {mutableStateOf(false)}
 
     var currentObstacleIndex by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(0) }
@@ -47,9 +47,11 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int) {
 
     // Timer
     LaunchedEffect(isRunning) {
+        val startTime = System.currentTimeMillis() - time * 10L
         while (isRunning) {
+            val elapsed = System.currentTimeMillis() - startTime
+            time = (elapsed / 10).toInt()
             delay(10L)
-            time++
         }
     }
 
@@ -61,8 +63,8 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int) {
             Text(
                 text = "Obstacle : ${
                     if (obstacles.isNotEmpty() && currentObstacleIndex < obstacles.size)
-                        obstacles[currentObstacleIndex]?.obstacleName
-                    else "Chargement..."
+                        obstacles[currentObstacleIndex].obstacleName
+                    else "Terminé"
                 }",
                 style = MaterialTheme.typography.headlineMedium
             )
@@ -73,28 +75,62 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int) {
             style = MaterialTheme.typography.displayLarge
         )
 
+        // Première ligne de boutons (Démarrer/Pause, Tour/Effacer)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { isRunning = !isRunning }) {
                 Text(if (isRunning) "Pause" else "Démarrer")
             }
 
             if (obstacles != null) {
-                Button(
-                    onClick = {
-                        if (obstacles != null) {
-                            if (obstacles.isNotEmpty() && currentObstacleIndex < obstacles.size) {
-                                // Correction ici : gestion du nullable
-                                laps.add(Pair(obstacles?.get(currentObstacleIndex)?.obstacleName ?: "Inconnu", formatTime(time)))
+                if (isRunning) {
+                    Button(
+                        onClick = {
+                            laps.add(Pair(obstacles[currentObstacleIndex].obstacleName ?: "Inconnu", formatTime(time)))
+
+                            // Vérifier si c'est le dernier obstacle
+                            if (currentObstacleIndex == obstacles.size - 1) {
+                                isRunning = false
+                            } else {
                                 currentObstacleIndex++
                             }
+                        },
+                        enabled = obstacles.isNotEmpty() && currentObstacleIndex < obstacles.size
+                    ) {
+                        Text("Tour")
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            time = 0
+                            currentObstacleIndex = 0
+                            laps.clear()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                    ) {
+                        Text("Effacer", color = MaterialTheme.colorScheme.onError)
+                    }
+
+                    if (hasTry) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = {
+                                has_fell = true
+                                if (laps.isNotEmpty()) {
+                                    val lastLapTime = laps.last().second
+                                    time = parseTime(lastLapTime)
+                                }
+                                else{
+                                    time = 0
+                                }
+                            }, enabled = !has_fell
+                        ) {
+                            Text("Recommencer l'obstacle")
                         }
-                    },
-                    enabled = obstacles.isNotEmpty() && currentObstacleIndex < obstacles.size
-                ) {
-                    Text("Tour")
+                    }
                 }
             }
         }
+
 
         LazyColumn {
             items(laps) { (obstacleName, lapTime) ->
@@ -102,11 +138,23 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int) {
             }
         }
     }
+
 }
+
+
 
 fun formatTime(time: Int): String {
     val minutes = time / 6000
     val seconds = (time / 100) % 60
     val centiseconds = time % 100
     return String.format("%02d:%02d:%02d", minutes, seconds, centiseconds)
+}
+
+fun parseTime(timeString: String): Int {
+    val parts = timeString.split(":").map { it.toIntOrNull() ?: 0 }
+    return if (parts.size == 3) {
+        (parts[0] * 6000) + (parts[1] * 100) + parts[2]
+    } else {
+        0
+    }
 }
