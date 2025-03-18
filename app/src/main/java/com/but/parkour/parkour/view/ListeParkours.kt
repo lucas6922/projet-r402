@@ -72,6 +72,7 @@ fun ListParkours(
     modifier: Modifier = Modifier,
     competition: Competition
 ) {
+    Log.d("ListeParkours", "competition: $competition")
     val context = LocalContext.current
     LazyColumn(
         modifier = modifier
@@ -114,7 +115,7 @@ fun ListParkours(
 fun onItemClickCourseConcurrent(competition: Competition, context: Context) {
     Log.d("     ListeParkours", "competition: $competition")
     val intent = Intent(context, ListeConcurrents::class.java)
-    intent.putExtra("course", competition)
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 
