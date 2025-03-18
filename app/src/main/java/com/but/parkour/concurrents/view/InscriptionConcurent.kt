@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
@@ -108,12 +109,24 @@ fun InscriptionPage(
             onExpandedChanged = { isExpanded ->
                 expanded = isExpanded
             },
-            onCreateNewCompetitor = {
-                competition?.let{
-                    onAjoutConcurrentClick(context, competition)
-                }
-            }
         )
+
+
+        if(EditionMode.isEnable.value) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    competition?.let{
+                        onAjoutConcurrentClick(context, competition)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+
+                ) {
+                Text(text = "Creer un nouveau concurrent")
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         InscriptionButton(
             selectedCompetitor = selectedCompetitor,
@@ -156,7 +169,6 @@ fun CompetitorDropdown(
     onCompetitorSelected: (Competitor) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onExpandedChanged: (Boolean) -> Unit,
-    onCreateNewCompetitor: () -> Unit
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -174,16 +186,7 @@ fun CompetitorDropdown(
             onDismissRequest = { onExpandedChanged(false) }
         ) {
             Column {
-                Button(
-                    onClick = {
-                        onCreateNewCompetitor()
-                        onExpandedChanged(false)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
 
-                ) {
-                    Text(text = "Creer un nouveau concurrent")
-                }
                 TextField(
                     value = searchQuery,
                     onValueChange = onSearchQueryChanged,

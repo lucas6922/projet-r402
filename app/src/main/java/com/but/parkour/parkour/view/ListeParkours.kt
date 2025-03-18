@@ -36,6 +36,7 @@ import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
 
 class ListeParkours : ComponentActivity() {
@@ -109,7 +110,15 @@ fun ListParkours(
             }
         }
     }
-    Button(onClick = {onItemClickAddCourse(context)}) { Text(text = "Ajouter un parkour") }
+
+    if(EditionMode.isEnable.value) {
+        Button(
+            onClick = {onItemClickAddCourse(context)},
+            modifier = Modifier.fillMaxWidth()
+            ) {
+            Text(text = "Ajouter un parkour")
+        }
+    }
 }
 
 fun onItemClickCourseConcurrent(competition: Competition, context: Context) {
