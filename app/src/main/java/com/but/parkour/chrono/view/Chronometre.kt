@@ -24,7 +24,7 @@ class Chronometre : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
-                ChronometreScreen(viewModel = viewModel, parkourId = 1106, true) // Remplace par l'ID du parkour
+                ChronometreScreen(viewModel = viewModel, parkourId = 1106, true) // à remplacer par l'ID du parkour et le hasTry de la compétition
             }
         }
     }
@@ -40,7 +40,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
     var isRunning by remember { mutableStateOf(false) }
     val laps = remember { mutableStateListOf<Pair<String, String>>() }
 
-    // Charger les obstacles
+    // Charge les obstacles depuis l'API
     LaunchedEffect(parkourId) {
         viewModel.fetchObstacles(parkourId)
     }
@@ -51,7 +51,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
         while (isRunning) {
             val elapsed = System.currentTimeMillis() - startTime
             time = elapsed
-            delay(1L) // Mise à jour chaque milliseconde
+            delay(1L)
         }
     }
 
@@ -59,6 +59,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        //Affichage des obstacles
         if (obstacles != null) {
             Text(
                 text = "Obstacle : ${
@@ -69,7 +70,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(min = 75.dp) // Fixe une hauteur minimale
+                    .heightIn(min = 75.dp)
             )
         }
 
@@ -86,11 +87,12 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
 
             if (obstacles != null) {
                 if (isRunning) {
+                    //Bouton Tour
                     Button(
                         onClick = {
                             laps.add(Pair(obstacles[currentObstacleIndex].obstacleName ?: "Inconnu", formatTime(time)))
 
-                            // Vérifier si c'est le dernier obstacle
+                            // Vérifie si c'est le dernier obstacle pour arreter le timer
                             if (currentObstacleIndex == obstacles.size - 1) {
                                 isRunning = false
                             } else {
@@ -102,6 +104,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                         Text("Tour")
                     }
                 } else {
+                    //Bouton Effacer
                     Button(
                         onClick = {
                             time = 0L
@@ -114,6 +117,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                         Text("Effacer", color = MaterialTheme.colorScheme.onError)
                     }
 
+                    //Bouton recommencer obstacle
                     if (hasTry) {
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
