@@ -66,7 +66,10 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                         obstacles[currentObstacleIndex].obstacleName
                     else "Terminé"
                 }",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 75.dp) // Fixe une hauteur minimale
             )
         }
 
@@ -104,6 +107,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                             time = 0L
                             currentObstacleIndex = 0
                             laps.clear()
+                            hasFell = false
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
