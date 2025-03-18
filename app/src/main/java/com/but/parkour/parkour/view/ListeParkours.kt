@@ -58,7 +58,7 @@ class ListeParkours : ComponentActivity() {
                 ParkoursPage(
                     competition?.name ?: "Unknown",
                     courses,
-                    competition ?: Competition()
+                    competition
                 )
             }
         }
@@ -113,10 +113,10 @@ fun ListParkours(
 
     if(EditionMode.isEnable.value) {
         Button(
-            onClick = {onItemClickAddCourse(context)},
+            onClick = {onItemClickAddCourse(context, competition)},
             modifier = Modifier.fillMaxWidth()
             ) {
-            Text(text = "Ajouter un parkour")
+            Text(text = "Ajouter une course")
         }
     }
 }
@@ -128,8 +128,9 @@ fun onItemClickCourseConcurrent(competition: Competition, context: Context) {
     context.startActivity(intent)
 }
 
-fun onItemClickAddCourse(context: Context) {
+fun onItemClickAddCourse(context: Context, competition: Competition) {
     val intent = Intent(context, AjoutParkour::class.java)
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 
@@ -144,28 +145,34 @@ fun onItemClickListeObstacles(context : Context, course : Course) {
 fun ParkoursPage(
     compet: String,
     courses: List<Course>,
-    competition: Competition
+    competition: Competition?
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .padding(top = 32.dp)
-    ) {
-        Text(
-            text = compet,
-            modifier = Modifier.padding(bottom = 16.dp),
-            style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
-        )
 
-        Spacer(modifier = Modifier.height(8.dp))
+    if(competition == null) {
+        Text("Aucune compétition trouvée")
+    }else{
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .padding(top = 32.dp)
+        ) {
+            Text(
+                text = compet,
+                modifier = Modifier.padding(bottom = 16.dp),
+                style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
+            )
 
-        ListParkours(
-            courses = courses,
-            modifier = Modifier.weight(1f),
-            competition = competition
-        )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            ListParkours(
+                courses = courses,
+                modifier = Modifier.weight(1f),
+                competition = competition
+            )
+        }
     }
+
 }
 
 

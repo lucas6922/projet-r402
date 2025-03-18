@@ -174,7 +174,7 @@ fun CompetitorDropdown(
         .fillMaxWidth()
         .padding(bottom = 16.dp)) {
         Text(
-            text = selectedCompetitor?.firstName ?: "Select a competitor",
+            text = selectedCompetitor?.firstName ?: "Selectionner un concurrent",
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.Gray)
