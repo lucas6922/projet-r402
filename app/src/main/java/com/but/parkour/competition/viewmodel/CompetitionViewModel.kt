@@ -109,6 +109,7 @@ class CompetitionViewModel : ViewModel() {
                     call,
                     onSuccess = { data, _ ->
                         Log.d("CompetitionViewModel", "Competition removed: $data")
+                        fetchCompetitions()
                     },
                     onError = { errorMessage, _ ->
                         Log.e("CompetitionViewModel", "Error: $errorMessage")
