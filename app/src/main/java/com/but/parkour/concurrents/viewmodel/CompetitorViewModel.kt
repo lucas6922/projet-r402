@@ -11,6 +11,7 @@ import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCompetitorRequest
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.clientkotlin.models.CompetitorCreate
 import kotlinx.coroutines.launch
 
 class CompetitorViewModel : ViewModel() {
@@ -30,7 +31,6 @@ class CompetitorViewModel : ViewModel() {
 
     val competitionApi = apiClient.createService(CompetitionsApi::class.java)
     val competitorApi = apiClient.createService(CompetitorsApi::class.java)
-    val courseApi = apiClient.createService(CoursesApi::class.java)
 
     fun fetchCompetitorsInscrit(competitionId: Int) {
         viewModelScope.launch {
@@ -72,6 +72,7 @@ class CompetitorViewModel : ViewModel() {
                                     registeredCompetitors?.none { it.id == competitor.id } != false
                                 } ?: emptyList()
                                 _unregisteredCompetitors.postValue(unregisteredCompetitors)
+                                Log.d("CompetitorViewModel", "Competitors unregistred fetch : $unregisteredCompetitors")
                             },
                             onError = { _, _ ->
                                 _unregisteredCompetitors.postValue(emptyList())
@@ -114,12 +115,12 @@ class CompetitorViewModel : ViewModel() {
         }
     }
 
-    fun fetchCompetitorsCourse(courseId : Int){
+    fun fetchCompetitorsCourse(competitionId : Int){
         viewModelScope.launch {
             try {
-                Log.d("CompetitorViewModel", "Fetching competitors for a course... id: $courseId")
+                Log.d("CompetitorViewModel", "Fetching competitors for a course... id: $competitionId")
 
-                val call = courseApi.getCourseCompetitors(courseId)
+                val call = competitionApi.getCompetitionInscriptions(competitionId)
 
                 apiClient.fetchData(
                     call,
@@ -136,6 +137,27 @@ class CompetitorViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
                 _competitorsCourse.postValue(emptyList())
+            }
+        }
+    }
+
+    fun addCompetitor(competitor: CompetitorCreate, competitionId: Int){
+        viewModelScope.launch {
+            try{
+                val call = competitorApi.addCompetitor(competitor)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("CompetitorViewModel", "Competitor registered: $data")
+                        fetchUnregisteredCompetitors(competitionId)
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("CompetitorViewModel", "Error: $errorMessage")
+                    }
+                )
+            }catch (e: Exception){
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
             }
         }
     }

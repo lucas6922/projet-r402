@@ -27,7 +27,7 @@
             android:label="@string/title_activity_classement"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".obstacles.ListeObstacles"
+            android:name=".obstacles.view.ListeObstacles"
             android:exported="false"
             android:label="@string/title_activity_liste_obstacles"
             android:theme="@style/Theme.Parkour" />
@@ -37,7 +37,7 @@
             android:label="@string/title_activity_ajout_parkour"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".competition.AjoutCompetition"
+            android:name=".competition.view.AjoutCompetition"
             android:exported="false"
             android:label="@string/title_activity_ajout_competition"
             android:theme="@style/Theme.Parkour" />
@@ -50,6 +50,16 @@
             android:name=".concurrents.view.InscriptionConcurent"
             android:exported="false"
             android:label="@string/title_activity_inscription_concurent"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".concurrents.view.AjoutConcurrent"
+            android:exported="false"
+            android:label="Ajout Concurrent"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".obstacles.view.AjoutObstacles"
+            android:exported="false"
+            android:label="Ajout Obstacle"
             android:theme="@style/Theme.Parkour" />
         <activity
             android:name=".chrono.view.Chronometre"

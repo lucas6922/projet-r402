@@ -1,5 +1,7 @@
 package com.but.parkour.concurrents.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,13 +18,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import com.but.parkour.ui.theme.ParkourTheme
+
 
 class InscriptionConcurent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +52,8 @@ class InscriptionConcurent : ComponentActivity() {
                     competitors,
                     unregisteredCompetitors,
                     competitorViewModel,
-                    competitionId
+                    competitionId,
+                    competition
                 )
             }
         }
@@ -60,13 +66,16 @@ fun InscriptionPage(
     competitorsInscrit: List<Competitor>,
     unregisteredCompetitors: List<Competitor>,
     competitorViewModel: CompetitorViewModel,
-    competitionId: Int?
+    competitionId: Int?,
+    competition: Competition?
 ) {
     Log.d("InscriptionPage", "Competitors inscrit dans la course: $competitorsInscrit")
     var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
     var expanded by remember { mutableStateOf(false) }
     var participants by remember { mutableStateOf(emptyList<Competitor>()) }
     var searchQuery by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     LaunchedEffect(competitorsInscrit) {
         participants = competitorsInscrit
@@ -99,8 +108,25 @@ fun InscriptionPage(
             },
             onExpandedChanged = { isExpanded ->
                 expanded = isExpanded
-            }
+            },
         )
+
+
+        if(EditionMode.isEnable.value) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    competition?.let{
+                        onAjoutConcurrentClick(context, competition)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+
+                ) {
+                Text(text = "Creer un nouveau concurrent")
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         InscriptionButton(
             selectedCompetitor = selectedCompetitor,
@@ -117,6 +143,12 @@ fun InscriptionPage(
             }
         )
     }
+}
+
+private fun onAjoutConcurrentClick(context: Context, competition: Competition) {
+    val intent = Intent(context, AjoutConcurrent::class.java)
+    intent.putExtra("competition", competition)
+    context.startActivity(intent)
 }
 
 @Composable
@@ -136,11 +168,13 @@ fun CompetitorDropdown(
     competitors: List<Competitor>,
     onCompetitorSelected: (Competitor) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onExpandedChanged: (Boolean) -> Unit
+    onExpandedChanged: (Boolean) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .padding(bottom = 16.dp)) {
         Text(
-            text = selectedCompetitor?.firstName ?: "Select a competitor",
+            text = selectedCompetitor?.firstName ?: "Selectionner un concurrent",
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.Gray)
@@ -152,6 +186,7 @@ fun CompetitorDropdown(
             onDismissRequest = { onExpandedChanged(false) }
         ) {
             Column {
+
                 TextField(
                     value = searchQuery,
                     onValueChange = onSearchQueryChanged,

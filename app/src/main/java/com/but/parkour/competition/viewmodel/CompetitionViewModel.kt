@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.CompetitionCreate
 import kotlinx.coroutines.launch
 
 class CompetitionViewModel : ViewModel() {
@@ -16,6 +17,9 @@ class CompetitionViewModel : ViewModel() {
     private val apiClient = ApiClient(
         bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
     )
+
+    val competitionApi = apiClient.createService(CompetitionsApi::class.java)
+
     init {
         fetchCompetitions()
     }
@@ -26,7 +30,6 @@ class CompetitionViewModel : ViewModel() {
             try {
                 Log.d("CompetitionViewModel", "Fetching competitions...")
 
-                val competitionApi = apiClient.createService(CompetitionsApi::class.java)
                 val call = competitionApi.getAllCompetitions()
 
                 apiClient.fetchData(
@@ -44,6 +47,29 @@ class CompetitionViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
                 _competitions.postValue(emptyList())
+            }
+        }
+    }
+
+    fun addCompetition(competition: CompetitionCreate) {
+        viewModelScope.launch {
+            try {
+                Log.d("CompetitionViewModel", "Adding competition...")
+
+                val call = competitionApi.addCompetition(competition)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("CompetitionViewModel", "Competition added: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("CompetitionViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
             }
         }
     }

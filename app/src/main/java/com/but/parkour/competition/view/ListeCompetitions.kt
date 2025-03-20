@@ -8,13 +8,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.view.InscriptionConcurent
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
             ParkourTheme {
                 val competitionViewModel: CompetitionViewModel = viewModel()
                 val competitions by competitionViewModel.competitions.observeAsState(initial = emptyList())
+
                 Competition(competitions)
             }
         }
@@ -48,11 +50,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Competition(competitions: List<Competition>) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .padding(top = 16.dp)
+            .padding(top = 32.dp)
     ) {
         Text(
             text = "Bienvenue dans Parkour! \n Sélectionnez une competition.",
@@ -65,46 +68,84 @@ fun Competition(competitions: List<Competition>) {
         ListCompetitions(
             items = competitions,
             modifier = Modifier.weight(1f)
-        ) {
+        )
 
+        if(EditionMode.isEnable.value) {
+            Button(
+                onClick = { onClickAjouterCompetition(context) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Ajouter une competition"
+                )
+            }
         }
+
     }
 }
 
 @Composable
-fun ListCompetitions(items: List<Competition>, modifier: Modifier = Modifier, onItemClick: (Competition) -> Unit) {
+fun ListCompetitions(
+    items: List<Competition>,
+    modifier: Modifier = Modifier,
+) {
     val context = LocalContext.current
-    LazyColumn(
+
+
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        items(items) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .clickable { onItemClick(item) }
-                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = item.name ?: "Unknown",
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Button(onClick = { onItemClickInscription(item, context) }) {
-                        Text("Inscription des concurrents")
-                    }
-                    Button(
-                        onClick = { onItemClickListeParkours(item, context) },
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Liste des parkours")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Activer le mode édition",
+            )
+            RadioButton(
+                selected = EditionMode.isEnable.value,
+                onClick = {
+                    EditionMode.isEnable.value = !EditionMode.isEnable.value
+                },
+            )
+        }
+
+        LazyColumn(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+        ) {
+            items(items) { item ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = item.name ?: "Unknown",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                        Button(onClick = { onItemClickInscription(item, context) }) {
+                            Text("Inscription des concurrents")
+                        }
+                        Button(
+                            onClick = { onItemClickListeParkours(item, context) },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("Liste des parkours")
+                        }
                     }
                 }
             }
         }
     }
+
 }
 
 fun onItemClickInscription(competition: Competition, context: Context) {
@@ -120,15 +161,23 @@ fun onItemClickListeParkours(competition: Competition, context: Context) {
     context.startActivity(intent)
 }
 
+fun onClickAjouterCompetition(context: Context) {
+    val intent = Intent(context, AjoutCompetition::class.java)
+    context.startActivity(intent)
+}
+
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun CompetitionPreview() {
     ParkourTheme {
         Competition(
-            competitions = listOf(
-                Competition(name = "Competition 1"),
-                Competition(name = "Competition 2")
-            )
+//            competitions = listOf(
+//                Competition(name = "Competition 1"),
+//                Competition(name = "Competition 2")
+//            )
         )
     }
 }
