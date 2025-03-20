@@ -1,5 +1,7 @@
 package com.but.parkour.concurrents.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -38,6 +40,8 @@ import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.concurrents.ui.theme.ParkourTheme
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
+import com.but.parkour.chrono.view.Chronometre
 import com.but.parkour.clientkotlin.models.Competition
 
 class ListeConcurrents : ComponentActivity() {
@@ -45,16 +49,17 @@ class ListeConcurrents : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val competition = intent.getSerializableExtra("competition") as Competition
+        val course = intent.getSerializableExtra("course") as Course
         setContent {
             ParkourTheme {
-                ConcurrentPage(competition)
+                ConcurrentPage(competition, course)
             }
         }
     }
 }
 
 @Composable
-fun ConcurrentPage(competition: Competition) {
+fun ConcurrentPage(competition: Competition, course: Course) {
     val competitorViewModel: CompetitorViewModel = viewModel()
     val participants by competitorViewModel.competitorsCourse.observeAsState(emptyList())
 
@@ -83,12 +88,26 @@ fun ConcurrentPage(competition: Competition) {
         Spacer(modifier = Modifier.height(8.dp))
 
         Log.d("ListeConcurrents", "Participants: $participants")
+        val context = LocalContext.current
         ListParticipants(
             concurrents = participants,
-            modifier = Modifier.weight(1f)
-        ) {
-            // Handle item click
-        }
+            modifier = Modifier.weight(1f),
+            onItemClick = { /* Gérer l'item click */ },
+            onChronoClick = { competitor ->
+                onItemClickChrono(competition, course, context)
+            }
+        )
 
     }
+}
+
+
+
+
+fun onItemClickChrono(competition: Competition, course: Course, context: Context) {
+    val intent = Intent(context, Chronometre::class.java).apply {
+        putExtra("competition", competition)
+        putExtra("course", course)
+    }
+    context.startActivity(intent)
 }

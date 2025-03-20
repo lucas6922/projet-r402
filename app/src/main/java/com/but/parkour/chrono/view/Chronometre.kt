@@ -13,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.parkour.viewmodel.ChronometreViewModel
 import com.but.parkour.ui.theme.ParkourTheme
@@ -25,15 +27,21 @@ class Chronometre : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val competition = intent.getSerializableExtra("competition") as Competition
+            val course = intent.getSerializableExtra("course") as Course
             ParkourTheme {
-                ChronometreScreen(viewModel = viewModel, parkourId = 1106, true) // à remplacer par l'ID du parkour et le hasTry de la compétition
+                course.id?.let { competition.hasRetry?.let { it1 ->
+                    ChronometreScreen(viewModel = viewModel, parkourId = it,
+                        it1
+                    )
+                } }
             }
         }
     }
 }
 
 @Composable
-fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: Boolean) {
+fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasRetry: Boolean) {
     val obstacles = viewModel.obstacles.value
     var hasFell by remember { mutableStateOf(false) }
     var lastLapTime by remember { mutableStateOf(0L) }
@@ -73,7 +81,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                 hasFell = false
                 lastLapTime = 0L
             },
-            hasTry = hasTry,
+            hasRetry = hasRetry,
             hasFell = hasFell,
             onRestart = {
                 hasFell = true
@@ -136,7 +144,7 @@ fun ChronometerButtons(
     isRunning: Boolean,
     onToggle: () -> Unit,
     onReset: () -> Unit,
-    hasTry: Boolean,
+    hasRetry: Boolean,
     hasFell: Boolean,
     onRestart: () -> Unit,
     onLap: () -> Unit,
@@ -179,7 +187,7 @@ fun ChronometerButtons(
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(modifier = Modifier.height(48.dp), contentAlignment = Alignment.Center) {
-            if (hasTry && !isRunning) {
+            if (hasRetry && !isRunning) {
                 Button(
                     onClick = onRestart,
                     enabled = !hasFell,
