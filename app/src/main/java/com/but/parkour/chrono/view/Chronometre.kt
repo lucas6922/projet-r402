@@ -30,9 +30,9 @@ class Chronometre : ComponentActivity() {
             val competition = intent.getSerializableExtra("competition") as Competition
             val course = intent.getSerializableExtra("course") as Course
             ParkourTheme {
-                course.id?.let { competition.hasRetry?.let { it1 ->
+                course.id?.let { competition.hasRetry?.let { it2 ->
                     ChronometreScreen(viewModel = viewModel, parkourId = it,
-                        it1
+                        it2
                     )
                 } }
             }
@@ -45,7 +45,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasRetry:
     val obstacles = viewModel.obstacles.value
     var hasFell by remember { mutableStateOf(false) }
     var lastLapTime by remember { mutableStateOf(0L) }
-
+    var isFinished by remember { mutableStateOf(false) }
     var currentObstacleIndex by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) }
@@ -80,9 +80,11 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasRetry:
                 laps.clear()
                 hasFell = false
                 lastLapTime = 0L
+                isFinished = false
             },
             hasRetry = hasRetry,
             hasFell = hasFell,
+            isFinished = isFinished,
             onRestart = {
                 hasFell = true
                 if(laps.isNotEmpty()){
@@ -101,6 +103,8 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasRetry:
 
                     if (currentObstacleIndex == obstacles.size - 1) {
                         isRunning = false
+                        isFinished = true
+
                     } else {
                         currentObstacleIndex++
                     }
@@ -148,7 +152,8 @@ fun ChronometerButtons(
     hasFell: Boolean,
     onRestart: () -> Unit,
     onLap: () -> Unit,
-    isLapEnabled: Boolean
+    isLapEnabled: Boolean,
+    isFinished: Boolean
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -161,7 +166,9 @@ fun ChronometerButtons(
             // Bouton "Démarrer/Pause"
             Button(
                 onClick = onToggle,
+                enabled = !isFinished,
                 modifier = Modifier.weight(1f)
+
             ) {
                 Text(if (isRunning) "Pause" else "Démarrer")
             }
@@ -190,7 +197,7 @@ fun ChronometerButtons(
             if (hasRetry && !isRunning) {
                 Button(
                     onClick = onRestart,
-                    enabled = !hasFell,
+                    enabled = !hasFell && !isFinished,
                     modifier = Modifier.width(200.dp)
                 ) {
                     Text("Recommencer obstacle")
