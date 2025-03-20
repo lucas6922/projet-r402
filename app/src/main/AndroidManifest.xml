@@ -62,9 +62,9 @@
             android:label="Ajout Obstacle"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".database.view.Vue"
+            android:name=".chrono.view.Chronometre"
             android:exported="false"
-            android:label="Vue test"
+            android:label="@string/title_activity_chronometre"
             android:theme="@style/Theme.Parkour" />
         <activity
             android:name=".competition.view.MainActivity"
