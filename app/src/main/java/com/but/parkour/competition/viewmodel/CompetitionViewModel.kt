@@ -9,6 +9,7 @@ import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.CompetitionCreate
+import com.but.parkour.clientkotlin.models.CompetitionUpdate
 import kotlinx.coroutines.launch
 
 class CompetitionViewModel : ViewModel() {
@@ -62,6 +63,29 @@ class CompetitionViewModel : ViewModel() {
                     call,
                     onSuccess = { data, statusCode ->
                         Log.d("CompetitionViewModel", "Competition added: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("CompetitionViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun updateCompetition(competitionId: Int, competition: CompetitionUpdate) {
+        viewModelScope.launch {
+            try {
+                Log.d("CompetitionViewModel", "Updating competition...")
+
+                val call = competitionApi.updateCompetition(competitionId, competition)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("CompetitionViewModel", "Competition updated: $data")
                     },
                     onError = { errorMessage, statusCode ->
                         Log.e("CompetitionViewModel", "Error: $errorMessage")

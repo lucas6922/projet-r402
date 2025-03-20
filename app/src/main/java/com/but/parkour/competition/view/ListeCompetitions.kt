@@ -128,7 +128,7 @@ fun ListCompetitions(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
-            items(items) { item ->
+            items(items) { competition ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -137,18 +137,28 @@ fun ListCompetitions(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = item.name ?: "Unknown",
+                            text = competition.name ?: "Nom inconnu",
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
-                        Button(onClick = { onItemClickInscription(item, context) }) {
+                        Button(onClick = { onItemClickInscription(competition, context) }) {
                             Text("Inscription des concurrents")
                         }
                         Button(
-                            onClick = { onItemClickListeParkours(item, context) },
+                            onClick = { onItemClickListeParkours(competition, context) },
                             modifier = Modifier.padding(top = 8.dp)
                         ) {
                             Text("Liste des parkours")
                         }
+
+                        if(EditionMode.isEnable.value) {
+                            Button(
+                                onClick = { onModifierCompetition(context, competition) },
+                                modifier = Modifier.padding(top = 8.dp)
+                            ) {
+                                Text("Modifier la competition")
+                            }
+                        }
+
                         Button(
                             onClick = {
                                 selectedCompetition = item
@@ -206,6 +216,12 @@ fun onClickSupprimerCompetition(competition: Competition, competitionViewModel: 
 
 fun onClickAjouterCompetition(context: Context) {
     val intent = Intent(context, AjoutCompetition::class.java)
+    context.startActivity(intent)
+}
+
+fun onModifierCompetition(context: Context, competition: Competition){
+    val intent = Intent(context, ModifierCompetition::class.java)
+    intent.putExtra("competition", competition)
     context.startActivity(intent)
 }
 
