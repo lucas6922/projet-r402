@@ -62,6 +62,11 @@
             android:label="Ajout Obstacle"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".database.view.Vue"
+            android:exported="false"
+            android:label="Vue test"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
