@@ -36,6 +36,7 @@ class Chronometre : ComponentActivity() {
 fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: Boolean) {
     val obstacles = viewModel.obstacles.value
     var hasFell by remember { mutableStateOf(false) }
+    var lastLapTime by remember { mutableStateOf(0L) }
 
     var currentObstacleIndex by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(0L) }
@@ -70,16 +71,25 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasTry: B
                 currentObstacleIndex = 0
                 laps.clear()
                 hasFell = false
+                lastLapTime = 0L
             },
             hasTry = hasTry,
             hasFell = hasFell,
             onRestart = {
                 hasFell = true
-                time = if (laps.isNotEmpty()) parseTime(laps.last().second) else 0L
+                if(laps.isNotEmpty()){
+                    time = laps.sumOf { parseTime(it.second) }
+                }
+                else{
+                    time = 0L
+                }
             },
             onLap = {
                 if (obstacles != null && currentObstacleIndex < obstacles.size) {
-                    laps.add(Pair(obstacles[currentObstacleIndex].obstacleName ?: "Inconnu", formatTime(time)))
+                    val lapTime = time - lastLapTime
+                    laps.add(Pair(obstacles[currentObstacleIndex].obstacleName ?: "Inconnu", formatTime(lapTime)))
+
+                    lastLapTime = time
 
                     if (currentObstacleIndex == obstacles.size - 1) {
                         isRunning = false
@@ -168,7 +178,6 @@ fun ChronometerButtons(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Réserve toujours de l'espace pour éviter que la liste des temps ne bouge
         Box(modifier = Modifier.height(48.dp), contentAlignment = Alignment.Center) {
             if (hasTry && !isRunning) {
                 Button(
@@ -187,31 +196,44 @@ fun ChronometerButtons(
 // Liste des temps (laps)
 @Composable
 fun LapList(laps: List<Pair<String, String>>) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(laps) { (obstacleName, lapTime) ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 12.dp)) {
+        // Légende
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Obstacle", style = MaterialTheme.typography.labelLarge)
+            Text(text = "Temps", style = MaterialTheme.typography.labelLarge)
+        }
+
+        // Liste des tours
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(laps) { (obstacleName, lapTime) ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
                 ) {
-                    Text(text = obstacleName, style = MaterialTheme.typography.bodyLarge)
-                    Text(text = lapTime, style = MaterialTheme.typography.bodyLarge)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = obstacleName, style = MaterialTheme.typography.bodyLarge)
+                        Text(text = lapTime, style = MaterialTheme.typography.bodyLarge)
+                    }
                 }
             }
         }
     }
 }
+
 
 // Convertit un temps en String
 fun formatTime(time: Long): String {
