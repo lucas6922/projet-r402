@@ -116,7 +116,7 @@ fun ChronometreScreen(viewModel: ChronometreViewModel, parkourId: Int, hasRetry:
 @Composable
 fun ObstacleDisplay(obstacles: List<CourseObstacle>?, currentObstacleIndex: Int) {
     Text(
-        text = "Obstacle : ${obstacles?.getOrNull(currentObstacleIndex)?.obstacleName ?: "Terminé"}",
+        text = "Obstacle : ${obstacles?.getOrNull(currentObstacleIndex)?.obstacleName ?: ""}",
         style = MaterialTheme.typography.headlineMedium,
         modifier = Modifier
             .fillMaxWidth()
