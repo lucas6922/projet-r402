@@ -161,7 +161,7 @@ fun ListCompetitions(
 
                         Button(
                             onClick = {
-                                selectedCompetition = item
+                                selectedCompetition = competition
                                 showDialog = true
                             },
                             modifier = Modifier.padding(top = 8.dp)
