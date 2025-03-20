@@ -11,6 +11,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -25,12 +26,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
+import com.but.parkour.parkour.view.onClickSupprimerParkour
 import com.but.parkour.ui.theme.ParkourTheme
 
 class MainActivity : ComponentActivity() {
@@ -42,14 +48,14 @@ class MainActivity : ComponentActivity() {
                 val competitionViewModel: CompetitionViewModel = viewModel()
                 val competitions by competitionViewModel.competitions.observeAsState(initial = emptyList())
 
-                Competition(competitions)
+                Competition(competitions, competitionViewModel)
             }
         }
     }
 }
 
 @Composable
-fun Competition(competitions: List<Competition>) {
+fun Competition(competitions: List<Competition>, competitionViewModel: CompetitionViewModel) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -67,7 +73,8 @@ fun Competition(competitions: List<Competition>) {
 
         ListCompetitions(
             items = competitions,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            competitionViewModel = competitionViewModel
         )
 
         if(EditionMode.isEnable.value) {
@@ -88,9 +95,11 @@ fun Competition(competitions: List<Competition>) {
 fun ListCompetitions(
     items: List<Competition>,
     modifier: Modifier = Modifier,
+    competitionViewModel: CompetitionViewModel
 ) {
     val context = LocalContext.current
-
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedCompetition by remember { mutableStateOf<Competition?>(null) }
 
     Column(
         modifier = modifier
@@ -140,10 +149,40 @@ fun ListCompetitions(
                         ) {
                             Text("Liste des parkours")
                         }
+                        Button(
+                            onClick = {
+                                selectedCompetition = item
+                                showDialog = true
+                            },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("Supprimer")
+                        }
                     }
                 }
             }
+
         }
+    }
+    if (showDialog && selectedCompetition != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirmation") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            confirmButton = {
+                Button(onClick = {
+                    selectedCompetition?.let { onClickSupprimerCompetition(it, competitionViewModel) }
+                    showDialog = false
+                }) {
+                    Text("Oui")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Non")
+                }
+            }
+        )
     }
 
 }
@@ -159,6 +198,10 @@ fun onItemClickListeParkours(competition: Competition, context: Context) {
     val intent = Intent(context, ListeParkours::class.java)
     intent.putExtra("competition", competition)
     context.startActivity(intent)
+}
+
+fun onClickSupprimerCompetition(competition: Competition, competitionViewModel: CompetitionViewModel) {
+    competitionViewModel.removeCompetition(competition.id!!)
 }
 
 fun onClickAjouterCompetition(context: Context) {

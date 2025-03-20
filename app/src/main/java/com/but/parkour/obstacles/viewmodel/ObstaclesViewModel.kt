@@ -128,4 +128,28 @@ class ObstaclesViewModel : ViewModel() {
             }
         }
     }
+
+    fun removeObstacle(obstacleId: Int) {
+        viewModelScope.launch {
+            try {
+                Log.d("ObstaclesViewModel", "Removing obstacle...")
+
+                val call = obstacleApi.deleteObstacle(obstacleId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, _ ->
+                        Log.d("ObstaclesViewModel", "obstacle removed: $data")
+                        fetchAllObstacles()
+                    },
+                    onError = { errorMessage, _ ->
+                        Log.e("ObstaclesViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ObstaclesViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
 }

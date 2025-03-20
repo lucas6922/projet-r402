@@ -77,6 +77,7 @@ fun InscriptionPage(
 
     val context = LocalContext.current
 
+
     LaunchedEffect(competitorsInscrit) {
         participants = competitorsInscrit
     }
@@ -92,7 +93,10 @@ fun InscriptionPage(
         ListParticipants(
             concurrents = participants,
             modifier = Modifier.weight(1f),
-            onItemClick = {}
+            onItemClick = {},
+            competitionId = competitionId,
+            competitorViewModel = competitorViewModel,
+            buttonSupp = true
         )
         CompetitorDropdown(
             selectedCompetitor = selectedCompetitor,
@@ -169,6 +173,7 @@ fun CompetitorDropdown(
     onCompetitorSelected: (Competitor) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
     onExpandedChanged: (Boolean) -> Unit,
+
 ) {
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -211,8 +216,13 @@ fun ListParticipants(
     concurrents: List<Competitor>,
     modifier: Modifier = Modifier,
     onItemClick: (String) -> Unit,
-    onChronoClick: ((Competitor) -> Unit)? = null
+    onChronoClick: ((Competitor) -> Unit)? = null,
+    competitionId: Int?,
+    competitorViewModel: CompetitorViewModel?,
+    buttonSupp: Boolean
 ) {
+    var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -232,6 +242,12 @@ fun ListParticipants(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
+                    if(buttonSupp) {
+                        Button(onClick = {
+                            selectedCompetitor = competitor
+                            showDialog = true
+                        }) { Text("Supprimer") }
+                    }
                     if (onChronoClick != null) {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Spacer(modifier = Modifier.width(8.dp))
@@ -247,6 +263,34 @@ fun ListParticipants(
             }
         }
     }
+    if(showDialog && selectedCompetitor != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirmation") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            confirmButton = {
+                Button(onClick = {
+                    selectedCompetitor?.let { onClickSupprimerCompetitor(it, competitionId, competitorViewModel!!) }
+                    showDialog = false
+                }) {
+                    Text("Oui")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Non")
+                }
+            }
+        )
+    }
+}
+
+fun onClickSupprimerCompetitor(
+    it: Competitor,
+    competitionId: Int?,
+    competitorViewModel: CompetitorViewModel
+) {
+    competitorViewModel.unregisterCompetitior(competitionId!!, it.id!!)
 }
 
 @Composable

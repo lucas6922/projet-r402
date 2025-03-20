@@ -72,4 +72,27 @@ class ParkourViewModel : ViewModel() {
             }
         }
     }
+
+    fun removeCourse(courseId: Int) {
+        viewModelScope.launch {
+            try {
+                Log.d("ParkourViewModel", "Removing course...")
+
+                val call = courseApi.deleteCourse(courseId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ParkourViewModel", "course removed: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ParkourViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ParkourViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
 }

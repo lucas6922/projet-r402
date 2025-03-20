@@ -162,4 +162,25 @@ class CompetitorViewModel : ViewModel() {
         }
     }
 
+    fun unregisterCompetitior(competitionId: Int, competitorId: Int){
+        viewModelScope.launch {
+            try {
+                val call = competitionApi.removeCompetitorFromCompetition(competitionId, competitorId)
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, _ ->
+                        Log.d("CompetitorViewModel", "Competitor unregistered: $data")
+                        fetchCompetitorsInscrit(competitionId)
+                        fetchUnregisteredCompetitors(competitionId)
+                    },
+                    onError = { errorMessage, _ ->
+                        Log.e("CompetitorViewModel", "Error: $errorMessage")
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
 }

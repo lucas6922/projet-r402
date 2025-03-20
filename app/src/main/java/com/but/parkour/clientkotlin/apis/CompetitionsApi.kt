@@ -39,6 +39,10 @@ interface CompetitionsApi {
     @DELETE("api/competitions/{id}")
     fun deleteCompetition(@Path("id") id: Int): Call<Unit>
 
+
+    @DELETE("api/competitions/{id}/remove_competitor")
+    fun removeCompetitorFromCompetition(@Path("id") id: Int, @Body competitorId: Int): Call<Unit>
+
     /**
      * GET api/competitions
      * List of every competitions you have access.

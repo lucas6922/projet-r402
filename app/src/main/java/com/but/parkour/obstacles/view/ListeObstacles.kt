@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
@@ -42,6 +43,7 @@ import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import androidx.compose.runtime.*
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
 import com.but.parkour.clientkotlin.models.Obstacle
+import okhttp3.internal.notifyAll
 
 class ListeObstacles : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +63,8 @@ class ListeObstacles : ComponentActivity() {
                 val obstaclesCourse by obstacleViewModel.obstaclesCourse.observeAsState(initial = emptyList())
                 ObstaclesPage(
                     obstacles = obstaclesCourse,
-                    parkour = parkour
+                    parkour = parkour,
+                    obstacleViewModel = obstacleViewModel
                 )
             }
         }
@@ -72,7 +75,8 @@ class ListeObstacles : ComponentActivity() {
 fun ObstaclesPage(
     obstacles: List<CourseObstacle>,
     modifier: Modifier = Modifier,
-    parkour: Course?
+    parkour: Course?,
+    obstacleViewModel: ObstaclesViewModel
 ) {
     if(parkour == null) {
         Text("Aucune course dans ce parkour")
@@ -89,7 +93,8 @@ fun ObstaclesPage(
             )
             ListObstacles(
                 obstacles = obstacles,
-                modifier = modifier.weight(1f)
+                modifier = modifier.weight(1f),
+                obstacleViewModel = obstacleViewModel
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -104,7 +109,10 @@ fun ObstaclesPage(
 fun ListObstacles(
     obstacles : List<CourseObstacle>,
     modifier: Modifier = Modifier,
+    obstacleViewModel: ObstaclesViewModel
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -122,10 +130,39 @@ fun ListObstacles(
                     text = item.obstacleName ?: "Unknown",
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+
+                Button(onClick = {
+                    selectedObstacle = item
+                    showDialog = true
+                }) {
+                    Text("Supprimer")
+                }
             }
         }
     }
+    if (showDialog && selectedObstacle != null) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirmation") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            confirmButton = {
+                Button(onClick = {
+                    selectedObstacle?.let { onClickSupprimer(it, obstacleViewModel) }
+                    showDialog = false
+                }) {
+                    Text("Oui")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("Non")
+                }
+            }
+        )
+    }
 }
+
+
 
 
 @Composable
@@ -216,7 +253,16 @@ fun CreerObstacleButton(course: Course) {
     }
 }
 
+fun onClickSupprimer(item: CourseObstacle, obstacleViewModel: ObstaclesViewModel) {
+    val allObstacles = obstacleViewModel.allObstacles
+    val allObstaclesList = allObstacles.value ?: emptyList()
+    for (obstacle in allObstaclesList){
+        if (obstacle.name == item.obstacleName){
+            obstacleViewModel.removeObstacle((obstacle.id!!))
+        }
+    }
 
+}
 
 fun onCreerObstacleClick(context : Context, course: Course) {
     val intent = Intent(context, AjoutObstacles::class.java)

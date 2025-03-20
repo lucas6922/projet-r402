@@ -74,4 +74,27 @@ class CompetitionViewModel : ViewModel() {
         }
     }
 
+    fun removeCompetition(competitionId: Int) {
+        viewModelScope.launch {
+            try {
+                Log.d("CompetitionViewModel", "Removing competition...")
+
+                val call = competitionApi.deleteCompetition(competitionId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, _ ->
+                        Log.d("CompetitionViewModel", "Competition removed: $data")
+                    },
+                    onError = { errorMessage, _ ->
+                        Log.e("CompetitionViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
 }

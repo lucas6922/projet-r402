@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -36,8 +37,13 @@ import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.obstacles.view.onClickSupprimer
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +64,8 @@ class ListeParkours : ComponentActivity() {
                 ParkoursPage(
                     competition?.name ?: "Unknown",
                     courses,
-                    competition
+                    competition,
+                    parkourViewModel
                 )
             }
         }
@@ -71,10 +78,13 @@ class ListeParkours : ComponentActivity() {
 fun ListParkours(
     courses: List<Course>,
     modifier: Modifier = Modifier,
-    competition: Competition
+    competition: Competition,
+    parkourViewModel: ParkourViewModel
 ) {
     Log.d("ListeParkours", "competition: $competition")
     val context = LocalContext.current
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedParkour by remember { mutableStateOf<Course?>(null) }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -105,8 +115,32 @@ fun ListParkours(
                     ) {
                         Text("Liste des concurrents")
                     }
+                    Button(onClick = {
+                        selectedParkour = course
+                        showDialog = true
+                    }) { Text("Supprimer")}
                 }
 
+            }
+            if (showDialog && selectedParkour != null) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Confirmation") },
+                    text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+                    confirmButton = {
+                        Button(onClick = {
+                            selectedParkour?.let { onClickSupprimerParkour(it, parkourViewModel) }
+                            showDialog = false
+                        }) {
+                            Text("Oui")
+                        }
+                    },
+                    dismissButton = {
+                        Button(onClick = { showDialog = false }) {
+                            Text("Non")
+                        }
+                    }
+                )
             }
         }
     }
@@ -119,6 +153,10 @@ fun ListParkours(
             Text(text = "Ajouter une course")
         }
     }
+}
+
+fun onClickSupprimerParkour(course : Course, parkourViewModel: ParkourViewModel) {
+    parkourViewModel.removeCourse(course.id!!)
 }
 
 fun onItemClickCourseConcurrent(competition: Competition, context: Context, course: Course) {
@@ -146,7 +184,8 @@ fun onItemClickListeObstacles(context : Context, course : Course) {
 fun ParkoursPage(
     compet: String,
     courses: List<Course>,
-    competition: Competition?
+    competition: Competition?,
+    parkourViewModel: ParkourViewModel
 ) {
 
     if(competition == null) {
@@ -169,7 +208,8 @@ fun ParkoursPage(
             ListParkours(
                 courses = courses,
                 modifier = Modifier.weight(1f),
-                competition = competition
+                competition = competition,
+                parkourViewModel = parkourViewModel
             )
         }
     }
