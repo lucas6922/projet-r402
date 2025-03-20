@@ -67,6 +67,11 @@
             android:label="@string/title_activity_chronometre"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".competition.view.ModifierCompetition"
+            android:exported="false"
+            android:label="Modifier competition"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
