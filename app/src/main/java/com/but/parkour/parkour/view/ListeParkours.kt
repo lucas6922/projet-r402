@@ -100,7 +100,7 @@ fun ListParkours(
                         Text("Liste des obstacles")
                     }
                     Button(
-                        onClick = { onItemClickCourseConcurrent(competition, context) },
+                        onClick = { onItemClickCourseConcurrent(competition, context, course) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text("Liste des concurrents")
@@ -121,10 +121,11 @@ fun ListParkours(
     }
 }
 
-fun onItemClickCourseConcurrent(competition: Competition, context: Context) {
+fun onItemClickCourseConcurrent(competition: Competition, context: Context, course: Course) {
     Log.d("     ListeParkours", "competition: $competition")
     val intent = Intent(context, ListeConcurrents::class.java)
     intent.putExtra("competition", competition)
+    intent.putExtra("course", course)
     context.startActivity(intent)
 }
 

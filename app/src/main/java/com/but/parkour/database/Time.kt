@@ -5,8 +5,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Time(
-    @PrimaryKey (autoGenerate = true) var id: Int = 0,
-    var courseId: Int = 0,
-    var competitorId: Int = 0,
+    @PrimaryKey (autoGenerate = true) var id: Int,
+    var courseId: Int,
+    var competitorId: Int,
     var times: ArrayList<Int> = ArrayList<Int>(),
+    var totalTime: Int,
 )

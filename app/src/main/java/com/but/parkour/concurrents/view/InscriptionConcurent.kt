@@ -210,26 +210,40 @@ fun CompetitorDropdown(
 fun ListParticipants(
     concurrents: List<Competitor>,
     modifier: Modifier = Modifier,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    onChronoClick: ((Competitor) -> Unit)? = null
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
     ) {
-        items(concurrents) { item ->
+        items(concurrents) { competitor ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
-                    .clickable { onItemClick(item.firstName ?: "Unknown") }
                     .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
                     .padding(4.dp)
             ) {
-                Text(
-                    text = item.firstName ?: "Unknown",
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                    Text(
+                        text = "${competitor.firstName} ${competitor.lastName}",
+                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    if (onChronoClick != null) {
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Button(
+                                onClick = { onChronoClick(competitor) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Chronométrer")
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -9,7 +9,7 @@ import androidx.room.Update
 @Dao
 interface TimeDAO {
     @Insert fun insert(vararg time: Time)
-    //timeDAO.insert(Time(courseId=x,competitorId=x,times=ArrayList))
+    //timeDAO.insert(Time(courseId=x,competitorId=x,times=ArrayList,totalTime=x))
 
     @Update fun update(vararg time: Time)
     //timeDAO.update(Time(id=id, times=ArrayList))
