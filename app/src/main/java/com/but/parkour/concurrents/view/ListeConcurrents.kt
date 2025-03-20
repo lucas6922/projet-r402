@@ -94,7 +94,7 @@ fun ConcurrentPage(competition: Competition, course: Course) {
             modifier = Modifier.weight(1f),
             onItemClick = { /* Gérer l'item click */ },
             onChronoClick = { competitor ->
-                onItemClickChrono(competition, course, context)
+                onItemClickChrono(competition, course, competitor, context)
             }
         )
 
@@ -104,9 +104,10 @@ fun ConcurrentPage(competition: Competition, course: Course) {
 
 
 
-fun onItemClickChrono(competition: Competition, course: Course, context: Context) {
+fun onItemClickChrono(competition: Competition, course: Course, competitor: Competitor, context: Context) {
     val intent = Intent(context, Chronometre::class.java).apply {
         putExtra("competition", competition)
+        putExtra("competitorId", competitor.id)
         putExtra("course", course)
     }
     context.startActivity(intent)

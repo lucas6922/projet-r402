@@ -7,8 +7,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CoursesApi
+import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
+import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
+import com.but.parkour.clientkotlin.models.CompetitionCreate
 import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.clientkotlin.models.PerformanceCreate
+import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
 import kotlinx.coroutines.launch
 
 class ChronometreViewModel : ViewModel() {
@@ -20,6 +25,8 @@ class ChronometreViewModel : ViewModel() {
     )
 
     private val courseApi = apiClient.createService(CoursesApi::class.java)
+    private val perfApi = apiClient.createService(PerformancesApi::class.java)
+    private val perfObstacleApi = apiClient.createService(PerformanceObstaclesApi::class.java)
 
     fun fetchObstacles(parkourId: Int) {
         viewModelScope.launch {
@@ -41,6 +48,52 @@ class ChronometreViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
                 _obstacles.postValue(emptyList())
+            }
+        }
+    }
+
+    fun addPerformance(performance: PerformanceCreate) {
+        viewModelScope.launch {
+            try {
+                Log.d("ChronometreViewModel", "Adding performance...")
+
+                val call = perfApi.addPerformance(performance)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ChronometreViewModel", "Performance added: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ChronometreViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun addPerformanceObstacle(performance: PerformanceObstacleCreate) {
+        viewModelScope.launch {
+            try {
+                Log.d("ChronometreViewModel", "Adding PerformanceObstacle ...")
+
+                val call = perfObstacleApi.createPerformanceObstacle(performance)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ChronometreViewModel", "PerformanceObstacle added: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ChronometreViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
             }
         }
     }
