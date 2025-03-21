@@ -7,13 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
-import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCompetitorRequest
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import kotlinx.coroutines.launch
-
+import java.time.LocalDate
+import java.time.Period
+import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 class CompetitorViewModel : ViewModel() {
     private val _competitors = MutableLiveData<List<Competitor>>()
     val competitors: LiveData<List<Competitor>> = _competitors
@@ -58,10 +62,25 @@ class CompetitorViewModel : ViewModel() {
         }
     }
 
+    private suspend fun getCompetitionDetails(competitionId: Int): Competition = suspendCoroutine { continuation ->
+        val call = competitionApi.getCompetitionDetails(competitionId)
+        apiClient.fetchData(
+            call,
+            onSuccess = { data, _ ->
+                continuation.resume(data ?: Competition())
+            },
+            onError = { errorMessage, _ ->
+                continuation.resumeWithException(Exception(errorMessage))
+            }
+        )
+    }
 
     fun fetchUnregisteredCompetitors(competitionId: Int) {
         viewModelScope.launch {
             try {
+                val competition = getCompetitionDetails(competitionId)
+                Log.d("CompetitorViewModel", "Competition fetched: $competition")
+
                 apiClient.fetchData(
                     call = competitorApi.getAllCompetitors(),
                     onSuccess = { allCompetitors, _ ->
@@ -69,10 +88,12 @@ class CompetitorViewModel : ViewModel() {
                             call = competitionApi.getCompetitionInscriptions(competitionId),
                             onSuccess = { registeredCompetitors, _ ->
                                 val unregisteredCompetitors = allCompetitors?.filter { competitor ->
-                                    registeredCompetitors?.none { it.id == competitor.id } != false
+                                    registeredCompetitors?.none { it.id == competitor.id } != false &&
+                                            isCompetitorInAgeRange(competitor, competition) &&
+                                            isCompetitorOfCorrectGender(competitor, competition)
                                 } ?: emptyList()
                                 _unregisteredCompetitors.postValue(unregisteredCompetitors)
-                                Log.d("CompetitorViewModel", "Competitors unregistred fetch : $unregisteredCompetitors")
+                                Log.d("CompetitorViewModel", "Competitors unregistered fetch: $unregisteredCompetitors")
                             },
                             onError = { _, _ ->
                                 _unregisteredCompetitors.postValue(emptyList())
@@ -89,6 +110,20 @@ class CompetitorViewModel : ViewModel() {
             }
         }
     }
+    private fun isCompetitorOfCorrectGender(competitor: Competitor, competition: Competition): Boolean {
+        return competition.gender == null || competition.gender.value == competitor.gender?.value
+    }
+
+    private fun isCompetitorInAgeRange(competitor: Competitor, competition: Competition): Boolean {
+        val age = calculateAge(competitor.bornAt)
+        return age in (competition.ageMin ?: 0)..(competition.ageMax ?: Int.MAX_VALUE)
+    }
+
+    private fun calculateAge(bornAt: LocalDate?): Int {
+        if (bornAt == null) return 0
+        return Period.between(bornAt, LocalDate.now()).years
+    }
+
 
     fun registerCompetitor(competitionId: Int, competitorId: Int) {
         viewModelScope.launch {
