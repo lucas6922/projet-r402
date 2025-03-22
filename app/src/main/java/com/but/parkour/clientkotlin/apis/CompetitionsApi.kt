@@ -40,8 +40,21 @@ interface CompetitionsApi {
     fun deleteCompetition(@Path("id") id: Int): Call<Unit>
 
 
-    @DELETE("api/competitions/{id}/remove_competitor")
-    fun removeCompetitorFromCompetition(@Path("id") id: Int, @Body competitorId: Int): Call<Unit>
+    /**
+     * DELETE api/competitions/{id}/remove_competitor/{id_competitor}
+     * Remove a competitor from the competition
+     *
+     * Responses:
+     *  - 200: Competitor successfully removed.
+     *  - 404: Competition or competitor not found
+     *  - 422: Incorrect body parameters
+     *
+     * @param id Competition ID in the database
+     * @param idCompetitor Competitor ID in the database
+     * @return [Call]<[Unit]>
+     */
+    @DELETE("api/competitions/{id}/remove_competitor/{id_competitor}")
+    fun removeCompetitorFromCompetition(@Path("id") id: Int, @Path("id_competitor") idCompetitor: Int): Call<Unit>
 
     /**
      * GET api/competitions
