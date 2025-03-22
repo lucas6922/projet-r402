@@ -72,6 +72,11 @@
             android:label="Modifier competition"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".concurrents.view.GestionConcurrents"
+            android:exported="false"
+            android:label="Gestion concurrents"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"

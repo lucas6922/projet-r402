@@ -34,6 +34,7 @@ import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
+import com.but.parkour.concurrents.view.GestionConcurrents
 import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
 import com.but.parkour.parkour.view.onClickSupprimerParkour
@@ -78,13 +79,25 @@ fun Competition(competitions: List<Competition>, competitionViewModel: Competiti
         )
 
         if(EditionMode.isEnable.value) {
-            Button(
-                onClick = { onClickAjouterCompetition(context) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = "Ajouter une competition"
-                )
+            Column {
+                Button(
+                    onClick = { onClickAjouterCompetition(context) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Ajouter une competition"
+                    )
+                }
+
+                Button(
+                    onClick = { onGestionConcurrents(context) },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Gerer les concurrents"
+                    )
+                }
+
             }
         }
 
@@ -178,7 +191,7 @@ fun ListCompetitions(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer ce concurrent de cette competition ?") },
             confirmButton = {
                 Button(onClick = {
                     selectedCompetition?.let { onClickSupprimerCompetition(it, competitionViewModel) }
@@ -222,6 +235,11 @@ fun onClickAjouterCompetition(context: Context) {
 fun onModifierCompetition(context: Context, competition: Competition){
     val intent = Intent(context, ModifierCompetition::class.java)
     intent.putExtra("competition", competition)
+    context.startActivity(intent)
+}
+
+fun onGestionConcurrents(context: Context) {
+    val intent = Intent(context, GestionConcurrents::class.java)
     context.startActivity(intent)
 }
 
