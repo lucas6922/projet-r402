@@ -75,7 +75,7 @@ fun InscriptionPage(
     var participants by remember { mutableStateOf(emptyList<Competitor>()) }
     var searchQuery by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
+    val competitionStatus = competition?.status
 
 
     LaunchedEffect(competitorsInscrit) {
@@ -96,64 +96,46 @@ fun InscriptionPage(
             onItemClick = {},
             competitionId = competitionId,
             competitorViewModel = competitorViewModel,
-            buttonSupp = true
-        )
-        CompetitorDropdown(
-            selectedCompetitor = selectedCompetitor,
-            expanded = expanded,
-            searchQuery = searchQuery,
-            competitors = unregisteredCompetitors,
-            onCompetitorSelected = { competitor ->
-                selectedCompetitor = competitor
-                expanded = false
-            },
-            onSearchQueryChanged = { query ->
-                searchQuery = query
-            },
-            onExpandedChanged = { isExpanded ->
-                expanded = isExpanded
-            },
         )
 
-
-        if(EditionMode.isEnable.value) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    competition?.let{
-                        onAjoutConcurrentClick(context, competition)
-                    }
+        if(competitionStatus == Competition.Status.not_ready) {
+            CompetitorDropdown(
+                selectedCompetitor = selectedCompetitor,
+                expanded = expanded,
+                searchQuery = searchQuery,
+                competitors = unregisteredCompetitors,
+                onCompetitorSelected = { competitor ->
+                    selectedCompetitor = competitor
+                    expanded = false
                 },
-                modifier = Modifier.fillMaxWidth(),
+                onSearchQueryChanged = { query ->
+                    searchQuery = query
+                },
+                onExpandedChanged = { isExpanded ->
+                    expanded = isExpanded
+                },
+            )
 
-                ) {
-                Text(text = "Creer un nouveau concurrent")
-            }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        InscriptionButton(
-            selectedCompetitor = selectedCompetitor,
-            onInscription = {
-                selectedCompetitor?.let { competitor ->
-                    competitionId?.let { id ->
-                        if(competitor.id != null){
-                            competitorViewModel.registerCompetitor(id, competitor.id)
-                            selectedCompetitor = null
-                            searchQuery = ""
+            Spacer(modifier = Modifier.height(16.dp))
+            InscriptionButton(
+                selectedCompetitor = selectedCompetitor,
+                onInscription = {
+                    selectedCompetitor?.let { competitor ->
+                        competitionId?.let { id ->
+                            if (competitor.id != null) {
+                                competitorViewModel.registerCompetitor(id, competitor.id)
+                                selectedCompetitor = null
+                                searchQuery = ""
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
-private fun onAjoutConcurrentClick(context: Context, competition: Competition) {
-    val intent = Intent(context, AjoutConcurrent::class.java)
-    intent.putExtra("competition", competition)
-    context.startActivity(intent)
-}
 
 @Composable
 fun HeaderText(compet: String) {
@@ -219,7 +201,6 @@ fun ListParticipants(
     onChronoClick: ((Competitor) -> Unit)? = null,
     competitionId: Int?,
     competitorViewModel: CompetitorViewModel?,
-    buttonSupp: Boolean
 ) {
     var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
     var showDialog by remember { mutableStateOf(false) }
@@ -242,7 +223,7 @@ fun ListParticipants(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    if(buttonSupp) {
+                    if(EditionMode.isEnable.value) {
                         Button(onClick = {
                             selectedCompetitor = competitor
                             showDialog = true

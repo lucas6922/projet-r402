@@ -17,7 +17,7 @@
         android:theme="@style/Theme.Parkour"
         tools:targetApi="31">
         <activity
-            android:name=".concurrents.view.ListeConcurrents"
+            android:name=".concurrents.view.ListeConcurrentsParkour"
             android:exported="false"
             android:label="@string/title_activity_liste_concurrents"
             android:theme="@style/Theme.Parkour" />
@@ -80,6 +80,11 @@
             android:name=".concurrents.view.ModifierConcurrent"
             android:exported="false"
             android:label="Modifier concurrents"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".competition.view.DetailsCompetition"
+            android:exported="false"
+            android:label="Details competition"
             android:theme="@style/Theme.Parkour" />
         <activity
             android:name=".competition.view.MainActivity"

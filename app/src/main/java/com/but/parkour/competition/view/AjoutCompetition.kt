@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -41,7 +42,9 @@ class AjoutCompetition : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ParkourTheme {
-                AjtCompetPage()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    AjtCompetPage(modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }
@@ -59,7 +62,7 @@ fun AjtCompetPage(modifier: Modifier = Modifier) {
     var errorMessage by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = "Ajouter une competition",
             modifier = Modifier.padding(32.dp)

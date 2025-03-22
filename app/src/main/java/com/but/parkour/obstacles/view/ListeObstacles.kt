@@ -50,6 +50,7 @@ class ListeObstacles : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val parkour = intent.getSerializableExtra("parkour") as? Course
+        val competitionStatus = intent.getStringExtra("competitionStatus")
         val parkourId = parkour?.id
         Log.d("ListeParkour", "Parkour: $parkour")
         setContent {
@@ -64,7 +65,8 @@ class ListeObstacles : ComponentActivity() {
                 ObstaclesPage(
                     obstacles = obstaclesCourse,
                     parkour = parkour,
-                    obstacleViewModel = obstacleViewModel
+                    obstacleViewModel = obstacleViewModel,
+                    competitionStatus = competitionStatus ?: ""
                 )
             }
         }
@@ -76,7 +78,8 @@ fun ObstaclesPage(
     obstacles: List<CourseObstacle>,
     modifier: Modifier = Modifier,
     parkour: Course?,
-    obstacleViewModel: ObstaclesViewModel
+    obstacleViewModel: ObstaclesViewModel,
+    competitionStatus: String
 ) {
     if(parkour == null) {
         Text("Aucune course dans ce parkour")
@@ -94,12 +97,13 @@ fun ObstaclesPage(
             ListObstacles(
                 obstacles = obstacles,
                 modifier = modifier.weight(1f),
-                obstacleViewModel = obstacleViewModel
+                obstacleViewModel = obstacleViewModel,
+                competitionStatus = competitionStatus
             )
             Spacer(modifier = Modifier.height(16.dp))
 
             if (EditionMode.isEnable.value) {
-                AjoutObstacle(parkour)
+                AjoutObstacle(parkour, competitionStatus)
             }
         }
     }
@@ -109,7 +113,8 @@ fun ObstaclesPage(
 fun ListObstacles(
     obstacles : List<CourseObstacle>,
     modifier: Modifier = Modifier,
-    obstacleViewModel: ObstaclesViewModel
+    obstacleViewModel: ObstaclesViewModel,
+    competitionStatus: String
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
@@ -131,12 +136,16 @@ fun ListObstacles(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                Button(onClick = {
-                    selectedObstacle = item
-                    showDialog = true
-                }) {
-                    Text("Supprimer")
+                if(EditionMode.isEnable.value && competitionStatus.equals("not_ready")) {
+                    Button(onClick = {
+                        selectedObstacle = item
+                        showDialog = true
+                    }) {
+                        Text("Supprimer")
+                    }
                 }
+
+
             }
         }
     }
@@ -166,8 +175,11 @@ fun ListObstacles(
 
 
 @Composable
-fun AjoutObstacle(parkour: Course){
-    DropDownMenuObstacle(parkour.id)
+fun AjoutObstacle(parkour: Course, competitionStatus: String){
+
+    if(competitionStatus.equals("not_ready")) {
+        DropDownMenuObstacle(parkour.id)
+    }
     CreerObstacleButton(parkour)
 }
 

@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
-import com.but.parkour.concurrents.view.ListeConcurrents
+import com.but.parkour.concurrents.view.ListeConcurrentsParkour
 import com.but.parkour.obstacles.view.ListeObstacles
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,8 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
-import com.but.parkour.clientkotlin.models.CourseObstacle
-import com.but.parkour.obstacles.view.onClickSupprimer
 
 class ListeParkours : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +82,9 @@ fun ListParkours(
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var selectedParkour by remember { mutableStateOf<Course?>(null) }
+
+    val competitionStatus = competition.status
+
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -104,7 +104,7 @@ fun ListParkours(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Button(
-                        onClick = { onItemClickListeObstacles(context, course) },
+                        onClick = { onItemClickListeObstacles(context, course, competition.status?.value!!) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
                         Text("Liste des obstacles")
@@ -115,10 +115,18 @@ fun ListParkours(
                     ) {
                         Text("Liste des concurrents")
                     }
-                    Button(onClick = {
-                        selectedParkour = course
-                        showDialog = true
-                    }) { Text("Supprimer")}
+
+                    if(EditionMode.isEnable.value) {
+                        Button(
+                            onClick = {
+                                selectedParkour = course
+                                showDialog = true
+                            },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text("Supprimer")
+                        }
+                    }
                 }
 
             }
@@ -126,7 +134,7 @@ fun ListParkours(
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
                     title = { Text("Confirmation") },
-                    text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+                    text = { Text("Êtes-vous sûr de vouloir supprimer cette course ?") },
                     confirmButton = {
                         Button(onClick = {
                             selectedParkour?.let { onClickSupprimerParkour(it, parkourViewModel) }
@@ -145,7 +153,7 @@ fun ListParkours(
         }
     }
 
-    if(EditionMode.isEnable.value) {
+    if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
         Button(
             onClick = {onItemClickAddCourse(context, competition)},
             modifier = Modifier.fillMaxWidth()
@@ -156,12 +164,12 @@ fun ListParkours(
 }
 
 fun onClickSupprimerParkour(course : Course, parkourViewModel: ParkourViewModel) {
-    parkourViewModel.removeCourse(course.id!!)
+    parkourViewModel.removeCourse(course.id!!, course.competitionId!!)
 }
 
 fun onItemClickCourseConcurrent(competition: Competition, context: Context, course: Course) {
     Log.d("     ListeParkours", "competition: $competition")
-    val intent = Intent(context, ListeConcurrents::class.java)
+    val intent = Intent(context, ListeConcurrentsParkour::class.java)
     intent.putExtra("competition", competition)
     intent.putExtra("course", course)
     context.startActivity(intent)
@@ -173,9 +181,10 @@ fun onItemClickAddCourse(context: Context, competition: Competition) {
     context.startActivity(intent)
 }
 
-fun onItemClickListeObstacles(context : Context, course : Course) {
+fun onItemClickListeObstacles(context : Context, course : Course, competitionStatus: String) {
     val intent = Intent(context, ListeObstacles::class.java)
     intent.putExtra("parkour", course)
+    intent.putExtra("competitionStatus", competitionStatus)
     context.startActivity(intent)
 }
 

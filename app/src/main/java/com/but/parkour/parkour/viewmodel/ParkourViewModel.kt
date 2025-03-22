@@ -73,7 +73,7 @@ class ParkourViewModel : ViewModel() {
         }
     }
 
-    fun removeCourse(courseId: Int) {
+    fun removeCourse(courseId: Int, competitionId: Int) {
         viewModelScope.launch {
             try {
                 Log.d("ParkourViewModel", "Removing course...")
@@ -84,6 +84,7 @@ class ParkourViewModel : ViewModel() {
                     call,
                     onSuccess = { data, statusCode ->
                         Log.d("ParkourViewModel", "course removed: $data")
+                        fetchCourses(competitionId)
                     },
                     onError = { errorMessage, statusCode ->
                         Log.e("ParkourViewModel", "Error: $errorMessage")

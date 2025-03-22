@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.but.parkour.chrono.view.Chronometre
 import com.but.parkour.clientkotlin.models.Competition
 
-class ListeConcurrents : ComponentActivity() {
+class ListeConcurrentsParkour : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -84,7 +84,6 @@ fun ConcurrentPage(competition: Competition, course: Course) {
             },
             competitionId = null,
             competitorViewModel = competitorViewModel,
-            buttonSupp = false
         )
 
     }
