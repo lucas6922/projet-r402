@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,15 +38,19 @@ class ListeConcurrentsParkour : ComponentActivity() {
         val competition = intent.getSerializableExtra("competition") as Competition
         val course = intent.getSerializableExtra("course") as Course
         setContent {
-            ParkourTheme {
-                ConcurrentPage(competition, course)
+            Scaffold(modifier = Modifier.fillMaxSize()){ innerPadding ->
+                ConcurrentPage(
+                    modifier = Modifier.padding(innerPadding),
+                    competition,
+                    course
+                )
             }
         }
     }
 }
 
 @Composable
-fun ConcurrentPage(competition: Competition, course: Course) {
+fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, course: Course) {
     val competitorViewModel: CompetitorViewModel = viewModel()
     val participants by competitorViewModel.competitorsCourse.observeAsState(emptyList())
 
@@ -56,7 +61,7 @@ fun ConcurrentPage(competition: Competition, course: Course) {
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
             .padding(top = 32.dp, bottom = 32.dp)

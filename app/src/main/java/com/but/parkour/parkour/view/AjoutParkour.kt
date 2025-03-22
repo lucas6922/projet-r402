@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,18 +37,24 @@ class AjoutParkour : ComponentActivity() {
         val competition = intent.getSerializableExtra("competition") as? Competition
         setContent {
             ParkourTheme {
-                competition?.let {
-                    AjtParkourPage(it)
-                } ?: run {
-                    Text("Aucune compétition trouvée")
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    competition?.let {
+                        AjtParkourPage(
+                            modifier = Modifier.padding(innerPadding),
+                            competition = it
+                        )
+                    } ?: run {
+                        Text("Aucune compétition trouvée")
+                    }
                 }
+
             }
         }
     }
 }
 
 @Composable
-fun AjtParkourPage(competition: Competition) {
+fun AjtParkourPage(modifier: Modifier = Modifier, competition: Competition) {
     var nom by remember { mutableStateOf("") }
     var dureeMax by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }

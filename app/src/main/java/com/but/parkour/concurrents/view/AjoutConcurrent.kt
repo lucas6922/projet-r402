@@ -29,15 +29,18 @@ class AjoutConcurrent : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val competition = intent.getSerializableExtra("competition") as? Competition
         setContent {
-            ParkourTheme {
-                AjoutConcurrentForm(competition)
+            Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            AjoutConcurrentForm(
+                    modifier = Modifier.padding(innerPadding),
+                    competition = competition
+                )
             }
         }
     }
 }
 
 @Composable
-fun AjoutConcurrentForm(competition: Competition?) {
+fun AjoutConcurrentForm(modifier: Modifier = Modifier, competition: Competition?) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -49,7 +52,7 @@ fun AjoutConcurrentForm(competition: Competition?) {
 
     val context = LocalContext.current
 
-    Column(modifier = Modifier
+    Column(modifier = modifier
         .fillMaxSize()
         .padding(16.dp)) {
         Text("Ajouter un concurrent", style = MaterialTheme.typography.titleLarge)
@@ -195,7 +198,7 @@ private fun verifChamps(
 
     var validDate: Boolean
     try {
-        val date = LocalDate.parse(bornAt)
+        LocalDate.parse(bornAt)
         validDate = true
     }catch (e: Exception){
         validDate = false

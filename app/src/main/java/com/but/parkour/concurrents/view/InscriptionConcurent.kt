@@ -47,14 +47,18 @@ class InscriptionConcurent : ComponentActivity() {
                 }
                 val competitors by competitorViewModel.competitors.observeAsState(initial = emptyList())
                 val unregisteredCompetitors by competitorViewModel.unregisteredCompetitors.observeAsState(initial = emptyList())
-                InscriptionPage(
-                    competition?.name ?: "Unknown",
-                    competitors,
-                    unregisteredCompetitors,
-                    competitorViewModel,
-                    competitionId,
-                    competition
-                )
+
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    InscriptionPage(
+                        modifier = Modifier.padding(innerPadding),
+                        competition?.name ?: "Unknown",
+                        competitors,
+                        unregisteredCompetitors,
+                        competitorViewModel,
+                        competitionId,
+                        competition
+                    )
+                }
             }
         }
     }
@@ -62,6 +66,7 @@ class InscriptionConcurent : ComponentActivity() {
 
 @Composable
 fun InscriptionPage(
+    modifier: Modifier = Modifier,
     compet: String,
     competitorsInscrit: List<Competitor>,
     unregisteredCompetitors: List<Competitor>,
@@ -83,7 +88,7 @@ fun InscriptionPage(
     }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
             .padding(top = 32.dp, bottom = 32.dp)

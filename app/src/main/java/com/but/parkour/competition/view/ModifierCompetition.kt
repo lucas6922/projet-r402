@@ -25,8 +25,13 @@ class ModifierCompetition : ComponentActivity() {
         val competition = intent.getSerializableExtra("competition") as? Competition
         setContent {
             ParkourTheme {
-                competition?.let {
-                    ModifierCompetitionForm(it)
+                Scaffold (modifier = Modifier.fillMaxSize()){innerPadding ->
+                    competition?.let {
+                        ModifierCompetitionForm(
+                            modifier = Modifier.padding(innerPadding),
+                            oldCompetition = it
+                        )
+                    }
                 }
             }
         }
@@ -34,7 +39,7 @@ class ModifierCompetition : ComponentActivity() {
 }
 
 @Composable
-fun ModifierCompetitionForm(oldCompetition: Competition) {
+fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Competition) {
     var name by remember { mutableStateOf(oldCompetition.name ?: "") }
     var ageMin by remember { mutableStateOf(oldCompetition.ageMin?.toString() ?: "") }
     var ageMax by remember { mutableStateOf(oldCompetition.ageMax?.toString() ?: "") }
@@ -46,10 +51,23 @@ fun ModifierCompetitionForm(oldCompetition: Competition) {
 
     val context = LocalContext.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ){
+            Text(
+                "Modifier la competition ${oldCompetition.name}",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
@@ -113,6 +131,8 @@ fun ModifierCompetitionForm(oldCompetition: Competition) {
         if (errorMessage.isNotEmpty()) {
             Text(text = errorMessage, color = androidx.compose.ui.graphics.Color.Red)
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 val validationResult = validateFields(name, ageMin, ageMax, gender, status)

@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +55,7 @@ class ListeObstacles : ComponentActivity() {
         val parkourId = parkour?.id
         Log.d("ListeParkour", "Parkour: $parkour")
         setContent {
-            com.but.parkour.ui.theme.ParkourTheme {
+            ParkourTheme {
                 val obstacleViewModel: ObstaclesViewModel = viewModel()
                 parkourId?.let {
                     LaunchedEffect(it) {
@@ -62,12 +63,16 @@ class ListeObstacles : ComponentActivity() {
                     }
                 }
                 val obstaclesCourse by obstacleViewModel.obstaclesCourse.observeAsState(initial = emptyList())
-                ObstaclesPage(
-                    obstacles = obstaclesCourse,
-                    parkour = parkour,
-                    obstacleViewModel = obstacleViewModel,
-                    competitionStatus = competitionStatus ?: ""
-                )
+
+                Scaffold (modifier = Modifier.fillMaxSize()){ innerPadding ->
+                    ObstaclesPage(
+                        obstacles = obstaclesCourse,
+                        modifier = Modifier.padding(innerPadding),
+                        parkour = parkour,
+                        obstacleViewModel = obstacleViewModel,
+                        competitionStatus = competitionStatus ?: ""
+                    )
+                }
             }
         }
     }
@@ -86,7 +91,7 @@ fun ObstaclesPage(
         Log.d("ObstaclesPage", "Aucune course dans ce parkour : $parkour")
     }else{
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp)
         ) {

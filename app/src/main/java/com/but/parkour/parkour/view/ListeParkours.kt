@@ -20,6 +20,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,12 +59,15 @@ class ListeParkours : ComponentActivity() {
                     }
                 }
                 val courses by parkourViewModel.parkours.observeAsState(initial = emptyList())
-                ParkoursPage(
-                    competition?.name ?: "Unknown",
-                    courses,
-                    competition,
-                    parkourViewModel
-                )
+                Scaffold (modifier = Modifier.fillMaxSize()){ innerPadding ->
+                    ParkoursPage(
+                        modifier = Modifier.padding(innerPadding),
+                        competition?.name ?: "Unknown",
+                        courses,
+                        competition,
+                        parkourViewModel
+                    )
+                }
             }
         }
     }
@@ -191,6 +195,7 @@ fun onItemClickListeObstacles(context : Context, course : Course, competitionSta
 
 @Composable
 fun ParkoursPage(
+    modifier: Modifier = Modifier,
     compet: String,
     courses: List<Course>,
     competition: Competition?,
@@ -201,7 +206,7 @@ fun ParkoursPage(
         Text("Aucune compétition trouvée")
     }else{
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(16.dp)
                 .padding(top = 32.dp)

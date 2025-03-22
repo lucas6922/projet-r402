@@ -205,7 +205,7 @@ private fun ParkoursButton(context: Context, competition: Competition) {
             .fillMaxWidth()
             .padding(bottom = 8.dp)
     ) {
-        Text("CParkoursourses")
+        Text("Courses")
     }
 }
 

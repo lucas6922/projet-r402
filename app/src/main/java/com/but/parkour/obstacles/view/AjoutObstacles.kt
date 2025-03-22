@@ -7,11 +7,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,16 +34,20 @@ class AjoutObstacles : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val course = intent.getSerializableExtra("course") as? Course
         enableEdgeToEdge()
-        setContent {
-            ParkourTheme {
-                AjoutObstaclePage(course)
+        setContent{
+            Scaffold (modifier = Modifier.fillMaxSize()){ innerPadding ->
+                AjoutObstaclePage(
+                    modifier = Modifier.padding(innerPadding),
+                    course
+                )
             }
+
         }
     }
 }
 
 @Composable
-fun AjoutObstaclePage(course: Course?) {
+fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?) {
     var obstacleName by remember { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -49,7 +55,7 @@ fun AjoutObstaclePage(course: Course?) {
         Text("Aucune course selectionnée")
     }else{
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
