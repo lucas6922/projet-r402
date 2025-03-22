@@ -219,12 +219,12 @@ fun onClickAjouterCompetition(name: String, ageMin: String, ageMax: String, gend
 
     val competitionViewModel = CompetitionViewModel()
     competitionViewModel.addCompetition(competition)
-    val intent = Intent(context, MainActivity::class.java)
+    val intent = Intent(context, ListeCompetitions::class.java)
     context.startActivity(intent)
 }
 
 fun onClickAnnuler(context: Context) {
-    val intent = Intent(context, MainActivity::class.java)
+    val intent = Intent(context, ListeCompetitions::class.java)
     context.startActivity(intent)
 }
 

@@ -205,7 +205,7 @@ private fun ParkoursButton(context: Context, competition: Competition) {
             .fillMaxWidth()
             .padding(bottom = 8.dp)
     ) {
-        Text("Liste des courses")
+        Text("CParkoursourses")
     }
 }
 
@@ -238,7 +238,7 @@ private fun DeleteButton(context: Context, competition: Competition) {
                 Button(onClick = {
                     competition.id?.let{
                         competitionViewModel.removeCompetition(it)
-                        val intent = Intent(context, MainActivity::class.java)
+                        val intent = Intent(context, ListeCompetitions::class.java)
                         context.startActivity(intent)
                     }
                     showDialog = false

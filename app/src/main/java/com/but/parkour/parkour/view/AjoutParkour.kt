@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.CourseCreate
-import com.but.parkour.competition.view.MainActivity
 import com.but.parkour.parkour.ui.theme.ParkourTheme
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 

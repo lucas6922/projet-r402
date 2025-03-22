@@ -158,6 +158,6 @@ fun modifCompetition(context: Context, competition: CompetitionUpdate, competiti
     val competitionViewModel = CompetitionViewModel()
     competitionViewModel.updateCompetition(competitionId, competition)
 
-    val intent = Intent(context, MainActivity::class.java)
+    val intent = Intent(context, ListeCompetitions::class.java)
     context.startActivity(intent)
 }

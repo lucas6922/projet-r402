@@ -87,7 +87,7 @@
             android:label="Details competition"
             android:theme="@style/Theme.Parkour" />
         <activity
-            android:name=".competition.view.MainActivity"
+            android:name=".competition.view.ListeCompetitions"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Parkour">
