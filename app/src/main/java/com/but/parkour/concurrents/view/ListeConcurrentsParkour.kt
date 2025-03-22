@@ -83,7 +83,6 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
         ListParticipants(
             concurrents = participants,
             modifier = Modifier.weight(1f),
-            onItemClick = {  },
             onChronoClick = { competitor ->
                 onItemClickChrono(competition, course, context)
             },

@@ -111,13 +111,13 @@ fun ListParkours(
                         onClick = { onItemClickListeObstacles(context, course, competition.status?.value!!) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
-                        Text("Liste des obstacles")
+                        Text("Obstacles")
                     }
                     Button(
                         onClick = { onItemClickCourseConcurrent(competition, context, course) },
                         modifier = Modifier.padding(top = 8.dp)
                     ) {
-                        Text("Liste des concurrents")
+                        Text("Concurrents")
                     }
 
                     if(EditionMode.isEnable.value) {

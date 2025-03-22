@@ -1,7 +1,5 @@
 package com.but.parkour.concurrents.view
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -18,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -98,7 +95,6 @@ fun InscriptionPage(
         ListParticipants(
             concurrents = participants,
             modifier = Modifier.weight(1f),
-            onItemClick = {},
             competitionId = competitionId,
             competitorViewModel = competitorViewModel,
         )
@@ -202,7 +198,6 @@ fun CompetitorDropdown(
 fun ListParticipants(
     concurrents: List<Competitor>,
     modifier: Modifier = Modifier,
-    onItemClick: (String) -> Unit,
     onChronoClick: ((Competitor) -> Unit)? = null,
     competitionId: Int?,
     competitorViewModel: CompetitorViewModel?,

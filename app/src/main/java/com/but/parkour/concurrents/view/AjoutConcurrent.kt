@@ -238,8 +238,7 @@ fun onAjoutCompetitorClick(
         competitorViewModel.addCompetitor(competitor, competition.id)
     }
 
-    val intent = Intent(context, InscriptionConcurent::class.java)
-    intent.putExtra("competition", competition)
+    val intent = Intent(context, GestionConcurrents::class.java)
     context.startActivity(intent)
 }
 

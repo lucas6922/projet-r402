@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 
 class GestionConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +65,7 @@ fun GestionConcurrentsPage(
 ) {
     val competitors by viewModel.competitors.observeAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.fetchAllCompetitors()
@@ -73,6 +75,12 @@ fun GestionConcurrentsPage(
         modifier = modifier.fillMaxSize()
     ) {
         PageTitle()
+        AddCompetitorButton(
+            onClick = {
+                val intent = Intent(context, AjoutConcurrent::class.java)
+                context.startActivity(intent)
+            }
+        )
         SearchField(searchQuery) { searchQuery = it }
         CompetitorsList(
             competitors = competitors,
@@ -251,5 +259,17 @@ private fun DeleteButton(onClick: () -> Unit) {
         )
     ) {
         Text("Supprimer")
+    }
+}
+
+@Composable
+private fun AddCompetitorButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    ) {
+        Text("Ajouter un concurrent")
     }
 }
