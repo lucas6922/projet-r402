@@ -176,7 +176,7 @@ class CompetitorViewModel : ViewModel() {
         }
     }
 
-    fun addCompetitor(competitor: CompetitorCreate, competitionId: Int){
+    fun addCompetitor(competitor: CompetitorCreate){
         viewModelScope.launch {
             try{
                 val call = competitorApi.addCompetitor(competitor)
@@ -185,7 +185,6 @@ class CompetitorViewModel : ViewModel() {
                     call,
                     onSuccess = { data, statusCode ->
                         Log.d("CompetitorViewModel", "Competitor registered: $data")
-                        fetchUnregisteredCompetitors(competitionId)
                     },
                     onError = { errorMessage, statusCode ->
                         Log.e("CompetitorViewModel", "Error: $errorMessage")

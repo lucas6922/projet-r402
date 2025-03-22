@@ -27,12 +27,10 @@ import java.util.Locale
 class AjoutConcurrent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val competition = intent.getSerializableExtra("competition") as? Competition
         setContent {
             Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             AjoutConcurrentForm(
                     modifier = Modifier.padding(innerPadding),
-                    competition = competition
                 )
             }
         }
@@ -40,7 +38,7 @@ class AjoutConcurrent : ComponentActivity() {
 }
 
 @Composable
-fun AjoutConcurrentForm(modifier: Modifier = Modifier, competition: Competition?) {
+fun AjoutConcurrentForm(modifier: Modifier = Modifier) {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -140,32 +138,30 @@ fun AjoutConcurrentForm(modifier: Modifier = Modifier, competition: Competition?
 
         Button(
             onClick = {
-                competition?.let {
-                    errorMessage = ""
-                    val verif = verifChamps(
+                errorMessage = ""
+                val verif = verifChamps(
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    selectedGender,
+                    bornAt,
+                )
+                if(verif.isNotEmpty()){
+                    errorMessage = verif
+                }else{
+
+                    onAjoutCompetitorClick(
                         firstName,
                         lastName,
                         email,
                         phone,
                         selectedGender,
                         bornAt,
+                        context,
                     )
-                    if(verif.isNotEmpty()){
-                        errorMessage = verif
-                    }else{
-
-                        onAjoutCompetitorClick(
-                            firstName,
-                            lastName,
-                            email,
-                            phone,
-                            selectedGender,
-                            bornAt,
-                            competition,
-                            context,
-                        )
-                    }
                 }
+
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -217,7 +213,6 @@ fun onAjoutCompetitorClick(
     phone: String,
     gender: String,
     bornAt: String,
-    competition: Competition,
     context: Context
 ){
     val competitor = CompetitorCreate(
@@ -234,9 +229,9 @@ fun onAjoutCompetitorClick(
     )
 
     val competitorViewModel = CompetitorViewModel()
-    competition.id?.let {
-        competitorViewModel.addCompetitor(competitor, competition.id)
-    }
+
+    competitorViewModel.addCompetitor(competitor)
+
 
     val intent = Intent(context, GestionConcurrents::class.java)
     context.startActivity(intent)
