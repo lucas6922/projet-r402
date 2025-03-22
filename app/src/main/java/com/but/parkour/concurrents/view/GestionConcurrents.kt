@@ -1,6 +1,9 @@
 package com.but.parkour.concurrents.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -36,9 +39,9 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.but.parkour.EditionMode
 
 class GestionConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,8 +64,6 @@ fun GestionConcurrentsPage(
 ) {
     val competitors by viewModel.competitors.observeAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.fetchAllCompetitors()
@@ -76,18 +77,8 @@ fun GestionConcurrentsPage(
         CompetitorsList(
             competitors = competitors,
             searchQuery = searchQuery,
-            onModifyClick = { competitor ->
-                selectedCompetitor = competitor
-                showDialog = true
-            }
         )
     }
-
-    ModifyCompetitorDialog(
-        showDialog = showDialog,
-        selectedCompetitor = selectedCompetitor,
-        onDismiss = { showDialog = false }
-    )
 }
 
 
@@ -130,7 +121,6 @@ private fun SearchField(
 private fun CompetitorsList(
     competitors: List<Competitor>,
     searchQuery: String,
-    onModifyClick: (Competitor) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -145,7 +135,6 @@ private fun CompetitorsList(
         ) { competitor ->
             CompetitorCard(
                 competitor = competitor,
-                onModifyClick = onModifyClick
             )
         }
     }
@@ -155,9 +144,10 @@ private fun CompetitorsList(
 @Composable
 private fun CompetitorCard(
     competitor: Competitor,
-    onModifyClick: (Competitor) -> Unit
+    gestionConcurrentViewModel: GestionConcurrentViewModel = viewModel()
 ) {
     var showDeleteDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Card(
         modifier = Modifier
@@ -172,14 +162,15 @@ private fun CompetitorCard(
         ) {
             CompetitorInfo(competitor)
 
-            if(EditionMode.isEnable.value) {
-                ModifyButton(
-                    onClick = { onModifyClick(competitor) }
-                )
-                DeleteButton(
-                    onClick = { showDeleteDialog = true }
-                )
-            }
+            ModifyButton(
+                onClick = {
+                    onModiffierConcurrent(context, competitor)
+                }
+            )
+            DeleteButton(
+                onClick = { showDeleteDialog = true }
+            )
+
         }
     }
 
@@ -191,6 +182,9 @@ private fun CompetitorCard(
             confirmButton = {
                 Button(
                     onClick = {
+                        competitor.id?.let{
+                            gestionConcurrentViewModel.deleteCompetitor(it)
+                        }
                         showDeleteDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -209,6 +203,11 @@ private fun CompetitorCard(
     }
 }
 
+private fun onModiffierConcurrent(context: Context, competitor: Competitor) {
+    val intent = Intent(context, ModifierConcurrent::class.java)
+    intent.putExtra("competitor", competitor)
+    context.startActivity(intent)
+}
 
 @Composable
 private fun CompetitorInfo(competitor: Competitor) {
@@ -238,26 +237,6 @@ private fun ModifyButton(onClick: () -> Unit) {
 }
 
 
-
-@Composable
-private fun ModifyCompetitorDialog(
-    showDialog: Boolean,
-    selectedCompetitor: Competitor?,
-    onDismiss: () -> Unit
-) {
-    if (showDialog && selectedCompetitor != null) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            title = { Text("Modifier un concurrent") },
-            text = { Text("Cette fonctionnalité sera bientôt disponible") },
-            confirmButton = {
-                Button(onClick = onDismiss) {
-                    Text("OK")
-                }
-            }
-        )
-    }
-}
 
 @Composable
 private fun DeleteButton(onClick: () -> Unit) {

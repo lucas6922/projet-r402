@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.clientkotlin.models.CompetitorUpdate
 import kotlinx.coroutines.launch
 
 class GestionConcurrentViewModel: ViewModel() {
@@ -23,25 +24,72 @@ class GestionConcurrentViewModel: ViewModel() {
     fun fetchAllCompetitors(){
         viewModelScope.launch {
             try {
-                Log.d("CompetitorViewModel", "Fetching all competitors...")
+                Log.d("GestionConcurrentViewModel", "Fetching all competitors...")
 
                 val call = competitorApi.getAllCompetitors()
 
                 apiClient.fetchData(
                     call,
                     onSuccess = { data, statusCode ->
-                        Log.d("CompetitorViewModel", "Competitors received: $data")
+                        Log.d("GestionConcurrentViewModel", "Competitors received: $data")
                         _competitors.postValue(data ?: emptyList())
                     },
                     onError = { errorMessage, statusCode ->
-                        Log.e("CompetitorViewModel", "Error: $errorMessage")
+                        Log.e("GestionConcurrentViewModel", "Error: $errorMessage")
                         _competitors.postValue(emptyList())
                     }
                 )
 
             } catch (e: Exception) {
-                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+                Log.e("GestionConcurrentViewModel", "Exception: ${e.message}", e)
                 _competitors.postValue(emptyList())
+            }
+        }
+    }
+
+    fun deleteCompetitor(competitorId: Int){
+        viewModelScope.launch {
+            try {
+                Log.d("GestionConcurrentViewModel", "Deleting competitor...")
+
+                val call = competitorApi.deleteCompetitor(competitorId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("GestionConcurrentViewModel", "Competitor deleted: $data")
+                        fetchAllCompetitors()
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("GestionConcurrentViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("GestionConcurrentViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun updateCompetitor(competitorId: Int, competitor: CompetitorUpdate){
+        viewModelScope.launch {
+            try {
+                Log.d("GestionConcurrentViewModel", "Updating competitor...")
+
+                val call = competitorApi.updateCompetitor(competitorId, competitor)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("GestionConcurrentViewModel", "Competitor updated: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("GestionConcurrentViewModel", "Error: $errorMessage")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("GestionConcurrentViewModel", "Exception: ${e.message}", e)
             }
         }
     }
