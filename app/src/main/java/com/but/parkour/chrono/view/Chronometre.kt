@@ -279,19 +279,15 @@ fun LapList(laps: List<Pair<String, String>>) {
 
 
 fun enregistrerPerformance(courseId: Int,  competitorId: Int, totalTime: Int, context: Context){
-    val perf = PerformanceCreate(courseId, competitorId, PerformanceCreate.Status.to_finish, totalTime)
+    val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status =  PerformanceCreate.Status.to_finish, totalTime = totalTime)
     val chronoModel = ChronometreViewModel()
     chronoModel.addPerformance(perf)
-    val intent = Intent(context, ListeConcurrents::class.java)
-    context.startActivity(intent)
 }
 
 fun enregistrerPerformanceObstacles(obstacleId: Int,  performanceId: Int, hasFell: Boolean, toVerify: Boolean, time: Int, context: Context){
     val perfObstacle = PerformanceObstacleCreate(obstacleId, performanceId, hasFell, toVerify, time)
     val chronoModel = ChronometreViewModel()
     chronoModel.addPerformanceObstacle(perfObstacle)
-    val intent = Intent(context, ListeConcurrents::class.java)
-    context.startActivity(intent)
 }
 
 

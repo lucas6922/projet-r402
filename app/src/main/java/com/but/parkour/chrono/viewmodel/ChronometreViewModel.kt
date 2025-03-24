@@ -56,6 +56,7 @@ class ChronometreViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 Log.d("ChronometreViewModel", "Adding performance...")
+                Log.d("PerformanceCreate", performance.toString())
 
                 val call = perfApi.addPerformance(performance)
 
