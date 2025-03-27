@@ -82,7 +82,6 @@ fun ListParkours(
     competition: Competition,
     parkourViewModel: ParkourViewModel
 ) {
-    Log.d("ListeParkours", "competition: $competition")
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var selectedParkour by remember { mutableStateOf<Course?>(null) }
@@ -105,6 +104,10 @@ fun ListParkours(
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = course.name ?: "Unknown",
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "position: " + course.position,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Button(
