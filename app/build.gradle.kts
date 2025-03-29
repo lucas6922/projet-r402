@@ -99,4 +99,7 @@ dependencies {
     implementation (libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.runtime.livedata)
 
+    implementation ("org.burnoutcrew.composereorderable:reorderable:0.9.6")
+
+
 }
