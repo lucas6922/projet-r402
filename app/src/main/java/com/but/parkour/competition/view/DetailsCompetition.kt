@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.EditionMode
+import com.but.parkour.clientkotlin.models.CompetitionUpdate
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
@@ -51,6 +52,11 @@ fun DetailsCompetitionPage(
     modifier: Modifier = Modifier
 ) {
     Log.d("DetailsCompetitionPage", "Competition: $competition")
+
+    var currentCompetition by remember { mutableStateOf(competition) }
+    val competitionViewModel: CompetitionViewModel = viewModel()
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -62,9 +68,11 @@ fun DetailsCompetitionPage(
         ) {
             PageTitle()
         }
-        CompetitionDetailsCard(competition)
+        CompetitionDetailsCard(currentCompetition)
         Spacer(modifier = Modifier.height(16.dp))
-        CompetitionActions(competition)
+        CompetitionActions(currentCompetition){
+            updatedCompetition -> currentCompetition = updatedCompetition
+        }
     }
 }
 
@@ -119,7 +127,10 @@ private fun CompetitionDetailsCard(competition: Competition) {
 
 
 @Composable
-private fun CompetitionActions(competition: Competition) {
+private fun CompetitionActions(
+    competition: Competition,
+    onCompetitionUpdate: (Competition) -> Unit
+) {
     val context = LocalContext.current
     val status = competition.status
 
@@ -129,6 +140,7 @@ private fun CompetitionActions(competition: Competition) {
             //peut inscrire des concurrents
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
+            ValiderCompetitionButton(competition, onCompetitionUpdate)
             //peut modifier la compétition et ses courses
             if (EditionMode.isEnable.value) {
                 ModifyButton(context, competition)
@@ -151,6 +163,32 @@ private fun CompetitionActions(competition: Competition) {
         }
         null -> {}
     }
+}
+
+@Composable
+fun ValiderCompetitionButton(
+    competition: Competition,
+    onCompetitionUpdate: (Competition) -> Unit
+) {
+    val competitionViewModel: CompetitionViewModel = viewModel()
+
+    val competValid = CompetitionUpdate(
+        status = CompetitionUpdate.Status.not_started
+    )
+
+    Button(
+        onClick = {
+            competitionViewModel.updateCompetition(competition.id!!, competValid)
+            val updatedCompetition = competition.copy(status = Competition.Status.not_started)
+            onCompetitionUpdate(updatedCompetition)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Text("Valider le parcours")
+    }
+
 }
 
 @Composable

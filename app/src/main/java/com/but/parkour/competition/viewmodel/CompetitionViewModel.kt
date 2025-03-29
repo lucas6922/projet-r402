@@ -80,6 +80,8 @@ class CompetitionViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 Log.d("CompetitionViewModel", "Updating competition...")
+                Log.d("CompetitionViewModel", "Competition: $competition")
+                Log.d("CompetitionViewModel", "CompetitionId: $competitionId")
 
                 val call = competitionApi.updateCompetition(competitionId, competition)
 
