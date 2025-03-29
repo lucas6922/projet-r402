@@ -12,6 +12,7 @@ import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.CompetitionCreate
 import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.clientkotlin.models.PerformanceCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
 import kotlinx.coroutines.launch
@@ -19,6 +20,9 @@ import kotlinx.coroutines.launch
 class ChronometreViewModel : ViewModel() {
     private val _obstacles = MutableLiveData<List<CourseObstacle>>()
     val obstacles: LiveData<List<CourseObstacle>> = _obstacles
+
+    private val _performances = MutableLiveData<List<Performance>>()
+    val performances: LiveData<List<Performance>> = _performances
 
     private val apiClient = ApiClient(
         bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
@@ -51,6 +55,32 @@ class ChronometreViewModel : ViewModel() {
             }
         }
     }
+
+    fun fetchAllPerformances() {
+        viewModelScope.launch {
+            try {
+                Log.d("ChronometreViewModel", "Fetching all performances...")
+                val call = perfApi.getAllPerformances()
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, _ ->
+                        Log.d("ChronometreViewModel", "Performances received: $data")
+                        _performances.postValue(data ?: emptyList())
+                    },
+                    onError = { errorMessage, _ ->
+                        Log.e("ChronometreViewModel", "Error: $errorMessage")
+                        _performances.postValue(emptyList())
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
+                _performances.postValue(emptyList())
+            }
+        }
+    }
+
+
 
     fun addPerformance(performance: PerformanceCreate) {
         viewModelScope.launch {

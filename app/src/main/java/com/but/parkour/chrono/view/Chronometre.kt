@@ -3,6 +3,7 @@ package com.but.parkour.chrono.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -83,6 +84,7 @@ fun ChronometreScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(text = competitorId.toString())
+        Text(text = course.id.toString())
         ObstacleDisplay(obstacles, currentObstacleIndex)
         ChronometerDisplay(time)
         ChronometerButtons(
@@ -130,7 +132,7 @@ fun ChronometreScreen(
             Button(
                 onClick = {
                     val totalTime = laps.sumOf { parseTime(it.second).toInt() }
-                    enregistrerPerformance(courseId = course.id ?: 0, competitorId = competitorId, totalTime = totalTime, context = context)
+                    enregistrerPerformance(course.id ?: 0, competitorId, totalTime, laps, context, viewModel)
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
@@ -278,15 +280,55 @@ fun LapList(laps: List<Pair<String, String>>) {
 
 
 
-fun enregistrerPerformance(courseId: Int,  competitorId: Int, totalTime: Int, context: Context){
-    val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status =  PerformanceCreate.Status.to_finish, totalTime = totalTime)
-    val chronoModel = ChronometreViewModel()
+fun enregistrerPerformance(
+    courseId: Int,
+    competitorId: Int,
+    totalTime: Int,
+    laps: List<Pair<String, String>>,
+    context: Context,
+    chronoModel: ChronometreViewModel
+) {
+    val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status = PerformanceCreate.Status.to_finish, totalTime = totalTime)
     chronoModel.addPerformance(perf)
+
+    chronoModel.fetchAllPerformances()
+    chronoModel.performances.observeForever { perfs ->
+        perfs?.find { it.courseId == courseId && it.competitorId == competitorId }?.let { newPerf ->
+            val performanceId = newPerf.id ?: return@let
+
+            chronoModel.obstacles.value?.let { obstaclesList ->
+                for ((index, lap) in laps.withIndex()) {
+                    val obstacleId = obstaclesList.getOrNull(index)?.courseObstacleId ?: 0
+                    val timeInMs = parseTime(lap.second).toInt()
+
+                    Log.d("Chronometre", "Enregistrement obstacle ID: $obstacleId")
+
+                    enregistrerPerformanceObstacles(
+                        obstacleId = obstacleId,
+                        performanceId = performanceId,
+                        hasFell = false,
+                        toVerify = false,
+                        time = timeInMs,
+                        context = context,
+                        chronoModel = chronoModel
+                    )
+                }
+            }
+        }
+    }
 }
 
-fun enregistrerPerformanceObstacles(obstacleId: Int,  performanceId: Int, hasFell: Boolean, toVerify: Boolean, time: Int, context: Context){
+fun enregistrerPerformanceObstacles(
+    obstacleId: Int,
+    performanceId: Int,
+    hasFell: Boolean,
+    toVerify: Boolean,
+    time: Int,
+    context: Context,
+    chronoModel: ChronometreViewModel
+) {
+    Log.d("Chronometre", "La fonction est appelee $obstacleId")
     val perfObstacle = PerformanceObstacleCreate(obstacleId, performanceId, hasFell, toVerify, time)
-    val chronoModel = ChronometreViewModel()
     chronoModel.addPerformanceObstacle(perfObstacle)
 }
 
