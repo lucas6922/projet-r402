@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.EditionMode
+import com.but.parkour.classement.view.Classement
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
@@ -141,7 +142,7 @@ private fun CompetitionActions(competition: Competition) {
             //aucune modif autorisée
         }
         Competition.Status.finished -> {
-            ViewResultsButton()
+            ViewResultsButton(competition = competition)
             //on peut que consulter les resultats
         }
         null -> {}
@@ -149,9 +150,10 @@ private fun CompetitionActions(competition: Competition) {
 }
 
 @Composable
-fun ViewResultsButton() {
+fun ViewResultsButton(competition: Competition) {
+    val context = LocalContext.current
     Button(
-        onClick = { },
+        onClick = {onClickResults(competition = competition, context)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -257,6 +259,13 @@ private fun DeleteButton(context: Context, competition: Competition) {
             }
         )
     }
+
+}
+
+fun onClickResults(competition: Competition, context: Context) {
+    val intent = Intent(context, Classement::class.java)
+    intent.putExtra("competition", competition)
+    context.startActivity(intent)
 
 }
 
