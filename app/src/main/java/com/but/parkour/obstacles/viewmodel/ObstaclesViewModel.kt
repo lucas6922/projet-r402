@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.apis.ObstaclesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
@@ -22,7 +23,7 @@ class ObstaclesViewModel : ViewModel() {
     val allObstacles: LiveData<List<Obstacle>> = _allObstacles
 
     private val apiClient = ApiClient(
-        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
+        bearerToken = BuildConfig.API_TOKEN
     )
 
     private val courseApi = apiClient.createService(CoursesApi::class.java)

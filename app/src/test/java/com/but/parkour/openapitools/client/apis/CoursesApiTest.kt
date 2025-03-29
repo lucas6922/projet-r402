@@ -1,5 +1,6 @@
 package com.but.parkour.openapitools.client.apis
 
+import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.apis.ObstaclesApi
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 
 class CoursesApiTest {
     private val apiClient = ApiClient(
-        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM",
+        bearerToken = BuildConfig.API_TOKEN,
     )
     private val apiService = apiClient.createService(CoursesApi::class.java)
     private val reset = apiClient.createService(UtilApi::class.java)

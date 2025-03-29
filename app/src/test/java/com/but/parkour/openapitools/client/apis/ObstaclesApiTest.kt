@@ -1,5 +1,6 @@
 package com.but.parkour.openapitools.client.apis
 
+import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.ObstaclesApi
 import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
@@ -11,7 +12,7 @@ import kotlin.test.Test
 
 class ObstaclesApiTest {
     private val apiClient = ApiClient(
-        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM",
+        bearerToken = BuildConfig.API_TOKEN,
     )
     private val reset = apiClient.createService(UtilApi::class.java)
     private val obstacleApi = apiClient.createService(ObstaclesApi::class.java)

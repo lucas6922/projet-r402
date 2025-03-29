@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,11 @@ plugins {
     id("com.google.devtools.ksp") version "2.1.10-1.0.29"
 }
 
+val envFile = rootProject.file("secret.properties")
+val env = Properties()
+if (envFile.exists()) {
+    env.load(envFile.inputStream())
+}
 android {
     namespace = "com.but.parkour"
     compileSdk = 35
@@ -15,6 +22,12 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
+        buildConfigField(
+            "String",
+            "API_TOKEN",
+            "${env.getProperty("API_TOKEN", "")}"
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

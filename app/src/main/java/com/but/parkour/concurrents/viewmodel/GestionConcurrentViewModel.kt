@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Competitor
@@ -16,7 +17,7 @@ class GestionConcurrentViewModel: ViewModel() {
     val competitors: LiveData<List<Competitor>> = _competitors
 
     private val apiClient = ApiClient(
-        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM"
+        bearerToken = BuildConfig.API_TOKEN
     )
 
     private val competitorApi = apiClient.createService(CompetitorsApi::class.java)

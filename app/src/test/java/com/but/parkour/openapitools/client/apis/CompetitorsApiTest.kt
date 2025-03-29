@@ -1,5 +1,6 @@
 package com.but.parkour.openapitools.client.apis
 
+import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.apis.UtilApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
@@ -12,7 +13,7 @@ import java.time.LocalDate
 
 class CompetitorsApiTest {
     private val apiClient = ApiClient(
-        bearerToken = "LgJxjdr5uiNa95irSUBNEMqdAz5WxKnxa93b7dbBNOI4V69IgGa6E2dK1KleF5QM",
+        bearerToken = BuildConfig.API_TOKEN,
     )
     private val apiService = apiClient.createService(CompetitorsApi::class.java)
     private val reset = apiClient.createService(UtilApi::class.java)
