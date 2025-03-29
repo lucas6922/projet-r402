@@ -53,23 +53,28 @@ fun DetailsCompetitionPage(
     Log.d("DetailsCompetitionPage", "Competition: $competition")
     Column(
         modifier = modifier
-            .padding(16.dp)
             .fillMaxSize()
+            .padding(16.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(
-                text = "Détails de la compétition",
-                style = MaterialTheme.typography.headlineMedium,
-            )
+            PageTitle()
         }
-        Spacer(modifier = Modifier.height(16.dp))
         CompetitionDetailsCard(competition)
         Spacer(modifier = Modifier.height(16.dp))
         CompetitionActions(competition)
     }
+}
+
+@Composable
+fun PageTitle(){
+    Text(
+        text = "Détails de la compétition",
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier.padding(bottom = 16.dp)
+    )
 }
 
 
@@ -257,6 +262,5 @@ private fun DeleteButton(context: Context, competition: Competition) {
             }
         )
     }
-
 }
 

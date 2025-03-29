@@ -43,6 +43,7 @@ import com.but.parkour.obstacles.ui.theme.ParkourTheme
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import androidx.compose.runtime.*
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Obstacle
 import okhttp3.internal.notifyAll
 
@@ -51,7 +52,7 @@ class ListeObstacles : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val parkour = intent.getSerializableExtra("parkour") as? Course
-        val competitionStatus = intent.getStringExtra("competitionStatus")
+        val competitionStatus = intent.getSerializableExtra("competitionStatus") as Competition.Status
         val parkourId = parkour?.id
         Log.d("ListeParkour", "Parkour: $parkour")
         setContent {
@@ -70,7 +71,7 @@ class ListeObstacles : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         parkour = parkour,
                         obstacleViewModel = obstacleViewModel,
-                        competitionStatus = competitionStatus ?: ""
+                        competitionStatus = competitionStatus
                     )
                 }
             }
@@ -84,7 +85,7 @@ fun ObstaclesPage(
     modifier: Modifier = Modifier,
     parkour: Course?,
     obstacleViewModel: ObstaclesViewModel,
-    competitionStatus: String
+    competitionStatus: Competition.Status
 ) {
     if(parkour == null) {
         Text("Aucune course dans ce parkour")
@@ -119,7 +120,7 @@ fun ListObstacles(
     obstacles : List<CourseObstacle>,
     modifier: Modifier = Modifier,
     obstacleViewModel: ObstaclesViewModel,
-    competitionStatus: String
+    competitionStatus: Competition.Status
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
@@ -141,7 +142,7 @@ fun ListObstacles(
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
 
-                if(EditionMode.isEnable.value && competitionStatus.equals("not_ready")) {
+                if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
                     Button(onClick = {
                         selectedObstacle = item
                         showDialog = true
@@ -180,9 +181,9 @@ fun ListObstacles(
 
 
 @Composable
-fun AjoutObstacle(parkour: Course, competitionStatus: String){
+fun AjoutObstacle(parkour: Course, competitionStatus: Competition.Status){
 
-    if(competitionStatus.equals("not_ready")) {
+    if(competitionStatus == Competition.Status.not_ready) {
         DropDownMenuObstacle(parkour.id)
     }
     CreerObstacleButton(parkour)

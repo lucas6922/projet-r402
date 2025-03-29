@@ -8,7 +8,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +42,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
 
@@ -64,132 +67,12 @@ class ListeParkours : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         competition?.name ?: "Unknown",
                         courses,
-                        competition,
-                        parkourViewModel
+                        competition
                     )
                 }
             }
         }
     }
-
-
-}
-
-@Composable
-fun ListParkours(
-    courses: List<Course>,
-    modifier: Modifier = Modifier,
-    competition: Competition,
-    parkourViewModel: ParkourViewModel
-) {
-    Log.d("ListeParkours", "competition: $competition")
-    val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedParkour by remember { mutableStateOf<Course?>(null) }
-
-    val competitionStatus = competition.status
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-    ) {
-        items(courses) { course ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
-                    .padding(4.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = course.name ?: "Unknown",
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    Button(
-                        onClick = { onItemClickListeObstacles(context, course, competition.status?.value!!) },
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Obstacles")
-                    }
-                    Button(
-                        onClick = { onItemClickCourseConcurrent(competition, context, course) },
-                        modifier = Modifier.padding(top = 8.dp)
-                    ) {
-                        Text("Concurrents")
-                    }
-
-                    if(EditionMode.isEnable.value) {
-                        Button(
-                            onClick = {
-                                selectedParkour = course
-                                showDialog = true
-                            },
-                            modifier = Modifier.padding(top = 8.dp)
-                        ) {
-                            Text("Supprimer")
-                        }
-                    }
-                }
-
-            }
-            if (showDialog && selectedParkour != null) {
-                AlertDialog(
-                    onDismissRequest = { showDialog = false },
-                    title = { Text("Confirmation") },
-                    text = { Text("Êtes-vous sûr de vouloir supprimer cette course ?") },
-                    confirmButton = {
-                        Button(onClick = {
-                            selectedParkour?.let { onClickSupprimerParkour(it, parkourViewModel) }
-                            showDialog = false
-                        }) {
-                            Text("Oui")
-                        }
-                    },
-                    dismissButton = {
-                        Button(onClick = { showDialog = false }) {
-                            Text("Non")
-                        }
-                    }
-                )
-            }
-        }
-    }
-
-    if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
-        Button(
-            onClick = {onItemClickAddCourse(context, competition)},
-            modifier = Modifier.fillMaxWidth()
-            ) {
-            Text(text = "Ajouter une course")
-        }
-    }
-}
-
-fun onClickSupprimerParkour(course : Course, parkourViewModel: ParkourViewModel) {
-    parkourViewModel.removeCourse(course.id!!, course.competitionId!!)
-}
-
-fun onItemClickCourseConcurrent(competition: Competition, context: Context, course: Course) {
-    Log.d("     ListeParkours", "competition: $competition")
-    val intent = Intent(context, ListeConcurrentsParkour::class.java)
-    intent.putExtra("competition", competition)
-    intent.putExtra("course", course)
-    context.startActivity(intent)
-}
-
-fun onItemClickAddCourse(context: Context, competition: Competition) {
-    val intent = Intent(context, AjoutParkour::class.java)
-    intent.putExtra("competition", competition)
-    context.startActivity(intent)
-}
-
-fun onItemClickListeObstacles(context : Context, course : Course, competitionStatus: String) {
-    val intent = Intent(context, ListeObstacles::class.java)
-    intent.putExtra("parkour", course)
-    intent.putExtra("competitionStatus", competitionStatus)
-    context.startActivity(intent)
 }
 
 
@@ -198,8 +81,7 @@ fun ParkoursPage(
     modifier: Modifier = Modifier,
     compet: String,
     courses: List<Course>,
-    competition: Competition?,
-    parkourViewModel: ParkourViewModel
+    competition: Competition?
 ) {
 
     if(competition == null) {
@@ -222,13 +104,128 @@ fun ParkoursPage(
             ListParkours(
                 courses = courses,
                 modifier = Modifier.weight(1f),
-                competition = competition,
-                parkourViewModel = parkourViewModel
+                competition = competition
+            )
+        }
+    }
+}
+
+
+
+
+@Composable
+fun ListParkours(
+    courses: List<Course>,
+    modifier: Modifier = Modifier,
+    competition: Competition
+) {
+    Log.d("ListeParkours", "competition: $competition")
+    val context = LocalContext.current
+
+    val competitionStatus = competition.status
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        items(courses) { course ->
+
+            CourseCard(
+                course = course,
+                onDetailsClick = {
+                    onCourseDetailsClick(context, course, competition)
+                }
             )
         }
     }
 
+    if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
+        Button(
+            onClick = {onItemClickAddCourse(context, competition)},
+            modifier = Modifier.fillMaxWidth()
+            ) {
+            Text(text = "Ajouter une course")
+        }
+    }
 }
+
+
+
+@Composable
+fun CourseCard(
+    course: Course,
+    onDetailsClick: (Course) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .border(2.dp, Color.Black, shape = MaterialTheme.shapes.medium)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = course.name ?: "Nom inconnu",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = "Position: ${course.position ?: "Non définie"}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "Durée max: ${course.maxDuration ?: "Non définie"} sec",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = if (course.isOver == true) "Terminée" else "En cours",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+
+            Button(
+                onClick = { onDetailsClick(course) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                Text("Voir détails")
+            }
+        }
+    }
+}
+
+
+fun onCourseDetailsClick(context: Context, course: Course, competition: Competition) {
+    val intent = Intent(context, DetailParkour::class.java)
+    intent.putExtra("course", course)
+    intent.putExtra("competition", competition)
+    context.startActivity(intent)
+}
+
+fun onItemClickAddCourse(context: Context, competition: Competition) {
+    val intent = Intent(context, AjoutParkour::class.java)
+    intent.putExtra("competition", competition)
+    context.startActivity(intent)
+}
+
+
+
+
+
+
 
 
 

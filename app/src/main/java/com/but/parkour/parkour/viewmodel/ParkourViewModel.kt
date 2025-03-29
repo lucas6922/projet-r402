@@ -11,6 +11,7 @@ import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseCreate
+import com.but.parkour.clientkotlin.models.CourseUpdate
 import kotlinx.coroutines.launch
 
 class ParkourViewModel : ViewModel() {
@@ -84,15 +85,37 @@ class ParkourViewModel : ViewModel() {
                 apiClient.fetchData(
                     call,
                     onSuccess = { data, statusCode ->
-                        Log.d("ParkourViewModel", "course removed: $data")
                         fetchCourses(competitionId)
+                        Log.d("ParkourViewModel", "course removed: $data")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ParkourViewModel", "Error: $errorMessage")
+                        Log.e("ParkourViewModel", "Status code: $statusCode")
+                        Log.e("ParkourViewModel", "Course ID: $courseId")
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("ParkourViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun updateCourse(courseId: Int, course: CourseUpdate){
+        viewModelScope.launch {
+            try{
+                val call = courseApi.updateCourse(courseId, course)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ParkourViewModel", "course updated: $course")
                     },
                     onError = { errorMessage, statusCode ->
                         Log.e("ParkourViewModel", "Error: $errorMessage")
                     }
                 )
-
-            } catch (e: Exception) {
+            }catch (e: Exception){
                 Log.e("ParkourViewModel", "Exception: ${e.message}", e)
             }
         }

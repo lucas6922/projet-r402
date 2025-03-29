@@ -99,7 +99,9 @@ fun InscriptionPage(
             competitorViewModel = competitorViewModel,
         )
 
-        if(competitionStatus == Competition.Status.not_ready) {
+        //si la competition est not_ready ou not started on peut ajouter un concurrent
+        if(competitionStatus == Competition.Status.not_ready
+            || competitionStatus == Competition.Status.not_started) {
             CompetitorDropdown(
                 selectedCompetitor = selectedCompetitor,
                 expanded = expanded,

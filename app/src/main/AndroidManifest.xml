@@ -87,6 +87,16 @@
             android:label="Details competition"
             android:theme="@style/Theme.Parkour" />
         <activity
+            android:name=".parkour.view.DetailParkour"
+            android:exported="false"
+            android:label="Details course"
+            android:theme="@style/Theme.Parkour" />
+        <activity
+            android:name=".parkour.view.ModifierCourse"
+            android:exported="false"
+            android:label="Modifier course"
+            android:theme="@style/Theme.Parkour" />
+        <activity
             android:name=".competition.view.ListeCompetitions"
             android:exported="true"
             android:label="@string/app_name"
