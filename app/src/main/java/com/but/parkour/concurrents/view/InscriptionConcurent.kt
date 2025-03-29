@@ -227,9 +227,12 @@ fun ListParticipants(
                     )
                     if(EditionMode.isEnable.value) {
                         Button(onClick = {
-                            selectedCompetitor = competitor
-                            showDialog = true
-                        }) { Text("Supprimer") }
+                                selectedCompetitor = competitor
+                                showDialog = true
+                            },colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red
+                            )
+                        ) { Text("Supprimer") }
                     }
                     if (onChronoClick != null) {
                         Row(modifier = Modifier.fillMaxWidth()) {
@@ -253,9 +256,13 @@ fun ListParticipants(
             text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
             confirmButton = {
                 Button(onClick = {
-                    selectedCompetitor?.let { onClickSupprimerCompetitor(it, competitionId, competitorViewModel!!) }
-                    showDialog = false
-                }) {
+                        selectedCompetitor?.let { onClickSupprimerCompetitor(it, competitionId, competitorViewModel!!) }
+                        showDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
+                    )
+                ) {
                     Text("Oui")
                 }
             },

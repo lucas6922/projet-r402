@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -87,6 +88,11 @@ fun ObstaclesPage(
     obstacleViewModel: ObstaclesViewModel,
     competitionStatus: Competition.Status
 ) {
+
+    var obstaclesList by remember { mutableStateOf(obstacles) }
+    LaunchedEffect(obstacles) {
+        obstaclesList = obstacles
+    }
     if(parkour == null) {
         Text("Aucune course dans ce parkour")
         Log.d("ObstaclesPage", "Aucune course dans ce parkour : $parkour")
@@ -101,11 +107,13 @@ fun ObstaclesPage(
                 modifier = Modifier.padding(top = 16.dp)
             )
             ListObstacles(
-                obstacles = obstacles,
+                obstacles = obstaclesList,
                 modifier = modifier.weight(1f),
                 obstacleViewModel = obstacleViewModel,
                 competitionStatus = competitionStatus
-            )
+            ){
+                obstacleViewModel.fetchCoursesObstacles(parkour.id!!)
+            }
             Spacer(modifier = Modifier.height(16.dp))
 
             if (EditionMode.isEnable.value) {
@@ -120,7 +128,8 @@ fun ListObstacles(
     obstacles : List<CourseObstacle>,
     modifier: Modifier = Modifier,
     obstacleViewModel: ObstaclesViewModel,
-    competitionStatus: Competition.Status
+    competitionStatus: Competition.Status,
+    onObstacleDeleted: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
@@ -144,9 +153,13 @@ fun ListObstacles(
 
                 if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
                     Button(onClick = {
-                        selectedObstacle = item
-                        showDialog = true
-                    }) {
+                            selectedObstacle = item
+                            showDialog = true
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Red
+                        )
+                    ) {
                         Text("Supprimer")
                     }
                 }
@@ -162,9 +175,13 @@ fun ListObstacles(
             text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
             confirmButton = {
                 Button(onClick = {
-                    selectedObstacle?.let { onClickSupprimer(it, obstacleViewModel) }
-                    showDialog = false
-                }) {
+                        selectedObstacle?.let { onClickSupprimer(it, obstacleViewModel, onObstacleDeleted) }
+                        showDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Red
+                    )
+                ) {
                     Text("Oui")
                 }
             },
@@ -271,12 +288,13 @@ fun CreerObstacleButton(course: Course) {
     }
 }
 
-fun onClickSupprimer(item: CourseObstacle, obstacleViewModel: ObstaclesViewModel) {
+fun onClickSupprimer(item: CourseObstacle, obstacleViewModel: ObstaclesViewModel, onObstacleSup:() -> Unit) {
     val allObstacles = obstacleViewModel.allObstacles
     val allObstaclesList = allObstacles.value ?: emptyList()
     for (obstacle in allObstaclesList){
         if (obstacle.name == item.obstacleName){
             obstacleViewModel.removeObstacle((obstacle.id!!))
+            onObstacleSup()
         }
     }
 

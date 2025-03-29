@@ -276,7 +276,7 @@ private fun DeleteButton(context: Context, competition: Competition) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer ce concurrent de cette competition ?") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cette competition ?") },
             confirmButton = {
                 Button(onClick = {
                     competition.id?.let{
