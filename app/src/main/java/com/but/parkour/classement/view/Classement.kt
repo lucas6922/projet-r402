@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,12 +70,19 @@ class Classement : ComponentActivity() {
 @Composable
 fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>) {
     var parkoursExpanded by remember { mutableStateOf(false) }
+    var selectedParkour by remember { mutableStateOf<Course?>(null) }
 
-    Column(modifier){
-        Row(){
+    Column(modifier) {
+        Row {
             Text(
                 text = "Parkour : ",
                 modifier = Modifier.padding(16.dp)
+            )
+            Text(
+                text = selectedParkour?.name ?: "Sélectionner un parkour",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .clickable { parkoursExpanded = true }
             )
             DropdownMenu(
                 expanded = parkoursExpanded,
@@ -82,13 +90,13 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
             ) {
                 parkours.forEach { parkour ->
                     DropdownMenuItem(
-                        text = { Text(parkour.name!!) },
+                        text = { Text(parkour.name ?: "") },
                         onClick = {
+                            selectedParkour = parkour
                             parkoursExpanded = false
                         }
                     )
                 }
-
             }
         }
     }
