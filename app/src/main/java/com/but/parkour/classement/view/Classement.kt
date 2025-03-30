@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -29,9 +31,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.classement.view.ui.theme.ParkourTheme
 import com.but.parkour.classement.viewmodel.PerformanceViewModel
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
+import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 
@@ -59,7 +63,8 @@ class Classement : ComponentActivity() {
                     ClassementPage(
                         modifier = Modifier.padding(innerPadding),
                         performances = performances,
-                        parkours = parkours
+                        parkours = parkours,
+                        viewModel = performanceViewModel
                     )
                 }
             }
@@ -68,9 +73,16 @@ class Classement : ComponentActivity() {
 }
 
 @Composable
-fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>) {
+fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>, viewModel: PerformanceViewModel) {
     var parkoursExpanded by remember { mutableStateOf(false) }
     var selectedParkour by remember { mutableStateOf<Course?>(null) }
+    var classement by remember { mutableStateOf<List<Competitor>>(emptyList()) }
+    if(selectedParkour != null) {
+        LaunchedEffect(selectedParkour) {
+            classement = viewModel.filterCompetitorsWithPerformance(selectedParkour!!)
+        }
+    }
+
 
     Column(modifier) {
         Row {
@@ -99,23 +111,29 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
                 }
             }
         }
+        Classement(Modifier.padding(top = 16.dp), concurrents = classement)
     }
 }
 
 @Composable
-fun Classement(modifier : Modifier, performances: List<Performance>) {
+fun Classement(modifier : Modifier, concurrents: List<Competitor>) {
+    if(concurrents.isEmpty()) {
+        Text(
+            text = "Aucun concurrent trouvé",
+            modifier = Modifier.padding(16.dp)
+        )
+        return
+    }
+    var i by remember { mutableStateOf(0) }
     LazyColumn(modifier) {
-        items(performances) { performance ->
+        items(concurrents) { concurrent ->
             Row(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Nom : ${performance.name}",
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = "Temps : ${performance.time}",
+                    text = "$i ${concurrent.firstName} ${concurrent.lastName}",
                     modifier = Modifier.padding(8.dp)
                 )
             }
+            i += 1
         }
     }
 }
