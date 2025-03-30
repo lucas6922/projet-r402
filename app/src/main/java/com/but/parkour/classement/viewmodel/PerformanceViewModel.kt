@@ -10,13 +10,18 @@ import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
 import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.clientkotlin.models.PerformanceObstacle
+import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
+import com.but.parkour.parkour.view.ListeParkours
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 
 class PerformanceViewModel : ViewModel() {
 
@@ -118,24 +123,78 @@ class PerformanceViewModel : ViewModel() {
         return competitor
     }
 
-    suspend fun filterCompetitorsWithPerformance(parkour: Course): List<Competitor> {
-        val classement: MutableList<Competitor> = mutableListOf()
+
+    suspend fun filterCompetitorsWithPerformance(parkour: Course): Map<Competitor, Int> {
+        val classement: MutableMap<Competitor, Int> = mutableMapOf()
         val performancesList = performances.value?.filter { it.courseId == parkour.id }?.sortedBy { it.totalTime }
         val competitorViewModel = CompetitorViewModel()
-        viewModelScope.launch {
-            competitorViewModel.fetchAllCompetitors()
-            delay(1000L)
-            val competitors = competitorViewModel.competitors.value
-            Log.d("PerformanceViewModel", "Competitors received: $competitors")
-            performancesList?.forEach {
-                val competitor = competitors?.firstOrNull { competitor -> competitor.id == it.competitorId }
-                Log.d("PerformanceViewModel", "Competitor received: $competitor")
-                if (competitor != null) {
-                    classement.add(competitor)
-                }
+
+
+        competitorViewModel.fetchAllCompetitors()
+
+        delay(400L)
+
+        val competitors = competitorViewModel.competitors.value
+
+        Log.d("PerformanceViewModel", "Competitors received: $competitors")
+
+        performancesList?.forEach {
+            val competitor = competitors?.firstOrNull { competitor -> competitor.id == it.competitorId }
+            Log.d("PerformanceViewModel", "Competitor received: $competitor")
+            if (competitor != null) {
+                classement[competitor] = it.totalTime!!
             }
-        }.join()
+        }
 
         return classement
     }
+
+    suspend fun filterCompetitorsWithCompetition(listeParkours: List<Course>): Map<Competitor, Int> {
+
+        val classement: MutableMap<Competitor, Int> = mutableMapOf()
+        val performancesList : MutableList<Performance> = mutableListOf()
+        listeParkours.forEach { parkour ->
+            Log.d("PerformanceViewModel", "Parkour: $parkour")
+            performancesList.addAll(performances.value?.filter { it.courseId == parkour.id }!!)
+        }
+
+        Log.d("PerformanceViewModel", "PerformancesList: $performancesList")
+
+        val totalTimes = mutableMapOf<Int, Int>()
+
+
+        performancesList.forEach{
+            if (totalTimes.containsKey(it.competitorId)) {
+                totalTimes[it.competitorId!!] = totalTimes[it.competitorId]!! + it.totalTime!!
+            } else {
+                totalTimes[it.competitorId!!] = it.totalTime!!
+            }
+        }
+
+        Log.d("PerformanceViewModel", "Total times: $totalTimes")
+
+        val sortedTimes = totalTimes.toList().sortedBy { (_, value) -> value }.toMap()
+
+
+        val competitorViewModel = CompetitorViewModel()
+
+        competitorViewModel.fetchAllCompetitors()
+
+        delay(400L)
+
+        val competitors = competitorViewModel.competitors.value
+
+        Log.d("PerformanceViewModel", "Competitors received: $competitors")
+
+        sortedTimes.forEach() {
+            val competitor = competitors?.firstOrNull { competitor -> competitor.id == it.key }
+            Log.d("PerformanceViewModel", "Competitor received: $competitor")
+            if (competitor != null) {
+                classement[competitor] = it.value
+            }
+        }
+
+        return classement
+    }
+
 }
