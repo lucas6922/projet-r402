@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
@@ -124,12 +125,12 @@ fun Classement(modifier : Modifier, concurrents: List<Competitor>) {
         )
         return
     }
-    var i by remember { mutableStateOf(0) }
+    var i =1
     LazyColumn(modifier) {
         items(concurrents) { concurrent ->
-            Row(modifier = Modifier.padding(16.dp)) {
+            Card(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "$i ${concurrent.firstName} ${concurrent.lastName}",
+                    text = "$i : ${concurrent.firstName} ${concurrent.lastName}",
                     modifier = Modifier.padding(8.dp)
                 )
             }
