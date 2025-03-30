@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
@@ -88,6 +89,24 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
                     )
                 }
 
+            }
+        }
+    }
+}
+
+@Composable
+fun Classement(modifier : Modifier, performances: List<Performance>) {
+    LazyColumn(modifier) {
+        items(performances) { performance ->
+            Row(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = "Nom : ${performance.name}",
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = "Temps : ${performance.time}",
+                    modifier = Modifier.padding(8.dp)
+                )
             }
         }
     }
