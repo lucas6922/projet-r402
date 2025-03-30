@@ -13,6 +13,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -43,14 +44,20 @@ class Classement : ComponentActivity() {
                 val performanceViewModel: PerformanceViewModel = viewModel()
                 val performances by performanceViewModel.performances.observeAsState(initial = emptyList())
 
+                val competitionId = competition.id
+
                 val parkourViewModel: ParkourViewModel = viewModel()
-                parkourViewModel.fetchCourses(competition.id!!)
-                val parkours by parkourViewModel.parkours.observeAsState()
+                competitionId?.let {
+                    LaunchedEffect(it) {
+                        parkourViewModel.fetchCourses(it)
+                    }
+                }
+                val parkours by parkourViewModel.parkours.observeAsState(initial = emptyList())
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ClassementPage(
                         modifier = Modifier.padding(innerPadding),
                         performances = performances,
-                        parkours = parkours!!
+                        parkours = parkours
                     )
                 }
             }
@@ -59,10 +66,10 @@ class Classement : ComponentActivity() {
 }
 
 @Composable
-fun ClassementPage(modifier: Modifier = Modifier, performances: List<Performance>, parkours: List<Course>) {
+fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>) {
     var parkoursExpanded by remember { mutableStateOf(false) }
 
-    Column(Modifier.fillMaxSize()){
+    Column(modifier){
         Row(){
             Text(
                 text = "Parkour : ",
