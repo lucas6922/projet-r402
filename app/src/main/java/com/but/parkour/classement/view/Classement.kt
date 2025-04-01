@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,8 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
 
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.classement.view.ui.theme.ParkourTheme
@@ -45,16 +42,9 @@ import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
-import com.but.parkour.clientkotlin.models.Obstacle
 import com.but.parkour.clientkotlin.models.Performance
-import com.but.parkour.competition.viewmodel.CompetitionViewModel
-import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
-import com.but.parkour.parkour.view.ListeParkours
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
-import kotlinx.coroutines.time.delay
-import okhttp3.internal.wait
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class Classement : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +56,7 @@ class Classement : ComponentActivity() {
 
                 val performanceViewModel: PerformanceViewModel = viewModel()
                 val performances by performanceViewModel.performances.observeAsState(initial = emptyList())
+                val obstaclesViewModel = viewModel<ObstaclesViewModel>()
 
                 val competitionId = competition.id
 
@@ -81,7 +72,8 @@ class Classement : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         performances = performances,
                         parkours = parkours,
-                        viewModel = performanceViewModel
+                        performanceViewModel = performanceViewModel,
+                        obstaclesViewModel = obstaclesViewModel
                     )
                 }
             }
@@ -90,29 +82,40 @@ class Classement : ComponentActivity() {
 }
 
 @Composable
-fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>, viewModel: PerformanceViewModel) {
+fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkours: List<Course>, performanceViewModel: PerformanceViewModel, obstaclesViewModel: ObstaclesViewModel) {
     var parkoursExpanded by remember { mutableStateOf(false) }
     var selectedParkour by remember { mutableStateOf<Course?>(null) }
     var obstacleExpanded by remember { mutableStateOf(false) }
     var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
     var classement by remember { mutableStateOf<Map<Competitor, Int>>(emptyMap()) }
     var obstacles by remember { mutableStateOf<List<CourseObstacle>>(emptyList()) }
-    val obstaclesViewModel = ObstaclesViewModel()
-    if(selectedParkour != null) {
+    val obstaclesCourse by obstaclesViewModel.obstaclesCourse.observeAsState(emptyList())
+
+
+    if (selectedParkour != null) {
         LaunchedEffect(selectedParkour) {
             obstaclesViewModel.fetchCoursesObstacles(selectedParkour!!.id!!)
         }
-        Log.d("obstacleViewModel" , "fetched Obstacles " + obstaclesViewModel.obstaclesCourse.value)
-        obstacles = obstaclesViewModel.obstaclesCourse.value?: emptyList()
-        LaunchedEffect(selectedParkour) {
-            classement = viewModel.filterCompetitorsWithPerformance(selectedParkour!!)
+        LaunchedEffect(obstaclesCourse) {
+            if (obstaclesCourse.isNotEmpty()) {
+                obstacles = obstaclesCourse
+                classement = performanceViewModel.filterCompetitorsWithPerformance(selectedParkour!!)
+                Log.d("ObstacleViewModel", "Fetched Obstacles: $obstacles")
+            }
         }
-    }
-    else {
+    } else {
         LaunchedEffect(performances) {
-            classement = viewModel.filterCompetitorsWithCompetition(parkours)
+            classement = performanceViewModel.filterCompetitorsWithCompetition(parkours)
         }
     }
+
+    LaunchedEffect(selectedObstacle) {
+        if (selectedObstacle != null) {
+            classement = performanceViewModel.filterCompetitorsWithObstacle(selectedParkour!!, selectedObstacle!!)
+            Log.d("ObstacleViewModel", "Fetched classement for obstacle: $selectedObstacle")
+        }
+    }
+
     Column(modifier) {
         Row {
             Text(

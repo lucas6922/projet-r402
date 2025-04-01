@@ -14,6 +14,7 @@ import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.clientkotlin.models.PerformanceObstacle
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
@@ -187,6 +188,27 @@ class PerformanceViewModel : ViewModel() {
             Log.d("PerformanceViewModel", "Competitor received: $competitor")
             if (competitor != null) {
                 classement[competitor] = it.value
+            }
+        }
+
+        return classement
+    }
+
+    suspend fun filterCompetitorsWithObstacle(parkour: Course, obstacle: CourseObstacle): Map<Competitor, Int> {
+        val classement: MutableMap<Competitor, Int> = mutableMapOf()
+        val performancesList = performancesObstacle.value?.filter { it.obstacleId == obstacle.courseObstacleId }?.sortedBy { it.time }
+        val competitorViewModel = CompetitorViewModel()
+
+
+        val competitors = competitorViewModel.fetchAllCompetitors()
+
+        Log.d("PerformanceViewModel", "Competitors received: $competitors")
+
+        performancesList?.forEach {
+            val competitor = competitors?.firstOrNull { competitor -> competitor.id == it.performanceId }
+            Log.d("PerformanceViewModel", "Competitor received: $competitor")
+            if (competitor != null) {
+                classement[competitor] = it.time!!
             }
         }
 
