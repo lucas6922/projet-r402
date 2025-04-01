@@ -30,6 +30,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import com.but.parkour.chrono.view.Chronometre
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.Competitor
 
 class ListeConcurrentsParkour : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +85,7 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
             concurrents = participants,
             modifier = Modifier.weight(1f),
             onChronoClick = { competitor ->
-                onItemClickChrono(competition, course, context)
+                onItemClickChrono(competition, course, competitor, context)
             },
             competitionId = null,
             competitorViewModel = competitorViewModel,
@@ -96,9 +97,10 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
 
 
 
-fun onItemClickChrono(competition: Competition, course: Course, context: Context) {
+fun onItemClickChrono(competition: Competition, course: Course, competitor: Competitor, context: Context) {
     val intent = Intent(context, Chronometre::class.java).apply {
         putExtra("competition", competition)
+        putExtra("competitorId", competitor.id)
         putExtra("course", course)
     }
     context.startActivity(intent)
