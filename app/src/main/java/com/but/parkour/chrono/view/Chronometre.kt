@@ -309,7 +309,7 @@ fun enregistrerPerformance(
 
             chronoModel.obstacles.value?.let { obstaclesList ->
                 for ((index, lap) in laps.withIndex()) {
-                    val obstacleId = obstaclesList.getOrNull(index)?.courseObstacleId ?: 0
+                    val obstacleId = obstaclesList.getOrNull(index)?.obstacleId ?: 0
                     val timeInMs = parseTime(lap.second).toInt()
 
                     Log.d("Chronometre", "Enregistrement obstacle ID: $obstacleId")
@@ -325,7 +325,7 @@ fun enregistrerPerformance(
                     )
                 }
             }
-            onComplete() // Notifie que l'enregistrement est terminé
+            onComplete()
         }
     }
 }

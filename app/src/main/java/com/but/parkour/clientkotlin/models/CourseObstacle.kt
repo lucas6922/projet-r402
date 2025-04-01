@@ -29,8 +29,11 @@ import com.squareup.moshi.Json
 
 data class CourseObstacle (
 
-    @Json(name = "course_obstacle_id")
+    @Json(name = "id")
     val courseObstacleId: Int? = null,
+
+    @Json(name = "obstacle_id")
+    val obstacleId: Int? = null,
 
     @Json(name = "obstacle_name")
     val obstacleName: String? = null,

@@ -41,6 +41,7 @@ class ChronometreViewModel : ViewModel() {
                 apiClient.fetchData(
                     call,
                     onSuccess = { data, _ ->
+                        Log.d("ChronometreViewModel", " course id: $parkourId")
                         Log.d("ChronometreViewModel", "Obstacles received: $data")
                         _obstacles.postValue(data ?: emptyList())
                     },
