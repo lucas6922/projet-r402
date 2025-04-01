@@ -62,15 +62,14 @@ fun ChronometreScreen(
     var currentObstacleIndex by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) }
+    var isSaved by remember { mutableStateOf(false) } // Ajout de l'état pour la confirmation
     val laps = remember { mutableStateListOf<Pair<String, String>>() }
-    val context = LocalContext.current;
+    val context = LocalContext.current
 
-    // Charge les obstacles depuis l'API
     LaunchedEffect(parkourId) {
         viewModel.fetchObstacles(parkourId)
     }
 
-    // Timer
     LaunchedEffect(isRunning) {
         val startTime = System.currentTimeMillis() - time
         while (isRunning) {
@@ -97,6 +96,7 @@ fun ChronometreScreen(
                 hasFell = false
                 lastLapTime = 0L
                 isFinished = false
+                isSaved = false // Réinitialisation de l'état d'enregistrement
             },
             hasRetry = hasRetry,
             hasFell = hasFell,
@@ -117,7 +117,7 @@ fun ChronometreScreen(
 
                     if (currentObstacleIndex == obstacles.size - 1) {
                         isRunning = false
-                        isFinished = true // Tous les obstacles ont été validés
+                        isFinished = true
                     } else {
                         currentObstacleIndex++
                     }
@@ -126,22 +126,32 @@ fun ChronometreScreen(
             isLapEnabled = obstacles != null && currentObstacleIndex < obstacles.size
         )
 
-
-        // Affichage du bouton "Enregistrer les performances" si la course est terminée
-        if (isFinished) {
+        if (isFinished && !isSaved) {
             Button(
                 onClick = {
                     val totalTime = laps.sumOf { parseTime(it.second).toInt() }
-                    enregistrerPerformance(course.id ?: 0, competitorId, totalTime, laps, context, viewModel)
+                    enregistrerPerformance(course.id ?: 0, competitorId, totalTime, laps, context, viewModel) {
+                        isSaved = true // Met à jour l'état après enregistrement
+                    }
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Enregistrer les performances")
             }
         }
+
+        if (isSaved) {
+            Text(
+                text = "Performances enregistrées avec succès !",
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
+
         LapList(laps)
     }
 }
+
 
 
 // Affichage de l'obstacle en cours
@@ -286,7 +296,8 @@ fun enregistrerPerformance(
     totalTime: Int,
     laps: List<Pair<String, String>>,
     context: Context,
-    chronoModel: ChronometreViewModel
+    chronoModel: ChronometreViewModel,
+    onComplete: () -> Unit
 ) {
     val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status = PerformanceCreate.Status.to_finish, totalTime = totalTime)
     chronoModel.addPerformance(perf)
@@ -314,6 +325,7 @@ fun enregistrerPerformance(
                     )
                 }
             }
+            onComplete() // Notifie que l'enregistrement est terminé
         }
     }
 }
