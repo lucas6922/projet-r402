@@ -147,4 +147,6 @@ interface CoursesApi {
     @POST("api/courses/{id}/update_obstacle_position")
     fun updateCourseObstaclePosition(@Path("id") id: Int, @Body courseObstacleUpdate: CourseObstacleUpdate): Call<Unit>
 
+    @DELETE("api/courses/{id}/remove_obstacle/{id_obstacle}")
+    fun deleteCourseObstacle(@Path("id") id: Int, @Path("id_obstacle") idObstacle: Int): Call<Unit>
 }
