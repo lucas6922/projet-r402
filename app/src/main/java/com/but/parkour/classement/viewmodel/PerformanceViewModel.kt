@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
@@ -18,7 +19,10 @@ import com.but.parkour.clientkotlin.models.PerformanceObstacle
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import com.but.parkour.parkour.view.ListeParkours
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
@@ -130,11 +134,7 @@ class PerformanceViewModel : ViewModel() {
         val competitorViewModel = CompetitorViewModel()
 
 
-        competitorViewModel.fetchAllCompetitors()
-
-        delay(400L)
-
-        val competitors = competitorViewModel.competitors.value
+        val competitors = competitorViewModel.fetchAllCompetitors()
 
         Log.d("PerformanceViewModel", "Competitors received: $competitors")
 
@@ -178,11 +178,7 @@ class PerformanceViewModel : ViewModel() {
 
         val competitorViewModel = CompetitorViewModel()
 
-        competitorViewModel.fetchAllCompetitors()
-
-        delay(400L)
-
-        val competitors = competitorViewModel.competitors.value
+        val competitors = competitorViewModel.fetchAllCompetitors()
 
         Log.d("PerformanceViewModel", "Competitors received: $competitors")
 

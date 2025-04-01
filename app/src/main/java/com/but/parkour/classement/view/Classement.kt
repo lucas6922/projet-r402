@@ -2,6 +2,7 @@ package com.but.parkour.classement.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -52,6 +53,7 @@ import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import com.but.parkour.parkour.view.ListeParkours
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import kotlinx.coroutines.time.delay
+import okhttp3.internal.wait
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 class Classement : ComponentActivity() {
@@ -100,8 +102,9 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
         LaunchedEffect(selectedParkour) {
             obstaclesViewModel.fetchCoursesObstacles(selectedParkour!!.id!!)
         }
+        Log.d("obstacleViewModel" , "fetched Obstacles " + obstaclesViewModel.obstaclesCourse.value)
         obstacles = obstaclesViewModel.obstaclesCourse.value?: emptyList()
-            LaunchedEffect(selectedParkour) {
+        LaunchedEffect(selectedParkour) {
             classement = viewModel.filterCompetitorsWithPerformance(selectedParkour!!)
         }
     }

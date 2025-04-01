@@ -15,6 +15,7 @@ import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.Period
@@ -39,31 +40,30 @@ class CompetitorViewModel : ViewModel() {
     val competitionApi = apiClient.createService(CompetitionsApi::class.java)
     val competitorApi = apiClient.createService(CompetitorsApi::class.java)
 
-    suspend fun fetchAllCompetitors() {
-        withContext(Dispatchers.IO) {
-            try {
-                Log.d("CompetitorViewModel", "Fetching all competitors...")
+    suspend fun fetchAllCompetitors(): List<Competitor> = withContext(Dispatchers.IO) {
+        try {
+            Log.d("CompetitorViewModel", "Fetching all competitors...")
 
-                val call = competitorApi.getAllCompetitors()
-
+            val call = competitorApi.getAllCompetitors()
+            return@withContext suspendCancellableCoroutine { continuation ->
                 apiClient.fetchData(
                     call,
                     onSuccess = { data, _ ->
                         Log.d("CompetitorViewModel", "Competitors received: $data")
-                        _competitors.postValue(data ?: emptyList())
+                        continuation.resume(data ?: emptyList())
                     },
                     onError = { errorMessage, _ ->
                         Log.e("CompetitorViewModel", "Error: $errorMessage")
-                        _competitors.postValue(emptyList())
+                        continuation.resume(emptyList())
                     }
                 )
-
-            } catch (e: Exception) {
-                Log.e("CompetitorViewModel", "Exception: ${e.message}", e)
-                _competitors.postValue(emptyList())
             }
+        } catch (e: Exception) {
+            Log.e("CompetitorViewModel", "Exception: ${e.message}", e)
+            emptyList()
         }
     }
+
 
     fun fetchCompetitorsInscrit(competitionId: Int) {
         viewModelScope.launch {
