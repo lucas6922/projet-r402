@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
+import com.but.parkour.components.PageTitle
 import com.but.parkour.concurrents.view.GestionConcurrents
 import com.but.parkour.ui.theme.ParkourTheme
 import kotlinx.coroutines.delay
@@ -79,7 +80,8 @@ fun CompetitionPage(
             .padding(top = 16.dp)
     ) {
 
-        TitreCompetition()
+        PageTitle("Bienvenue dans Parkour !")
+
         EditionMode()
 
         if(isLoading) {
@@ -135,21 +137,6 @@ fun EditionMode() {
                 EditionMode.isEnable.value = !EditionMode.isEnable.value
             },
         )
-    }
-}
-
-@Composable
-fun TitreCompetition(){
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Bienvenue dans Parkour !",
-            modifier = Modifier.padding(bottom = 16.dp),
-            style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold),
-
-            )
     }
 }
 

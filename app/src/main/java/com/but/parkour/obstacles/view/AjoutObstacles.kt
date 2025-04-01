@@ -27,6 +27,7 @@ import com.but.parkour.clientkotlin.models.ObstacleCreate
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.compose.ui.platform.LocalContext
+import com.but.parkour.components.PageTitle
 
 
 class AjoutObstacles : ComponentActivity() {
@@ -59,11 +60,7 @@ fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Ajouter un obstacle",
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            PageTitle("Creer un obstacle")
             OutlinedTextField(
                 value = obstacleName,
                 onValueChange = { obstacleName = it },

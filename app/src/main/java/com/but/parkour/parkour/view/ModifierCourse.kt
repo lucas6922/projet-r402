@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseUpdate
+import com.but.parkour.components.PageTitle
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 
@@ -61,24 +62,13 @@ fun ModifierCoursePage(modifier: Modifier, course: Course, competition: Competit
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ){
-            PageTitle(course)
-        }
+
+        PageTitle("Modifier la course ${course.name}")
+
         ModifierCourseForm(course, competition)
     }
 }
 
-@Composable
-private fun PageTitle(course: Course){
-    Text(
-        text = "Modifier la course ${course.name}",
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
-}
 
 
 @Composable

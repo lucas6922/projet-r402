@@ -3,7 +3,6 @@ package com.but.parkour.concurrents.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.border
@@ -16,13 +15,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.CompetitorCreate
 import com.but.parkour.clientkotlin.models.CompetitorCreate.Gender
+import com.but.parkour.components.PageTitle
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 import java.time.LocalDate
-import java.util.Locale
 
 class AjoutConcurrent : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +51,9 @@ fun AjoutConcurrentForm(modifier: Modifier = Modifier) {
     Column(modifier = modifier
         .fillMaxSize()
         .padding(16.dp)) {
-        Text("Ajouter un concurrent", style = MaterialTheme.typography.titleLarge)
+
+        PageTitle("Ajouter un concurrent")
+
         Spacer(modifier = Modifier.height(16.dp))
 
         TextField(

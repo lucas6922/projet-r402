@@ -18,6 +18,7 @@ import com.but.parkour.clientkotlin.models.CompetitionUpdate.Gender
 import com.but.parkour.clientkotlin.models.CompetitionUpdate.Status
 import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
+import com.but.parkour.components.PageTitle
 
 class ModifierCompetition : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,15 +57,7 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
             .padding(16.dp)
     ) {
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ){
-            Text(
-                "Modifier la competition ${oldCompetition.name}",
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
+        PageTitle("Modifier la competition ${oldCompetition.name}")
 
         Spacer(modifier = Modifier.height(16.dp))
 

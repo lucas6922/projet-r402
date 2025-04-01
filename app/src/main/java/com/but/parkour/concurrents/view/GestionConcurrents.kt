@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import com.but.parkour.concurrents.ui.theme.ParkourTheme
 import com.but.parkour.concurrents.viewmodel.GestionConcurrentViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -42,7 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
+import com.but.parkour.components.PageTitle
+import com.but.parkour.ui.theme.ParkourTheme
 
 class GestionConcurrents : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +74,8 @@ fun GestionConcurrentsPage(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        PageTitle()
+        PageTitle("Liste des concurrents")
+
         AddCompetitorButton(
             onClick = {
                 val intent = Intent(context, AjoutConcurrent::class.java)
@@ -89,24 +90,6 @@ fun GestionConcurrentsPage(
     }
 }
 
-
-@Composable
-private fun PageTitle() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Liste des concurrents",
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold
-            )
-        )
-    }
-}
 
 
 @Composable

@@ -19,18 +19,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Course
-import com.but.parkour.concurrents.ui.theme.ParkourTheme
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import com.but.parkour.chrono.view.Chronometre
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.components.PageTitle
 
 class ListeConcurrentsParkour : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,14 +66,8 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
             .padding(top = 32.dp, bottom = 32.dp)
 
     ) {
-        Text(
-            text = competition.name ?: "Unknown",
-            modifier = Modifier.padding(bottom = 16.dp),
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = Color.DarkGray,
-                fontWeight = FontWeight.Bold
-            )
-        )
+
+        PageTitle("Concurrents de la competition : ${competition.name}")
 
         Spacer(modifier = Modifier.height(8.dp))
 

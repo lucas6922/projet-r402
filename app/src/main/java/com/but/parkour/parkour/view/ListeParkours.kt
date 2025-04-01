@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -43,15 +42,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
-
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.text.style.TextAlign
 import org.burnoutcrew.reorderable.ReorderableItem
-import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import com.but.parkour.clientkotlin.models.CourseUpdate
+import com.but.parkour.components.PageTitle
 import org.burnoutcrew.reorderable.detectReorder
 
 class ListeParkours : ComponentActivity() {
@@ -101,11 +98,9 @@ fun ParkoursPage(
                 .padding(16.dp)
                 .padding(top = 32.dp)
         ) {
-            Text(
-                text = compet,
-                modifier = Modifier.padding(bottom = 16.dp),
-                style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
-            )
+
+            PageTitle("Courses de la competition : $compet")
+
 
             Spacer(modifier = Modifier.height(8.dp))
 

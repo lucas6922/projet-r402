@@ -23,6 +23,7 @@ import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.CompetitionUpdate
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
+import com.but.parkour.components.PageTitle
 import com.but.parkour.concurrents.view.InscriptionConcurent
 import com.but.parkour.parkour.view.ListeParkours
 
@@ -62,27 +63,15 @@ fun DetailsCompetitionPage(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            PageTitle()
-        }
+
+        PageTitle("Detail de la competition")
+
         CompetitionDetailsCard(currentCompetition)
         Spacer(modifier = Modifier.height(16.dp))
         CompetitionActions(currentCompetition){
             updatedCompetition -> currentCompetition = updatedCompetition
         }
     }
-}
-
-@Composable
-fun PageTitle(){
-    Text(
-        text = "Détails de la compétition",
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
 }
 
 

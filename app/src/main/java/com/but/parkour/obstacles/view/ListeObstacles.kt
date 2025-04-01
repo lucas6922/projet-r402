@@ -40,12 +40,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
-import com.but.parkour.obstacles.ui.theme.ParkourTheme
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import androidx.compose.runtime.*
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Obstacle
+import com.but.parkour.components.PageTitle
+import com.but.parkour.ui.theme.ParkourTheme
 import okhttp3.internal.notifyAll
 
 class ListeObstacles : ComponentActivity() {
@@ -102,10 +103,8 @@ fun ObstaclesPage(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            Text(
-                text = "Obstacles",
-                modifier = Modifier.padding(top = 16.dp)
-            )
+
+            PageTitle("Obstacles de la course : ${parkour.name}")
             ListObstacles(
                 obstacles = obstaclesList,
                 modifier = modifier.weight(1f),

@@ -20,6 +20,7 @@ import java.time.LocalDate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.but.parkour.clientkotlin.models.CompetitorUpdate
+import com.but.parkour.components.PageTitle
 
 
 class ModifierConcurrent : ComponentActivity() {
@@ -57,20 +58,9 @@ fun ModifierConcurrentPage(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        ConcurrentTitle(competitor = competitor)
+        PageTitle(title = "Modifier le concurrent ${competitor.firstName} ${competitor.lastName}")
         ModifierConcurrentForm(competitor = competitor)
     }
-}
-
-
-
-@Composable
-fun ConcurrentTitle(competitor: Competitor) {
-    Text(
-        text = "Modifier le concurrent ${competitor.firstName} ${competitor.lastName}",
-        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
 }
 
 @Composable

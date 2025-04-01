@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Course
+import com.but.parkour.components.PageTitle
 import com.but.parkour.concurrents.view.ListeConcurrentsParkour
 import com.but.parkour.obstacles.view.ListeObstacles
 import com.but.parkour.parkour.viewmodel.ParkourViewModel
@@ -68,27 +69,15 @@ fun DetailParkourPage(modifier: Modifier = Modifier, course: Course, competition
             .fillMaxSize()
             .padding(16.dp)
     ){
-        Row (
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ){
-            PageTitle()
-        }
+
+        PageTitle("Detail de la course ${course.name}")
+
         CourseCard(course)
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CourseActions(course, competition)
     }
-}
-
-@Composable
-private fun PageTitle() {
-    Text(
-        text = "Détail de la course",
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier.padding(bottom = 16.dp)
-    )
 }
 @Composable
 fun CourseCard(
@@ -245,7 +234,7 @@ private fun DeleteButton(context: Context, competition: Competition, course: Cou
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer ce concurrent de cette course ?") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cette course ?") },
             confirmButton = {
                 Button(onClick = {
                     course.id?.let{

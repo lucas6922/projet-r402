@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
+import com.but.parkour.components.PageTitle
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 
@@ -90,7 +91,8 @@ fun InscriptionPage(
             .padding(16.dp)
             .padding(top = 32.dp, bottom = 32.dp)
     ) {
-        HeaderText(compet)
+        PageTitle(title = "Concurrents de la competition : $compet")
+
         Spacer(modifier = Modifier.height(8.dp))
         ListParticipants(
             concurrents = participants,
@@ -140,14 +142,6 @@ fun InscriptionPage(
 }
 
 
-@Composable
-fun HeaderText(compet: String) {
-    Text(
-        text = compet,
-        modifier = Modifier.padding(bottom = 16.dp),
-        style = MaterialTheme.typography.titleLarge.copy(color = Color.DarkGray, fontWeight = FontWeight.Bold)
-    )
-}
 
 @Composable
 fun CompetitorDropdown(
@@ -253,7 +247,7 @@ fun ListParticipants(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer ce concurrent de la competition ?") },
             confirmButton = {
                 Button(onClick = {
                         selectedCompetitor?.let { onClickSupprimerCompetitor(it, competitionId, competitorViewModel!!) }
