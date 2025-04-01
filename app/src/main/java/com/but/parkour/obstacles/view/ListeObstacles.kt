@@ -110,9 +110,10 @@ fun ObstaclesPage(
                 obstacles = obstaclesList,
                 modifier = modifier.weight(1f),
                 obstacleViewModel = obstacleViewModel,
-                competitionStatus = competitionStatus
+                competitionStatus = competitionStatus,
+                parkourId = parkour.id!!
             ){
-                obstacleViewModel.fetchCoursesObstacles(parkour.id!!)
+                obstacleViewModel.fetchCoursesObstacles(parkour.id)
             }
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -129,6 +130,7 @@ fun ListObstacles(
     modifier: Modifier = Modifier,
     obstacleViewModel: ObstaclesViewModel,
     competitionStatus: Competition.Status,
+    parkourId: Int,
     onObstacleDeleted: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -172,10 +174,11 @@ fun ListObstacles(
         AlertDialog(
             onDismissRequest = { showDialog = false },
             title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle ?") },
+            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle de cette course" +
+                    "?") },
             confirmButton = {
                 Button(onClick = {
-                        selectedObstacle?.let { onClickSupprimer(it, obstacleViewModel, onObstacleDeleted) }
+                        selectedObstacle?.let { onClickSupprimer(it.obstacleId!!,parkourId, obstacleViewModel, onObstacleDeleted) }
                         showDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -288,16 +291,9 @@ fun CreerObstacleButton(course: Course) {
     }
 }
 
-fun onClickSupprimer(item: CourseObstacle, obstacleViewModel: ObstaclesViewModel, onObstacleSup:() -> Unit) {
-    val allObstacles = obstacleViewModel.allObstacles
-    val allObstaclesList = allObstacles.value ?: emptyList()
-    for (obstacle in allObstaclesList){
-        if (obstacle.name == item.obstacleName){
-            obstacleViewModel.removeObstacle((obstacle.id!!))
-            onObstacleSup()
-        }
-    }
-
+fun onClickSupprimer(obstacleId: Int, courseId: Int, obstacleViewModel: ObstaclesViewModel, onObstacleSup:() -> Unit) {
+    obstacleViewModel.removeObstacle(obstacleId, courseId)
+    onObstacleSup()
 }
 
 fun onCreerObstacleClick(context : Context, course: Course) {

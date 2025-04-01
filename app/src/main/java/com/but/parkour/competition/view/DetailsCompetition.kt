@@ -150,6 +150,7 @@ private fun CompetitionActions(
         Competition.Status.not_started -> {
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
+            StartCompetition(competition, onCompetitionUpdate)
             //peut inscrire des concurrents
         }
         Competition.Status.started -> {
@@ -186,7 +187,34 @@ fun ValiderCompetitionButton(
             .fillMaxWidth()
             .padding(bottom = 8.dp)
     ) {
-        Text("Valider le parcours")
+        Text("Valider les parcours")
+    }
+
+}
+
+
+@Composable
+fun StartCompetition(
+    competition: Competition,
+    onCompetitionUpdate: (Competition) -> Unit
+) {
+    val competitionViewModel: CompetitionViewModel = viewModel()
+
+    val competValid = CompetitionUpdate(
+        status = CompetitionUpdate.Status.started
+    )
+
+    Button(
+        onClick = {
+            competitionViewModel.updateCompetition(competition.id!!, competValid)
+            val updatedCompetition = competition.copy(status = Competition.Status.started)
+            onCompetitionUpdate(updatedCompetition)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
+        Text("Commencer la competition")
     }
 
 }

@@ -130,12 +130,12 @@ class ObstaclesViewModel : ViewModel() {
         }
     }
 
-    fun removeObstacle(obstacleId: Int) {
+    fun removeObstacle(obstacleId: Int, courseId: Int) {
         viewModelScope.launch {
             try {
                 Log.d("ObstaclesViewModel", "Removing obstacle...")
 
-                val call = obstacleApi.deleteObstacle(obstacleId)
+                val call = courseApi.deleteCourseObstacle(courseId, obstacleId)
 
                 apiClient.fetchData(
                     call,
