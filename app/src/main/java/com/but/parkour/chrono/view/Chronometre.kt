@@ -57,6 +57,7 @@ fun ChronometreScreen(
     var hasFell by remember { mutableStateOf(false) }
     var lastLapTime by remember { mutableStateOf(0L) }
     var isFinished by remember { mutableStateOf(false) }
+    var fallenObstacleIndex by remember { mutableStateOf(-1) }
     var currentObstacleIndex by remember { mutableStateOf(0) }
     var time by remember { mutableStateOf(0L) }
     var isRunning by remember { mutableStateOf(false) }
@@ -76,10 +77,13 @@ fun ChronometreScreen(
         }
     }
 
+
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        Text(text = competitorId.toString())
+        Text(text = course.id.toString())
         ObstacleDisplay(obstacles, currentObstacleIndex)
         ChronometerDisplay(time)
         ChronometerButtons(
@@ -92,12 +96,13 @@ fun ChronometreScreen(
                 hasFell = false
                 lastLapTime = 0L
                 isFinished = false
-                isSaved = false // Réinitialisation de l'état d'enregistrement
+                isSaved = false
             },
             hasRetry = hasRetry,
             hasFell = hasFell,
             isFinished = isFinished,
             onRestart = {
+                fallenObstacleIndex = currentObstacleIndex
                 hasFell = true
                 if (laps.isNotEmpty()) {
                     time = laps.sumOf { parseTime(it.second) }
@@ -126,8 +131,16 @@ fun ChronometreScreen(
             Button(
                 onClick = {
                     val totalTime = laps.sumOf { parseTime(it.second).toInt() }
-                    enregistrerPerformance(course.id ?: 0, competitorId, totalTime, laps, context, viewModel) {
-                        isSaved = true // Met à jour l'état après enregistrement
+                    enregistrerPerformance(
+                        course.id ?: 0,
+                        competitorId,
+                        totalTime,
+                        laps,
+                        fallenObstacleIndex,
+                        context,
+                        viewModel
+                    ) {
+                        isSaved = true
                     }
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -291,6 +304,7 @@ fun enregistrerPerformance(
     competitorId: Int,
     totalTime: Int,
     laps: List<Pair<String, String>>,
+    fallenObstacleIndex: Int,
     context: Context,
     chronoModel: ChronometreViewModel,
     onComplete: () -> Unit
@@ -307,13 +321,13 @@ fun enregistrerPerformance(
                 for ((index, lap) in laps.withIndex()) {
                     val obstacleId = obstaclesList.getOrNull(index)?.obstacleId ?: 0
                     val timeInMs = parseTime(lap.second).toInt()
-
-                    Log.d("Chronometre", "Enregistrement obstacle ID: $obstacleId")
+                    Log.d("Chronometre", "Tombé à : $fallenObstacleIndex")
+                    Log.d("Chronometre", "Index à : $index")
 
                     enregistrerPerformanceObstacles(
                         obstacleId = obstacleId,
                         performanceId = performanceId,
-                        hasFell = false,
+                        hasFell = (index == fallenObstacleIndex),
                         toVerify = false,
                         time = timeInMs,
                         context = context,
@@ -335,7 +349,7 @@ fun enregistrerPerformanceObstacles(
     context: Context,
     chronoModel: ChronometreViewModel
 ) {
-    Log.d("Chronometre", "La fonction est appelee $obstacleId")
+    Log.d("Chronometre", "hasFell : $hasFell")
     val perfObstacle = PerformanceObstacleCreate(obstacleId, performanceId, hasFell, toVerify, time)
     chronoModel.addPerformanceObstacle(perfObstacle)
 }
