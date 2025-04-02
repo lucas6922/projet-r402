@@ -79,7 +79,7 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
             onChronoClick = { competitor ->
                 onItemClickChrono(competition, course, competitor, context)
             },
-            competitionId = null,
+            competition = competition,
             competitorViewModel = competitorViewModel,
         )
 

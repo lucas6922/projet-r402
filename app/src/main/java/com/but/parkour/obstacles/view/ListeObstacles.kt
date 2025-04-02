@@ -204,8 +204,8 @@ fun AjoutObstacle(parkour: Course, competitionStatus: Competition.Status){
 
     if(competitionStatus == Competition.Status.not_ready) {
         DropDownMenuObstacle(parkour.id)
+        CreerObstacleButton(parkour)
     }
-    CreerObstacleButton(parkour)
 }
 
 @Composable

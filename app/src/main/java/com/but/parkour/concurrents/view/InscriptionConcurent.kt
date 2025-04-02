@@ -97,7 +97,7 @@ fun InscriptionPage(
         ListParticipants(
             concurrents = participants,
             modifier = Modifier.weight(1f),
-            competitionId = competitionId,
+            competition = competition!!,
             competitorViewModel = competitorViewModel,
         )
 
@@ -195,7 +195,7 @@ fun ListParticipants(
     concurrents: List<Competitor>,
     modifier: Modifier = Modifier,
     onChronoClick: ((Competitor) -> Unit)? = null,
-    competitionId: Int?,
+    competition: Competition,
     competitorViewModel: CompetitorViewModel?,
 ) {
     var selectedCompetitor by remember { mutableStateOf<Competitor?>(null) }
@@ -219,7 +219,10 @@ fun ListParticipants(
                         style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    if(EditionMode.isEnable.value) {
+                    if(EditionMode.isEnable.value &&
+                        (competition.status == Competition.Status.not_ready ||
+                                competition.status == Competition.Status.not_started))
+                    {
                         Button(onClick = {
                                 selectedCompetitor = competitor
                                 showDialog = true
@@ -250,7 +253,7 @@ fun ListParticipants(
             text = { Text("Êtes-vous sûr de vouloir supprimer ce concurrent de la competition ?") },
             confirmButton = {
                 Button(onClick = {
-                        selectedCompetitor?.let { onClickSupprimerCompetitor(it, competitionId, competitorViewModel!!) }
+                        selectedCompetitor?.let { onClickSupprimerCompetitor(it, competition.id, competitorViewModel!!) }
                         showDialog = false
                     },
                     colors = ButtonDefaults.buttonColors(
