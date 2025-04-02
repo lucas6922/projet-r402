@@ -42,12 +42,18 @@ import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.alpha
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.CourseObstacleUpdate
 import com.but.parkour.clientkotlin.models.Obstacle
 import com.but.parkour.components.PageTitle
 import com.but.parkour.ui.theme.ParkourTheme
 import okhttp3.internal.notifyAll
+import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.detectReorder
+import org.burnoutcrew.reorderable.rememberReorderableLazyListState
+import org.burnoutcrew.reorderable.reorderable
 
 class ListeObstacles : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,76 +131,78 @@ fun ObstaclesPage(
 
 @Composable
 fun ListObstacles(
-    obstacles : List<CourseObstacle>,
+    obstacles: List<CourseObstacle>,
     modifier: Modifier = Modifier,
     obstacleViewModel: ObstaclesViewModel,
     competitionStatus: Competition.Status,
     parkourId: Int,
     onObstacleDeleted: () -> Unit
 ) {
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedObstacle by remember { mutableStateOf<CourseObstacle?>(null) }
+    var reorderedObstacles by remember { mutableStateOf(obstacles) }
+    val editionEnable = EditionMode.isEnable.value
+
+    LaunchedEffect(obstacles) {
+        reorderedObstacles = obstacles
+    }
+
+    val state = rememberReorderableLazyListState(
+        onMove = { from, to ->
+            if (editionEnable && competitionStatus == Competition.Status.not_ready) {
+                reorderedObstacles = reorderedObstacles.toMutableList().apply {
+                    add(to.index, removeAt(from.index))
+                }
+            }
+        },
+        onDragEnd = { fromIndex, toIndex ->
+            if (editionEnable && competitionStatus == Competition.Status.not_ready) {
+                reorderedObstacles.forEachIndexed { index, obstacle ->
+                    val obstacleUpdate = CourseObstacleUpdate(position = index + 1, obstacleId = obstacle.obstacleId)
+                    obstacleViewModel.updateObstaclePosition(parkourId, obstacleUpdate)
+
+                }
+                obstacleViewModel.fetchCoursesObstacles(parkourId)
+            }
+        }
+    )
+
     LazyColumn(
+        state = state.listState,
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
+            .then(if (editionEnable && competitionStatus == Competition.Status.not_ready) Modifier.reorderable(state) else Modifier)
     ) {
-        items(obstacles) { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
-                    .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
-                    .padding(4.dp)
-            ) {
-                Text(
-                    text = item.obstacleName ?: "Unknown",
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+        items(reorderedObstacles, key = { it.obstacleId!! }) { obstacle ->
+            ReorderableItem(state, key = obstacle.obstacleId!!) { isDragging ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                        .border(3.dp, Color.Black, shape = MaterialTheme.shapes.medium)
+                        .padding(4.dp)
+                        .then(if (editionEnable && competitionStatus == Competition.Status.not_ready) Modifier.detectReorder(state).alpha(if (isDragging) 0.5f else 1f) else Modifier)
+                ) {
+                    Text(
+                        text = obstacle.obstacleName ?: "Unknown",
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
 
-                if(EditionMode.isEnable.value && competitionStatus == Competition.Status.not_ready) {
-                    Button(onClick = {
-                            selectedObstacle = item
-                            showDialog = true
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red
-                        )
-                    ) {
-                        Text("Supprimer")
+                    if (editionEnable && competitionStatus == Competition.Status.not_ready) {
+                        Button(
+                            onClick = {
+                                onClickSupprimer(obstacle.obstacleId!!, parkourId, obstacleViewModel, onObstacleDeleted)
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                        ) {
+                            Text("Supprimer")
+                        }
                     }
                 }
-
-
             }
         }
     }
-    if (showDialog && selectedObstacle != null) {
-        AlertDialog(
-            onDismissRequest = { showDialog = false },
-            title = { Text("Confirmation") },
-            text = { Text("Êtes-vous sûr de vouloir supprimer cet obstacle de cette course" +
-                    "?") },
-            confirmButton = {
-                Button(onClick = {
-                        selectedObstacle?.let { onClickSupprimer(it.obstacleId!!,parkourId, obstacleViewModel, onObstacleDeleted) }
-                        showDialog = false
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Red
-                    )
-                ) {
-                    Text("Oui")
-                }
-            },
-            dismissButton = {
-                Button(onClick = { showDialog = false }) {
-                    Text("Non")
-                }
-            }
-        )
-    }
 }
+
 
 
 

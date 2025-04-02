@@ -178,15 +178,26 @@ fun validateForm(
     phone: String,
     bornAt: String
 ): String {
+
+    val nameRegex = "^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$".toRegex()
+
     if(firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || phone.isEmpty() || bornAt.isEmpty()) {
         return "Veuillez remplir tous les champs"
+    }
+
+    if (!firstName.matches(nameRegex)) {
+        return "Prénom invalide"
+    }
+
+    if (!lastName.matches(nameRegex)) {
+        return "Nom invalide"
     }
 
     if(!email.matches(Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"))) {
         return "Email invalide"
     }
 
-    if (phone.isNotBlank() && !phone.matches(Regex("^(?:(?:\\+|00)33|0)\\s*[1-9](?:[\\s.-]*\\d{2}){4}\$"))) {
+    if (phone.isNotBlank() && !phone.matches(Regex("""^(\+|00)?\d{1,3}?[.\s()-]?\d{1,4}[.\s()-]?\d{2,4}[.\s()-]?\d{2,4}[.\s()-]?\d{0,4}$"""))) {
         return "Numéro de téléphone invalide"
     }
 
