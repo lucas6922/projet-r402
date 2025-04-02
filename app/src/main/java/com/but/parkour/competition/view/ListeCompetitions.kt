@@ -77,7 +77,7 @@ fun CompetitionPage(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(top = 16.dp)
+            .padding(16.dp)
     ) {
 
         PageTitle("Bienvenue dans Parkour !")
