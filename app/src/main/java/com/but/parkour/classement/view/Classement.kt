@@ -91,28 +91,27 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
     var obstacles by remember { mutableStateOf<List<CourseObstacle>>(emptyList()) }
     val obstaclesCourse by obstaclesViewModel.obstaclesCourse.observeAsState(emptyList())
 
-
-    if (selectedParkour != null) {
-        LaunchedEffect(selectedParkour) {
-            obstaclesViewModel.fetchCoursesObstacles(selectedParkour!!.id!!)
-        }
-        LaunchedEffect(obstaclesCourse) {
-            if (obstaclesCourse.isNotEmpty()) {
-                obstacles = obstaclesCourse
-                classement = performanceViewModel.filterCompetitorsWithPerformance(selectedParkour!!)
-                Log.d("ObstacleViewModel", "Fetched Obstacles: $obstacles")
-            }
+    if (selectedObstacle != null) {
+        LaunchedEffect(selectedObstacle) {
+            classement = performanceViewModel.filterCompetitorsWithObstacle(selectedParkour!!,selectedObstacle!!)
+            Log.d("ObstacleViewModel", "Fetched classement for obstacle: $selectedObstacle")
         }
     } else {
-        LaunchedEffect(performances) {
-            classement = performanceViewModel.filterCompetitorsWithCompetition(parkours)
-        }
-    }
-
-    LaunchedEffect(selectedObstacle) {
-        if (selectedObstacle != null) {
-            classement = performanceViewModel.filterCompetitorsWithObstacle(selectedParkour!!, selectedObstacle!!)
-            Log.d("ObstacleViewModel", "Fetched classement for obstacle: $selectedObstacle")
+        if (selectedParkour != null) {
+            LaunchedEffect(selectedParkour) {
+                obstaclesViewModel.fetchCoursesObstacles(selectedParkour!!.id!!)
+            }
+            LaunchedEffect(obstaclesCourse) {
+                if (obstaclesCourse.isNotEmpty()) {
+                    obstacles = obstaclesCourse
+                    classement = performanceViewModel.filterCompetitorsWithPerformance(selectedParkour!!)
+                    Log.d("ObstacleViewModel", "Fetched Obstacles: $obstacles")
+                }
+            }
+        } else {
+            LaunchedEffect(performances) {
+                classement = performanceViewModel.filterCompetitorsWithCompetition(parkours)
+            }
         }
     }
 

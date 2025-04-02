@@ -196,7 +196,9 @@ class PerformanceViewModel : ViewModel() {
 
     suspend fun filterCompetitorsWithObstacle(parkour: Course, obstacle: CourseObstacle): Map<Competitor, Int> {
         val classement: MutableMap<Competitor, Int> = mutableMapOf()
-        val performancesList = performancesObstacle.value?.filter { it.obstacleId == obstacle.courseObstacleId }?.sortedBy { it.time }
+        val performancesList = performancesObstacle.value?.filter{ it.obstacleId == obstacle.courseObstacleId}
+            ?.filter{ it.performanceId == parkour.id }
+            ?.sortedBy { it.time }
         val competitorViewModel = CompetitorViewModel()
 
 
