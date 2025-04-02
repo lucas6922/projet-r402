@@ -183,8 +183,8 @@ private fun verifChamps(
         return "Tous les champs sont obligatoire"
     }
 
-    if (phone.toIntOrNull() == null || phone.length != 10) {
-        return "Le numéro de téléphone doit être valide"
+    if (phone.isNotBlank() && !phone.matches(Regex("""^(\+|00)?\d{1,3}?[.\s()-]?\d{1,4}[.\s()-]?\d{2,4}[.\s()-]?\d{2,4}[.\s()-]?\d{0,4}$"""))) {
+        return "Numéro de téléphone invalide"
     }
 
     val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$".toRegex()
