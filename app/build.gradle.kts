@@ -26,7 +26,7 @@ android {
         buildConfigField(
             "String",
             "API_TOKEN",
-            "${env.getProperty("API_TOKEN", "")}"
+            env.getProperty("API_TOKEN", "")
         )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

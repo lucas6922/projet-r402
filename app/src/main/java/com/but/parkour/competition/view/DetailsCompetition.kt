@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.EditionMode
+import com.but.parkour.classement.view.Classement
 import com.but.parkour.clientkotlin.models.CompetitionUpdate
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.components.PageTitle
@@ -60,8 +61,8 @@ fun DetailsCompetitionPage(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .padding(16.dp)
+            .fillMaxSize()
     ) {
 
         PageTitle("Detail de la competition")
@@ -129,7 +130,6 @@ private fun CompetitionActions(
             //peut inscrire des concurrents
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
-            ValiderCompetitionButton(competition, onCompetitionUpdate)
             //peut modifier la compétition et ses courses
             if (EditionMode.isEnable.value) {
                 ModifyButton(context, competition)
@@ -139,7 +139,6 @@ private fun CompetitionActions(
         Competition.Status.not_started -> {
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
-            StartCompetition(competition, onCompetitionUpdate)
             //peut inscrire des concurrents
         }
         Competition.Status.started -> {
@@ -148,7 +147,7 @@ private fun CompetitionActions(
             //aucune modif autorisée
         }
         Competition.Status.finished -> {
-            ViewResultsButton()
+            ViewResultsButton(competition = competition)
             //on peut que consulter les resultats
         }
         null -> {}
@@ -209,9 +208,10 @@ fun StartCompetition(
 }
 
 @Composable
-fun ViewResultsButton() {
+fun ViewResultsButton(competition: Competition) {
+    val context = LocalContext.current
     Button(
-        onClick = { },
+        onClick = {onClickResults(competition = competition, context)},
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
@@ -317,5 +317,13 @@ private fun DeleteButton(context: Context, competition: Competition) {
             }
         )
     }
+
+}
+
+fun onClickResults(competition: Competition, context: Context) {
+    val intent = Intent(context, Classement::class.java)
+    intent.putExtra("competition", competition)
+    context.startActivity(intent)
+
 }
 

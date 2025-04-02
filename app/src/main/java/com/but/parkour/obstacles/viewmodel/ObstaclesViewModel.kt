@@ -36,17 +36,20 @@ class ObstaclesViewModel : ViewModel() {
 
                 val call = courseApi.getCourseObstacles(parkourId)
 
+                Log.v("ObstaclesViewModel", "Course id: $parkourId")
                 apiClient.fetchData(
                     call,
                     onSuccess = { data, statusCode ->
                         Log.d("ParkourViewModel", "courses received: $data")
                         _obstaclesCourse.postValue(data ?: emptyList())
+                        Log.v("ObstaclesViewModel", "Courses: $obstaclesCourse")
                     },
                     onError = { errorMessage, statusCode ->
                         Log.e("ParkourViewModel", "Error: $errorMessage")
                         _obstaclesCourse.postValue(emptyList())
                     }
                 )
+                Log.v("ObstaclesViewModel", "Course fetch")
 
             } catch (e: Exception) {
                 Log.e("ParkourViewModel", "Exception: ${e.message}", e)
