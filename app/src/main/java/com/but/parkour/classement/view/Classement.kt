@@ -93,7 +93,8 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
 
     if (selectedObstacle != null) {
         LaunchedEffect(selectedObstacle) {
-            classement = performanceViewModel.filterCompetitorsWithObstacle(selectedParkour!!,selectedObstacle!!)
+            classement = performanceViewModel.filterCompetitorsWithObstacle(selectedObstacle!!,
+                performanceViewModel.filterCompetitorsWithPerformance(selectedParkour!!))
             Log.d("ObstacleViewModel", "Fetched classement for obstacle: $selectedObstacle")
         }
     } else {
@@ -127,7 +128,7 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
                     modifier = Modifier
                         .padding(16.dp)
                         .clickable { parkoursExpanded = true }
-                        .width(64.dp),
+                        .width(128.dp),
 
                     )
                 DropdownMenu(
@@ -164,7 +165,7 @@ fun ClassementPage(modifier : Modifier, performances: List<Performance>, parkour
                     modifier = Modifier
                         .padding(16.dp)
                         .clickable { obstacleExpanded = true }
-                        .width(64.dp),
+                        .width(128.dp),
 
                     )
                 DropdownMenu(

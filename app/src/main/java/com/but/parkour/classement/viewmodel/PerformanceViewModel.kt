@@ -5,28 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.but.parkour.BuildConfig
 import com.but.parkour.clientkotlin.apis.CompetitorsApi
 import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
 import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
-import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.clientkotlin.models.PerformanceObstacle
-import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.concurrents.viewmodel.CompetitorViewModel
-import com.but.parkour.parkour.view.ListeParkours
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 
 class PerformanceViewModel : ViewModel() {
 
@@ -46,6 +36,7 @@ class PerformanceViewModel : ViewModel() {
 
     init {
         fetchPerformances()
+        fetchPerformancesObstacle()
     }
 
     private fun fetchPerformances() {
@@ -131,9 +122,10 @@ class PerformanceViewModel : ViewModel() {
 
     suspend fun filterCompetitorsWithPerformance(parkour: Course): Map<Competitor, Int> {
         val classement: MutableMap<Competitor, Int> = mutableMapOf()
-        val performancesList = performances.value?.filter { it.courseId == parkour.id }?.sortedBy { it.totalTime }
+        val performancesList = performances.value
+            ?.filter { it.courseId == parkour.id }
+            ?.sortedBy { it.totalTime }
         val competitorViewModel = CompetitorViewModel()
-
 
         val competitors = competitorViewModel.fetchAllCompetitors()
 
@@ -194,20 +186,30 @@ class PerformanceViewModel : ViewModel() {
         return classement
     }
 
-    suspend fun filterCompetitorsWithObstacle(parkour: Course, obstacle: CourseObstacle): Map<Competitor, Int> {
+    suspend fun filterCompetitorsWithObstacle(
+        obstacle: CourseObstacle
+    ): Map<Competitor, Int> {
+
+        //recuperer les performances obstacles sur un pobstacle donné dans une course donnée
+
+        //pour chaque performances obstacle obtenir le competitor
+
+        //renvoyer le competitor et son temps
+
+
         val classement: MutableMap<Competitor, Int> = mutableMapOf()
-        val performancesList = performancesObstacle.value?.filter{ it.obstacleId == obstacle.courseObstacleId}
-            ?.filter{ it.performanceId == parkour.id }
+        val performancesList = performancesObstacle.value
+            ?.filter{ it.obstacleId == obstacle.obstacleId }
             ?.sortedBy { it.time }
         val competitorViewModel = CompetitorViewModel()
-
 
         val competitors = competitorViewModel.fetchAllCompetitors()
 
         Log.d("PerformanceViewModel", "Competitors received: $competitors")
+        Log.v("Performance Obstacle","List size : ${performancesList?.size}")
 
         performancesList?.forEach {
-            val competitor = competitors?.firstOrNull { competitor -> competitor.id == it.performanceId }
+            val competitor = competitors?.firstOrNull { competitor -> competitor.id ==  2427}
             Log.d("PerformanceViewModel", "Competitor received: $competitor")
             if (competitor != null) {
                 classement[competitor] = it.time!!
