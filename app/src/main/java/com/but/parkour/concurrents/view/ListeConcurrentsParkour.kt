@@ -92,7 +92,7 @@ fun ConcurrentPage(modifier: Modifier = Modifier, competition: Competition, cour
 fun onItemClickChrono(competition: Competition, course: Course, competitor: Competitor, context: Context) {
     val intent = Intent(context, Chronometre::class.java).apply {
         putExtra("competition", competition)
-        putExtra("competitorId", competitor.id)
+        putExtra("competitor", competitor)
         putExtra("course", course)
     }
     context.startActivity(intent)

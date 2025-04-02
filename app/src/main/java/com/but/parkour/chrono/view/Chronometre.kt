@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
+import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.clientkotlin.models.CourseUpdate
 import com.but.parkour.clientkotlin.models.PerformanceCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
+import com.but.parkour.components.PageTitle
 import com.but.parkour.parkour.viewmodel.ChronometreViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 import kotlinx.coroutines.delay
@@ -34,12 +36,23 @@ class Chronometre : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val competition = intent.getSerializableExtra("competition") as Competition
-            val competitorId = intent.getSerializableExtra("competitorId") as Int
+            val competitor = intent.getSerializableExtra("competitor") as Competitor
             val course = intent.getSerializableExtra("course") as Course
             ParkourTheme {
-                course.id?.let { competition.hasRetry?.let { it2 ->
-                    ChronometreScreen(viewModel = viewModel, parkourId = it, hasRetry = it2, competitorId = competitorId, course = course, competitionId = competition.id)
-                } }
+                Scaffold (modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    course.id?.let { competition.hasRetry?.let { it2 ->
+                        ChronometreScreen(
+                            viewModel = viewModel,
+                            parkourId = it,
+                            hasRetry = it2,
+                            competitor = competitor,
+                            course = course,
+                            competitionId = competition.id,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                    } }
+                }
+
             }
         }
     }
@@ -50,9 +63,10 @@ fun ChronometreScreen(
     viewModel: ChronometreViewModel,
     parkourId: Int,
     hasRetry: Boolean,
-    competitorId: Int,
+    competitor: Competitor,
     course: Course,
-    competitionId: Int?
+    competitionId: Int?,
+    modifier: Modifier
 ) {
     val obstacles = viewModel.obstacles.value
     var hasFell by remember { mutableStateOf(false) }
@@ -80,11 +94,12 @@ fun ChronometreScreen(
 
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(text = competitorId.toString())
-        Text(text = course.id.toString())
+
+        PageTitle("Chronometrer le concurrent : ${competitor.firstName} pour la course ${course.name}")
+
         ObstacleDisplay(obstacles, currentObstacleIndex)
         ChronometerDisplay(time)
         ChronometerButtons(
@@ -134,7 +149,7 @@ fun ChronometreScreen(
                     val totalTime = laps.sumOf { parseTime(it.second).toInt() }
                     enregistrerPerformance(
                         course.id ?: 0,
-                        competitorId,
+                        competitor.id!!,
                         competitionId,
                         totalTime,
                         laps,
