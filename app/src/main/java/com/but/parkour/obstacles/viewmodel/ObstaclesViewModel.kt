@@ -11,8 +11,11 @@ import com.but.parkour.clientkotlin.apis.ObstaclesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
 import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.clientkotlin.models.CourseObstacleUpdate
+import com.but.parkour.clientkotlin.models.CourseUpdate
 import com.but.parkour.clientkotlin.models.Obstacle
 import com.but.parkour.clientkotlin.models.ObstacleCreate
+import com.but.parkour.clientkotlin.models.ObstacleUpdate
 import kotlinx.coroutines.launch
 
 class ObstaclesViewModel : ViewModel() {
@@ -128,6 +131,26 @@ class ObstaclesViewModel : ViewModel() {
                 )
 
             } catch (e: Exception) {
+                Log.e("ObstaclesViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun updateObstaclePosition(parkourId : Int, obstacle: CourseObstacleUpdate){
+        viewModelScope.launch {
+            try{
+                val call = courseApi.updateCourseObstaclePosition(parkourId, obstacle)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ObstaclesViewModel", "course updated: $obstacle")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ObstaclesViewModel", "Error: $errorMessage")
+                    }
+                )
+            }catch (e: Exception){
                 Log.e("ObstaclesViewModel", "Exception: ${e.message}", e)
             }
         }
