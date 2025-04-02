@@ -211,8 +211,8 @@ fun AjoutObstacle(parkour: Course, competitionStatus: Competition.Status){
 @Composable
 fun DropDownMenuObstacle(parkourId: Int?) {
     val obstaclesViewModel: ObstaclesViewModel = viewModel()
-    obstaclesViewModel.fetchAllObstacles()
-    val obstacles by obstaclesViewModel.allObstacles.observeAsState(initial = emptyList())
+    obstaclesViewModel.fetchCoursesObstaclesAvailable(parkourId!!)
+    val obstacles by obstaclesViewModel.allObstaclesAvailable.observeAsState(initial = emptyList())
 
     var expanded by remember { mutableStateOf(false) }
     var selectedObstacle by remember { mutableStateOf<Obstacle?>(null) }

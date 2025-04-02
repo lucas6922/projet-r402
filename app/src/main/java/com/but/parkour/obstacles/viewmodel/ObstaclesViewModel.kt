@@ -22,6 +22,11 @@ class ObstaclesViewModel : ViewModel() {
     private val _allObstacles = MutableLiveData<List<Obstacle>>()
     val allObstacles: LiveData<List<Obstacle>> = _allObstacles
 
+    private val _allObstaclesAvailable = MutableLiveData<List<Obstacle>>()
+    val allObstaclesAvailable: LiveData<List<Obstacle>> = _allObstaclesAvailable
+
+
+
     private val apiClient = ApiClient(
         bearerToken = BuildConfig.API_TOKEN
     )
@@ -57,6 +62,48 @@ class ObstaclesViewModel : ViewModel() {
             }
         }
     }
+
+fun fetchCoursesObstaclesAvailable(parkourId: Int) {
+    viewModelScope.launch {
+        try {
+            Log.d("ObstaclesViewModel", "Fetching available obstacles...")
+
+            val allObstaclesCall = obstacleApi.getAllObstacles()
+
+            val courseObstaclesCall = courseApi.getCourseObstacles(parkourId)
+
+            apiClient.fetchData(
+                allObstaclesCall,
+                onSuccess = { allObstaclesData, _ ->
+                    apiClient.fetchData(
+                        courseObstaclesCall,
+                        onSuccess = { courseObstaclesData, _ ->
+                            val courseObstacleIds = courseObstaclesData?.map { it.obstacleId } ?: emptyList()
+                            val availableObstacles = allObstaclesData?.filter { obstacle ->
+                                obstacle.id !in courseObstacleIds
+                            } ?: emptyList()
+
+                            Log.d("ObstaclesViewModel", "Available obstacles: $availableObstacles")
+                            _allObstaclesAvailable.postValue(availableObstacles)
+                        },
+                        onError = { errorMessage, _ ->
+                            Log.e("ObstaclesViewModel", "Error fetching course obstacles: $errorMessage")
+                            _allObstaclesAvailable.postValue(emptyList())
+                        }
+                    )
+                },
+                onError = { errorMessage, _ ->
+                    Log.e("ObstaclesViewModel", "Error fetching all obstacles: $errorMessage")
+                    _allObstaclesAvailable.postValue(emptyList())
+                }
+            )
+
+        } catch (e: Exception) {
+            Log.e("ObstaclesViewModel", "Exception: ${e.message}", e)
+            _allObstaclesAvailable.postValue(emptyList())
+        }
+    }
+}
 
     fun fetchAllObstacles() {
         viewModelScope.launch {
