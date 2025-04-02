@@ -1,7 +1,6 @@
 package com.but.parkour.chrono.view
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.clientkotlin.models.CourseUpdate
 import com.but.parkour.clientkotlin.models.PerformanceCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
 import com.but.parkour.parkour.viewmodel.ChronometreViewModel
@@ -38,7 +38,7 @@ class Chronometre : ComponentActivity() {
             val course = intent.getSerializableExtra("course") as Course
             ParkourTheme {
                 course.id?.let { competition.hasRetry?.let { it2 ->
-                    ChronometreScreen(viewModel = viewModel, parkourId = it, hasRetry = it2, competitorId = competitorId, course = course)
+                    ChronometreScreen(viewModel = viewModel, parkourId = it, hasRetry = it2, competitorId = competitorId, course = course, competitionId = competition.id)
                 } }
             }
         }
@@ -51,7 +51,8 @@ fun ChronometreScreen(
     parkourId: Int,
     hasRetry: Boolean,
     competitorId: Int,
-    course: Course
+    course: Course,
+    competitionId: Int?
 ) {
     val obstacles = viewModel.obstacles.value
     var hasFell by remember { mutableStateOf(false) }
@@ -134,6 +135,7 @@ fun ChronometreScreen(
                     enregistrerPerformance(
                         course.id ?: 0,
                         competitorId,
+                        competitionId,
                         totalTime,
                         laps,
                         fallenObstacleIndex,
@@ -302,6 +304,7 @@ fun LapList(laps: List<Pair<String, String>>) {
 fun enregistrerPerformance(
     courseId: Int,
     competitorId: Int,
+    competitionId: Int?,
     totalTime: Int,
     laps: List<Pair<String, String>>,
     fallenObstacleIndex: Int,
@@ -333,6 +336,23 @@ fun enregistrerPerformance(
                         context = context,
                         chronoModel = chronoModel
                     )
+                }
+            }
+            chronoModel.fetchCompetitorsCourse(competitionId?: 0)
+            chronoModel.competitorsCourse.observeForever { competitors ->
+                if (competitors != null && competitors.isNotEmpty()) {
+                    val totalCompetitors = competitors.size
+                    val recordedPerformances = perfs.count { it.courseId == courseId }
+
+                    Log.d("Chronometre", "Total competitors: $totalCompetitors, Recorded performances: $recordedPerformances")
+
+                    if (recordedPerformances >= totalCompetitors) {
+                        Log.d("Chronometre", "Course terminée")
+                        val course = CourseUpdate(isOver = true)
+                        chronoModel.updateCourse(courseId, course)
+                    }
+                } else {
+                    Log.d("Chronometre", "competitorsCourse est vide ou non encore chargé courseId : $courseId")
                 }
             }
             onComplete()
