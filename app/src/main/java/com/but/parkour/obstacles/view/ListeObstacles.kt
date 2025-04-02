@@ -204,7 +204,7 @@ fun AjoutObstacle(parkour: Course, competitionStatus: Competition.Status){
 
     if(competitionStatus == Competition.Status.not_ready) {
         DropDownMenuObstacle(parkour.id)
-        CreerObstacleButton(parkour)
+        CreerObstacleButton(parkour, competitionStatus)
     }
 }
 
@@ -280,10 +280,10 @@ fun AjoutObstacleButton(
 
 
 @Composable
-fun CreerObstacleButton(course: Course) {
+fun CreerObstacleButton(course: Course, competitionStatus: Competition.Status) {
     val context = LocalContext.current
     Button(
-        onClick = {onCreerObstacleClick(context, course)},
+        onClick = {onCreerObstacleClick(context, course, competitionStatus)},
         modifier = Modifier.fillMaxWidth()
     ) {
         Text("Creer un obstacle")
@@ -295,9 +295,10 @@ fun onClickSupprimer(obstacleId: Int, courseId: Int, obstacleViewModel: Obstacle
     onObstacleSup()
 }
 
-fun onCreerObstacleClick(context : Context, course: Course) {
+fun onCreerObstacleClick(context : Context, course: Course, competitionStatus: Competition.Status) {
     val intent = Intent(context, AjoutObstacles::class.java)
     intent.putExtra("course", course)
+    intent.putExtra("competitionStatus", competitionStatus)
     context.startActivity(intent)
 }
 

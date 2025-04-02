@@ -27,6 +27,7 @@ import com.but.parkour.clientkotlin.models.ObstacleCreate
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
 import com.but.parkour.ui.theme.ParkourTheme
 import androidx.compose.ui.platform.LocalContext
+import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.components.PageTitle
 
 
@@ -34,12 +35,14 @@ class AjoutObstacles : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val course = intent.getSerializableExtra("course") as? Course
+        val competitionStatus = intent.getSerializableExtra("competitionStatus") as Competition.Status
         enableEdgeToEdge()
         setContent{
             Scaffold (modifier = Modifier.fillMaxSize()){ innerPadding ->
                 AjoutObstaclePage(
                     modifier = Modifier.padding(innerPadding),
-                    course
+                    course,
+                    competitionStatus
                 )
             }
 
@@ -48,7 +51,7 @@ class AjoutObstacles : ComponentActivity() {
 }
 
 @Composable
-fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?) {
+fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?, competitionStatus: Competition.Status) {
     var obstacleName by remember { mutableStateOf("") }
     val context = LocalContext.current
 
@@ -69,7 +72,7 @@ fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?) {
             )
             Button(
                 onClick = {
-                    onObstacleAdded(obstacleName, course, context )
+                    onObstacleAdded(obstacleName, course, context, competitionStatus)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,11 +84,12 @@ fun AjoutObstaclePage(modifier: Modifier = Modifier, course: Course?) {
     }
 }
 
-fun onObstacleAdded(obstacle: String, course: Course, context: Context) {
+fun onObstacleAdded(obstacle: String, course: Course, context: Context, competitionStatus: Competition.Status) {
     val obstaclesViewModel = ObstaclesViewModel()
     obstaclesViewModel.addObstacle(ObstacleCreate(name = obstacle))
 
     val intent = Intent(context, ListeObstacles::class.java)
     intent.putExtra("parkour", course)
+    intent.putExtra("competitionStatus", competitionStatus)
     context.startActivity(intent)
 }
