@@ -130,6 +130,7 @@ private fun CompetitionActions(
             //peut inscrire des concurrents
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
+            ValiderCompetitionButton(competition, onCompetitionUpdate)
             //peut modifier la compétition et ses courses
             if (EditionMode.isEnable.value) {
                 ModifyButton(context, competition)
@@ -139,6 +140,7 @@ private fun CompetitionActions(
         Competition.Status.not_started -> {
             ConcurrentButton(context, competition)
             ParkoursButton(context, competition)
+            StartCompetition(competition, onCompetitionUpdate)
             //peut inscrire des concurrents
         }
         Competition.Status.started -> {
