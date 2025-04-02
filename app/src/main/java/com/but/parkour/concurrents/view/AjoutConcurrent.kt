@@ -59,7 +59,7 @@ fun AjoutConcurrentForm(modifier: Modifier = Modifier) {
         TextField(
             value = firstName,
             onValueChange = { firstName = it },
-            label = { Text("Prenom") },
+            label = { Text("Prénom") },
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -178,9 +178,20 @@ private fun verifChamps(
     gender: String,
     bornAt: String,
 ): String{
+
+    val nameRegex = "^[A-Za-zÀ-ÖØ-öø-ÿ' -]+$".toRegex()
+
     if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()
         || phone.isEmpty() || gender == "Genre" || bornAt.isEmpty()){
         return "Tous les champs sont obligatoire"
+    }
+
+    if (!firstName.matches(nameRegex)) {
+        return "Prénom invalide"
+    }
+
+    if (!lastName.matches(nameRegex)) {
+        return "Nom invalide"
     }
 
     if (phone.isNotBlank() && !phone.matches(Regex("""^(\+|00)?\d{1,3}?[.\s()-]?\d{1,4}[.\s()-]?\d{2,4}[.\s()-]?\d{2,4}[.\s()-]?\d{0,4}$"""))) {
