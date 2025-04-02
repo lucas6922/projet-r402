@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -49,7 +48,6 @@ import com.but.parkour.clientkotlin.models.CourseObstacleUpdate
 import com.but.parkour.clientkotlin.models.Obstacle
 import com.but.parkour.components.PageTitle
 import com.but.parkour.ui.theme.ParkourTheme
-import okhttp3.internal.notifyAll
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorder
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState

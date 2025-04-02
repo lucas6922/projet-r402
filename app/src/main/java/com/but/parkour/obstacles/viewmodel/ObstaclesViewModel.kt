@@ -12,10 +12,8 @@ import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.AddCourseObstacleRequest
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.clientkotlin.models.CourseObstacleUpdate
-import com.but.parkour.clientkotlin.models.CourseUpdate
 import com.but.parkour.clientkotlin.models.Obstacle
 import com.but.parkour.clientkotlin.models.ObstacleCreate
-import com.but.parkour.clientkotlin.models.ObstacleUpdate
 import kotlinx.coroutines.launch
 
 class ObstaclesViewModel : ViewModel() {

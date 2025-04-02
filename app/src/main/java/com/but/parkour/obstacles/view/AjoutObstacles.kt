@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Course
 import com.but.parkour.clientkotlin.models.ObstacleCreate
 import com.but.parkour.obstacles.viewmodel.ObstaclesViewModel
-import com.but.parkour.ui.theme.ParkourTheme
 import androidx.compose.ui.platform.LocalContext
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.components.PageTitle

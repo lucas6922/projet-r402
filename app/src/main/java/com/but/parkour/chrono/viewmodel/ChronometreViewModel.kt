@@ -12,7 +12,6 @@ import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
 import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
-import com.but.parkour.clientkotlin.models.CompetitionCreate
 import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.CourseObstacle
 import com.but.parkour.clientkotlin.models.CourseUpdate

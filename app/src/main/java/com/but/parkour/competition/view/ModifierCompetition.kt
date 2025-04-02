@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.clientkotlin.models.CompetitionUpdate
 import com.but.parkour.clientkotlin.models.CompetitionUpdate.Gender
-import com.but.parkour.clientkotlin.models.CompetitionUpdate.Status
 import com.but.parkour.ui.theme.ParkourTheme
 import com.but.parkour.competition.viewmodel.CompetitionViewModel
 import com.but.parkour.components.PageTitle

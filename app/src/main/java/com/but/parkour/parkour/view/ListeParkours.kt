@@ -29,7 +29,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.but.parkour.clientkotlin.models.Competition
 import com.but.parkour.ui.theme.ParkourTheme
@@ -43,7 +42,6 @@ import androidx.compose.ui.Alignment
 import com.but.parkour.EditionMode
 import com.but.parkour.clientkotlin.models.Course
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.style.TextAlign
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
