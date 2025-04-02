@@ -143,6 +143,29 @@ fun ChronometreScreen(
             isLapEnabled = obstacles != null && currentObstacleIndex < obstacles.size
         )
 
+        if (!isRunning && !isFinished && !isSaved) {
+            Button(
+                onClick = {
+                    enregistrerPerformance(
+                        course.id ?: 0,
+                        competitor.id!!,
+                        competitionId,
+                        time.toInt(),
+                        true,
+                        laps,
+                        fallenObstacleIndex,
+                        context,
+                        viewModel
+                    ) {
+                        isSaved = true
+                    }
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Arrêter et enregistrer")
+            }
+        }
+
         if (isFinished && !isSaved) {
             Button(
                 onClick = {
@@ -152,6 +175,7 @@ fun ChronometreScreen(
                         competitor.id!!,
                         competitionId,
                         totalTime,
+                        false,
                         laps,
                         fallenObstacleIndex,
                         context,
@@ -321,13 +345,19 @@ fun enregistrerPerformance(
     competitorId: Int,
     competitionId: Int?,
     totalTime: Int,
+    failed : Boolean,
     laps: List<Pair<String, String>>,
     fallenObstacleIndex: Int,
     context: Context,
     chronoModel: ChronometreViewModel,
     onComplete: () -> Unit
 ) {
-    val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status = PerformanceCreate.Status.to_finish, totalTime = totalTime)
+    var status = PerformanceCreate.Status.to_finish
+    if(failed){
+        status = PerformanceCreate.Status.over
+    }
+
+    val perf = PerformanceCreate(courseId = courseId, competitorId = competitorId, status = status, totalTime = totalTime)
     chronoModel.addPerformance(perf)
 
     chronoModel.fetchAllPerformances()
