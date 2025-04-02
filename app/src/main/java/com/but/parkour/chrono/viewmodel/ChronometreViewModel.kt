@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.but.parkour.BuildConfig
+import com.but.parkour.clientkotlin.apis.CompetitionsApi
 import com.but.parkour.clientkotlin.apis.CoursesApi
 import com.but.parkour.clientkotlin.apis.PerformanceObstaclesApi
 import com.but.parkour.clientkotlin.apis.PerformancesApi
 import com.but.parkour.clientkotlin.infrastructure.ApiClient
 import com.but.parkour.clientkotlin.models.CompetitionCreate
+import com.but.parkour.clientkotlin.models.Competitor
 import com.but.parkour.clientkotlin.models.CourseObstacle
+import com.but.parkour.clientkotlin.models.CourseUpdate
 import com.but.parkour.clientkotlin.models.Performance
 import com.but.parkour.clientkotlin.models.PerformanceCreate
 import com.but.parkour.clientkotlin.models.PerformanceObstacleCreate
@@ -25,6 +28,9 @@ class ChronometreViewModel : ViewModel() {
     private val _performances = MutableLiveData<List<Performance>>()
     val performances: LiveData<List<Performance>> = _performances
 
+    private val _competitorsCourse = MutableLiveData<List<Competitor>>()
+    val competitorsCourse: LiveData<List<Competitor>> = _competitorsCourse
+
     private val apiClient = ApiClient(
         bearerToken = BuildConfig.API_TOKEN
     )
@@ -32,6 +38,7 @@ class ChronometreViewModel : ViewModel() {
     private val courseApi = apiClient.createService(CoursesApi::class.java)
     private val perfApi = apiClient.createService(PerformancesApi::class.java)
     private val perfObstacleApi = apiClient.createService(PerformanceObstaclesApi::class.java)
+    private val competitionApi = apiClient.createService(CompetitionsApi::class.java)
 
     fun fetchObstacles(parkourId: Int) {
         viewModelScope.launch {
@@ -78,6 +85,52 @@ class ChronometreViewModel : ViewModel() {
             } catch (e: Exception) {
                 Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
                 _performances.postValue(emptyList())
+            }
+        }
+    }
+
+    fun updateCourse(courseId: Int, course: CourseUpdate){
+        viewModelScope.launch {
+            try{
+                val call = courseApi.updateCourse(courseId, course)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ChronometreViewModel", "course updated: $course")
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ChronometreViewModel", "Error: $errorMessage")
+                    }
+                )
+            }catch (e: Exception){
+                Log.e("ChronometreViewModel", "Exception: ${e.message}", e)
+            }
+        }
+    }
+
+    fun fetchCompetitorsCourse(competitionId : Int){
+        viewModelScope.launch {
+            try {
+                Log.d("ChronometreViewModel", "Fetching competitors for a course... id: $competitionId")
+
+                val call = competitionApi.getCompetitionInscriptions(competitionId)
+
+                apiClient.fetchData(
+                    call,
+                    onSuccess = { data, statusCode ->
+                        Log.d("ChronometreViewModel", "Competitors received: $data")
+                        _competitorsCourse.postValue(data ?: emptyList())
+                    },
+                    onError = { errorMessage, statusCode ->
+                        Log.e("ChronometreViewModel", "Error Competitors Course: $errorMessage")
+                        _competitorsCourse.postValue(emptyList())
+                    }
+                )
+
+            } catch (e: Exception) {
+                Log.e("CompetitionViewModel", "Exception: ${e.message}", e)
+                _competitorsCourse.postValue(emptyList())
             }
         }
     }
