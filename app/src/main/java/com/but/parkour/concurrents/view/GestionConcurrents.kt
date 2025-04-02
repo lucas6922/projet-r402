@@ -73,6 +73,7 @@ fun GestionConcurrentsPage(
 
     Column(
         modifier = modifier.fillMaxSize()
+            .padding(16.dp),
     ) {
         PageTitle("Liste des concurrents")
 

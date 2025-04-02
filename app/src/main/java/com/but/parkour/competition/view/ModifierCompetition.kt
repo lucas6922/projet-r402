@@ -46,9 +46,7 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
     var ageMax by remember { mutableStateOf(oldCompetition.ageMax?.toString() ?: "") }
     var gender by remember { mutableStateOf(oldCompetition.gender?.value ?: "") }
     var hasRetry by remember { mutableStateOf(oldCompetition.hasRetry ?: false) }
-    var status by remember { mutableStateOf(oldCompetition.status?.value ?: "") }
     var errorMessage by remember { mutableStateOf("") }
-    var expanded by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     Column(
@@ -93,34 +91,22 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
             )
             Text("Femme")
         }
-        Text("Status")
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = true }
-        ) {
-            OutlinedTextField(
-                value = status,
-                onValueChange = { },
-                label = { Text("Status") },
-                modifier = Modifier.fillMaxWidth(),
-                readOnly = true
+
+        Text("Auroiser une chute ?")
+        Row {
+            RadioButton(
+                selected = hasRetry,
+                onClick = { hasRetry = true }
             )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                Status.values().forEach { statusOption ->
-                    DropdownMenuItem(
-                        onClick = {
-                            status = statusOption.value
-                            expanded = false
-                        },
-                        text = { Text(statusOption.value) }
-                    )
-                }
-            }
+            Text("Oui")
+            Spacer(modifier = Modifier.width(16.dp))
+            RadioButton(
+                selected = !hasRetry,
+                onClick = { hasRetry = false }
+            )
+            Text("Non")
         }
+
         if (errorMessage.isNotEmpty()) {
             Text(text = errorMessage, color = androidx.compose.ui.graphics.Color.Red)
         }
@@ -128,7 +114,7 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                val validationResult = validateFields(name, ageMin, ageMax, gender, status)
+                val validationResult = validateFields(name, ageMin, ageMax, gender)
                 if (validationResult == null) {
                     val newCompetition = CompetitionUpdate(
                         name = name,
@@ -136,7 +122,6 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
                         ageMax = ageMax.toIntOrNull(),
                         gender = Gender.values().find { it.value == gender },
                         hasRetry = hasRetry,
-                        status = Status.values().find { it.value == status }
                     )
                     oldCompetition.id?.let {
                         modifCompetition(context, newCompetition, it)
@@ -154,15 +139,12 @@ fun ModifierCompetitionForm(modifier: Modifier = Modifier, oldCompetition: Compe
     }
 }
 
-fun validateFields(name: String, ageMin: String, ageMax: String, gender: String, status: String): String? {
-    if (name.isBlank() || ageMin.isBlank() || ageMax.isBlank() || gender.isBlank() || status.isBlank()) {
+fun validateFields(name: String, ageMin: String, ageMax: String, gender: String): String? {
+    if (name.isBlank() || ageMin.isBlank() || ageMax.isBlank() || gender.isBlank() ) {
         return "Tous les champs sont obligatiores"
     }
     if (gender != "H" && gender != "F") {
         return "Le genre doit être Homme ou Femme"
-    }
-    if (status !in listOf("not_ready", "not_started", "started", "finished")) {
-        return "Le status doit être un des suivants : 'not_ready', 'not_started', 'started', 'finished'"
     }
     return null
 }

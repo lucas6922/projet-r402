@@ -253,7 +253,7 @@ private fun SelectionDropdowns(
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text(
-                    text = "Plusieurs essais ?",
+                    text = "Auroiser une chute ?",
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
